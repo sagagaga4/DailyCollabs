@@ -18,7 +18,7 @@ const userSchema = new mongoose.Schema(
     [
       {
         type: mongoose.Schema.Types.ObjectId,
-        ref: 'community', // <-- must match your Community model name
+        ref: 'community', // <-- reference to Community model 
       },
     ],
    /* collaborationsWall: [{
