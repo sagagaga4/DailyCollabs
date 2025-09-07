@@ -4,6 +4,10 @@ const userService = require('../services/userService')
 const router = express.Router();
 
 //Entry Point - " /users "
+router.post('/:userId/join/:communityId', async (req, res) => {
+  const user = await userService.joinCommunity(req.params.userId, req.params.communityId);
+  res.json(user);
+});
 
 router.get('/', async (req, res) => {
     try {

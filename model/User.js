@@ -13,7 +13,14 @@ const userSchema = new mongoose.Schema(
     },
     genres:{
       type:String,      required:true
-    }
+    },
+    communities: 
+    [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'community', // <-- must match your Community model name
+      },
+    ],
    /* collaborationsWall: [{
       type: mongoose.Schema.Types.ObjectId,
       ref: 'Video',

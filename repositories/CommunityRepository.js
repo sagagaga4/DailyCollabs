@@ -103,6 +103,39 @@ class CommunityRepository{
             throw new Error(`Can't delete community ${error.message}`)
         }
     }
+
+    // Add member
+    addMember = async (communityId, userId) => {
+        try {
+        const community = await Community.findByIdAndUpdate(
+            communityId,
+            { $addToSet: { members: userId } },
+            { new: true }
+        ).populate('members');
+
+        if (!community) throw new Error("Community not found");
+        return community;
+        } catch (error) {
+        throw new Error(`Can't add member: ${error.message}`);
+        }
+    };
+
+  // Remove member
+  removeMember = async (communityId, userId) => {
+    try {
+      const community = await Community.findByIdAndUpdate(
+        communityId,
+        { $pull: { members: userId } },
+        { new: true }
+      ).populate('members');
+
+      if (!community) throw new Error("Community not found");
+      return community;
+    } catch (error) {
+      throw new Error(`Can't remove member: ${error.message}`);
+    }
+  };
+    
 }
 
 module.exports = CommunityRepository;

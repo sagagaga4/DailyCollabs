@@ -68,6 +68,36 @@ class UserRepository{
             throw new Error(`Can't delete user ${error.message}`)
         }
     }
+
+  joinCommunity = async (userId, communityId) => {
+    try {
+      const user = await User.findByIdAndUpdate(
+        userId,
+        { $addToSet: { communities: communityId } },
+        { new: true }
+      ).populate('communities');
+
+      if (!user) throw new Error("User not found");
+      return user;
+    } catch (error) {
+      throw new Error(`Can't join community: ${error.message}`);
+    }
+  }
+
+  leaveCommunity = async (userId, communityId) => {
+    try {
+      const user = await User.findByIdAndUpdate(
+        userId,
+        { $pull: { communities: communityId } },
+        { new: true }
+      ).populate('communities');
+
+      if (!user) throw new Error("User not found");
+      return user;
+    } catch (error) {
+      throw new Error(`Can't leave community: ${error.message}`);
+    }
+}
 /*
     updateCollaborationsWall = async (id) = {
         try {
@@ -83,4 +113,4 @@ class UserRepository{
         }
     }*/
 }
-    module.exports = UserRepository
+module.exports = UserRepository
