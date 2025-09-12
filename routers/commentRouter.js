@@ -5,8 +5,8 @@ const router = express.Router();
 
 // Entry Point - "/communities"
 // All CRUD activities
-
 // Get all communities
+
 router.get('/', async (req, res) => {
   try {
     const filters = req.query;

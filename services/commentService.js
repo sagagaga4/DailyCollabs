@@ -22,7 +22,7 @@ const deleteComment = (id) => {
 
 module.exports = {
   getAllComments,
-  getCommentsById,
+  getCommentById,
   createComment,
   deleteComment,
 };
