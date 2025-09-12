@@ -8,7 +8,7 @@ const getAllComments = (filters) => {
   return CommentsRepo.findCommentByDate(filters.date);
 };
 
-const getCommentsById = (id) => {
+const getCommentById = (id) => {
   return CommentsRepo.getCommentById(id);
 };
 
