@@ -4,7 +4,6 @@ const jwt = require('jsonwebtoken')
 const router = express.Router();
 
 //Entry Point: http://localhost:4000/products
-
 router.get('/', (req, res) => {
    const token = req.headers['x-access-token']
    if(!token){

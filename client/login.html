@@ -13,16 +13,21 @@
           password: document.getElementById('password').value,
         };
 
-        const resp = await fetch(url, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(loginData),
-        });
-        const data = await resp.json();
+        try{
+              const resp = await fetch(url, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(loginData),
+              });
 
-        sessionStorage.token = data.token;
-        location.href = './products.html';
-      }
+            const data = await resp.json();
+            sessionStorage.token = data.token;
+            location.href = './products.html';
+            }catch(err){
+              console.log("Login Error:", err)
+              alert("Smething went wrong Try again")
+            }
+          }
     </script>
   </body>
 </html>
