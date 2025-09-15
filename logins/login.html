@@ -1,0 +1,33 @@
+<html>
+  <body>
+    Username: <input type="text" id="username" /> <br />
+    Password: <input type="password" id="password" /> <br />
+    <button onclick="login()">Login</button>
+
+    <script>
+      const url = 'http://127.0.0.1:4000/auth/login';
+
+      async function login() {
+        const loginData = {
+          username: document.getElementById('username').value,
+          password: document.getElementById('password').value,
+        };
+
+        try{
+              const resp = await fetch(url, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(loginData),
+              });
+
+            const data = await resp.json();
+            sessionStorage.token = data.token;
+            location.href = './products.html';
+            }catch(err){
+              console.log("Login Error:", err)
+              alert("Smething went wrong Try again")
+            }
+          }
+    </script>
+  </body>
+</html>
