@@ -49,13 +49,7 @@ export default function AddPost({ onPostCreated }) {
         onChange={(e) => setContent(e.target.value)}
         required
       />
-      <input className="hash-area"
-        type="text"
-        placeholder= "#hashtags(optional)"
-        value={communityID}
-        onChange={(e) => setCommunityID(e.target.value)}
-      />
-      <button type="submit">Post</button>
+      <button type="submit" className="post-btn">Post</button>
     </form>
   );
 }

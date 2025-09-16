@@ -67,12 +67,13 @@
 .pos-button:hover {
   translate: 1.5px 1.5px;
   box-shadow: 1.5px 1.5px 0 #000000;
-  background: #1ac2ff;
+  background: #f5d872;
 }
 
 .pos-button:active {
   translate: 3px 3px;
   box-shadow: 0 0 0 #000000;
+  background-color: rgb(84, 244, 113);
 }
 
 /* Card hover effect */

@@ -7,9 +7,9 @@ const commRepo = new CommunityRepository()
 //Get All 
 const getAllUsers = (filters) => {
   if (!filters.name) {
-    return userRepo.getAllUsers(); 
+    return userRepo.getAllUsers()
   }
-  return userRepo.findUserByName(filters.name);
+  return userRepo.findUserByName(filters.name)
 }
 
 //Get By ID
@@ -26,15 +26,15 @@ const deleteUser = (id) => {
 }
 
 const joinCommunity = async (userId, communityId) => {
-  const user = await userRepo.joinCommunity(userId, communityId);
-  await commRepo.addMember(communityId, userId);
+  const user = await userRepo.joinCommunity(userId, communityId)
+  await commRepo.addMember(communityId, userId)
   return user;
 }
 
 // Leave community (update both User + Community)
 const leaveCommunity = async (userId, communityId) => {
-  const user = await userRepo.leaveCommunity(userId, communityId);
-  await commRepo.removeMember(communityId, userId);
+  const user = await userRepo.leaveCommunity(userId, communityId)
+  await commRepo.removeMember(communityId, userId)
   return user;
 }
 

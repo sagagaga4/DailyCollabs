@@ -12,8 +12,11 @@ const CommunitySchema = new mongoose.Schema(
             { type: String }
         ],
         aiMember:{
-            type:String, required:true
+            type:  String, required:true
         },
+        rssUrls: [
+            { type: String, required:true}
+        ],
     },
 );
 
