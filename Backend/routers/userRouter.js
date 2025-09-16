@@ -52,4 +52,15 @@ router.delete('/:id', async(req, res) => {
         }
 })
 
+router.get('/:userId/saved-posts', async (req, res) => {
+  try {
+    const { userId } = req.params;
+    const savedPosts = await userService.getSavedPosts(userId);
+    res.json(savedPosts);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+});
+
 module.exports = router;
+

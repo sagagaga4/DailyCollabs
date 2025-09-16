@@ -6,7 +6,7 @@ const router = express.Router()
 // Entry Point http://localhost:4000/auth
 router.post('/login', (req, res) => {
   const { username, password } = req.body
-
+  
   try {
     if (!process.env.JWT_SECRET) {
       return res.status(500).json({ error: "JWT secret is not configured" })

@@ -31,12 +31,29 @@ router.get('/:id', async (req, res) => {
   }
 });
 
+/*
 // Create a new comment
 router.post('/', async (req, res) => {
   try {
     const commentObj = req.body;
     const newcomment = await commentService.createComment(commentObj);
     res.status(201).json({ id: newcomment._id, message: 'comment created successfully' });
+  } catch (error) {
+    res.status(500).json({ message: error.message || 'Failed to create comment' });
+  }
+});
+*/
+
+//Create a new comment
+router.post('/', async (req, res) => {
+  try {
+    const { postId, content } = req.body;
+    const newComment = await commentService.createComment({
+      postId,
+      content,
+      authorId: req.user.id, 
+    });
+    res.status(201).json(newComment);
   } catch (error) {
     res.status(500).json({ message: error.message || 'Failed to create comment' });
   }
@@ -57,3 +74,13 @@ router.delete('/:id', async (req, res) => {
 });
 
 module.exports = router;
+
+router.get('/post/:postId', async (req, res) => {
+  try {
+    const { postId } = req.params
+    const comments = await commentService.getCommentByPost(postId)
+    res.json(comments)
+  } catch (error) {
+    res.status(500).json({ message: error.message })
+  }
+})

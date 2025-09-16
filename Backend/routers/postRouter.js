@@ -1,13 +1,12 @@
 const express = require('express');
 const postService = require('../services/postService');
-
 const router = express.Router();
 
-// Entry Point - "/posts"
-
-router.get('/', async (req, res) => {
+// GET all posts with optional filters
+router.get("/", async (req, res) => {
   try {
     const filters = req.query;
+    // Ensure description is included
     const posts = await postService.getAllPosts(filters);
     res.json(posts);
   } catch (error) {
@@ -15,7 +14,8 @@ router.get('/', async (req, res) => {
   }
 });
 
-router.get('/:id', async (req, res) => {
+// GET a single post by ID
+router.get("/:id", async (req, res) => {
   try {
     const { id } = req.params;
     const post = await postService.getPostById(id);
@@ -26,17 +26,19 @@ router.get('/:id', async (req, res) => {
   }
 });
 
-router.post('/', async (req, res) => {
+// CREATE a new post
+router.post("/", async (req, res) => {
   try {
     const postObj = req.body;
     const newPost = await postService.createPost(postObj);
-    res.status(201).send(newPost);
+    res.status(201).json(newPost);
   } catch (error) {
     res.status(500).send(error.message || 'Failed to create post');
   }
 });
 
-router.delete('/:id', async (req, res) => {
+// DELETE a post by ID
+router.delete("/:id", async (req, res) => {
   try {
     const { id } = req.params;
     const deletedPost = await postService.deletePost(id);
@@ -47,7 +49,41 @@ router.delete('/:id', async (req, res) => {
   }
 });
 
-router.post('/:postId/tags/:userId', async (req, res) => {
+// LIKE a post
+router.post("/:id/like", async (req, res) => {
+  try {
+    const { id } = req.params;
+    const updatedPost = await postService.likePost(id, req.user.id);
+    res.json(updatedPost);
+  } catch (error) {
+    res.status(500).send(error.message || 'Failed to like post');
+  }
+});
+
+// UNLIKE a post
+router.post("/:id/unlike", async (req, res) => {
+  try {
+    const { id } = req.params;
+    const updatedPost = await postService.unlikePost(id, req.user.id);
+    res.json(updatedPost);
+  } catch (error) {
+    res.status(500).send(error.message || 'Failed to unlike post');
+  }
+});
+
+// SAVE a post
+router.post("/:id/save", async (req, res) => {
+  try {
+    const { id } = req.params;
+    const updatedPost = await postService.savePost(id, req.user.id);
+    res.json(updatedPost);
+  } catch (error) {
+    res.status(500).send(error.message || 'Failed to save post');
+  }
+});
+
+// ADD a tag to a post
+router.post("/:postId/tags/:userId", async (req, res) => {
   try {
     const { postId, userId } = req.params;
     const updatedPost = await postService.addTag(postId, userId);
@@ -57,7 +93,8 @@ router.post('/:postId/tags/:userId', async (req, res) => {
   }
 });
 
-router.delete('/:postId/tags/:userId', async (req, res) => {
+// REMOVE a tag from a post
+router.delete("/:postId/tags/:userId", async (req, res) => {
   try {
     const { postId, userId } = req.params;
     const updatedPost = await postService.removeTag(postId, userId);

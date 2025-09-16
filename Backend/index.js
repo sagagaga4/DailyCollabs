@@ -9,6 +9,7 @@ const postRoutes = require('./routers/postRouter.js')
 const commentRoutes = require('./routers/commentRouter.js')
 const authRoutes = require('./routers/authRouter.js')
 const authMiddleware = require('./middleware/authMiddleware.js')
+const rssRouter = require('./routers/rssRouter')
 
 const app = express()
 const PORT = 4000
@@ -28,6 +29,7 @@ app.use('/comments', authMiddleware, commentRoutes)
 
 // 🔓 Public routes
 app.use('/auth', authRoutes)
+app.use('/rss', rssRouter)
 
 connectDB().then(() => {
   app.listen(PORT, () => {

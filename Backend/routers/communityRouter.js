@@ -1,6 +1,7 @@
 const express = require('express');
 const communityService = require('../services/communityService');
-
+const ctrl = require('../controllers/communityController');
+const auth = require('../middleware/authMiddleware');
 const router = express.Router();
 
 // Entry Point - "/communities"
@@ -57,3 +58,14 @@ router.delete('/:id', async (req, res) => {
 });
 
 module.exports = router;
+
+// Get RSS news for desired community
+router.get('/:id/rss', async (req, res) => {
+  try {
+    const { id } = req.params
+    const feed = await communityService.getCommunityNews(id)
+    res.json(feed)
+  } catch (err) {
+    res.status(500).json({ message: error.message || 'Failed to fetch RSS news '})  
+  }
+})
