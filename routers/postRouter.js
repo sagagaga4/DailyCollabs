@@ -30,7 +30,7 @@ router.post('/', async (req, res) => {
   try {
     const postObj = req.body;
     const newPost = await postService.createPost(postObj);
-    res.status(201).send(`The new ID: ${newPost._id}`);
+    res.status(201).send(newPost);
   } catch (error) {
     res.status(500).send(error.message || 'Failed to create post');
   }
