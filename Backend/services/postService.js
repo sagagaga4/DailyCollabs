@@ -20,6 +20,10 @@ const deletePost = (id) => {
   return postRepo.deletePost(id)
 }
 
+const getDescription = (postId) => {
+  return postRepo.getPostDescription(postId);
+}
+
 const addTag = (postId, userId) => {
   return postRepo.addTag(postId, userId)
 }
@@ -33,6 +37,7 @@ module.exports = {
   getPostById,
   createPost,
   deletePost,
+  getDescription,
   addTag,
   removeTag,
 };

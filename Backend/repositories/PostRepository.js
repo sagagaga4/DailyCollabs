@@ -64,6 +64,16 @@ class PostRepository {
     }
   };
 
+  getPostDescription = async (postId) => {
+    try{
+      const post = await Post.findById(postId)
+      if(!post) throw new Error("Post not found")
+      return post.description
+    } catch (error) {
+      throw new Error ('Cant fetch description')
+    } 
+  }
+
   removeTag = async (postId, userId) => {
     try {
       const updatedPost = await Post.findByIdAndUpdate(

@@ -46,7 +46,7 @@ const Sidebar = () => {
             onClick={() => setClick(false)}
           >
             <img src={Team} alt="Team" />
-            <span className={`text ${click ? "show" : ""}`}>Communiti</span>
+            <span className={`text ${click ? "show" : ""}`}>Community</span>
           </NavLink>
 
             <NavLink

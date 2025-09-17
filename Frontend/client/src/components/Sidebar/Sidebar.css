@@ -14,7 +14,7 @@
   width: 3rem;
   display: flex;
   flex-direction: column;
-  background-color: white;
+  background-color: #151516;
   z-index: 1000;
   transition: all 0.4s ease;
 }
@@ -24,7 +24,7 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  background: #ffffff;
+  background: #151516;
   width: 100%;
   height: 100%;
   border-radius: 0 10px 10px 0;
@@ -38,7 +38,7 @@
 
 /* === Menu Button === */
 .menu-button {
-  background-color: #fff;
+  background-color: #19191b;
   border: none;
   width: 1.5rem;
   height: 1.5rem;
@@ -54,7 +54,7 @@
 .menu-button::before,
 .menu-button::after {
   content: "";
-  background-color: #111;
+  background-color: #ddd6d6dc;
   height: 2px;
   width: 1rem;
   position: absolute;
@@ -112,17 +112,16 @@
   font-size: 0.9rem;
   transition: all 0.3s ease;
   color: black;
-  border-radius: 0 20px 20px 0;
 }
 
 .slick-bar a img {
   width: 1.5rem;
   height: 1.5rem;
+  filter: invert(100%);
 }
 
 .slick-bar a.active {
-  background-color: rgba(0, 0, 0, 0.05);
-  border-right: 4px solid #1f1c1c;
+  border-right: 3px solid #fffffeeb;
 }
 
 .slick-bar a.active img {
@@ -202,15 +201,15 @@
 @media screen and (max-width: 768px) {
   .container {
     flex-direction: row;
-    height: 2rem;
+    height: 2.5rem;
     width: 100vw;
   }
 
   .sidebar-container {
     flex-direction: row;
-    justify-content: flex-start;
-    align-items: center;
-    margin-top:-2px;
+    justify-content: flex-end;
+    align-items: right;
+    margin-top:3px;
     height: 100%;
     width: 100%;
     padding: 0 1rem;

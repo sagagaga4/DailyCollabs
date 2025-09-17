@@ -1,27 +1,52 @@
 const express = require('express');
 const Parser = require('rss-parser');
+const ogs = require('open-graph-scraper');
 const router = express.Router();
 
 const parser = new Parser();
 
 router.get('/', async (req, res) => {
   try {
-    const feed = await parser.parseURL('https://techcrunch.com/feed/');
-    res.json(feed.items);
+    const feedUrl = req.query.url; // 👈 Allow dynamic RSS feed via query
+    if (!feedUrl) {
+      return res.status(400).json({ error: 'Missing RSS feed URL' });
+    }
+
+    const feed = await parser.parseURL(feedUrl);
+
+    // Normalize feed items
+    const normalized = await Promise.all(
+      feed.items.map(async (item) => {
+        let image =
+          item.enclosure?.url || item['media:content']?.url || null;
+
+        // 👇 If no image found, try Open Graph
+        if (!image && item.link) {
+          try {
+            const { result } = await ogs({ url: item.link });
+            image = result?.ogImage?.url || null;
+          } catch {
+            image = null;
+          }
+        }
+
+        return {
+          title: item.title || 'No title',
+          link: item.link || '#',
+          image,
+          pubDate: item.pubDate || new Date().toISOString(),
+          description:
+            item.contentSnippet ||
+            item.description ||
+            'No description available',
+        };
+      })
+    );
+
+    res.json(normalized);
   } catch (error) {
     res.status(500).json({ error: 'Failed to fetch RSS feed' });
   }
 });
-
-//FOR COMPUTER SCIENCE
-//https://techcrunch.com/feed/
-//https://www.theverge.com/rss/index.xml
-//https://www.reddit.com/r/programming/.rss
-//https://stackoverflow.blog/feed/
-//http://export.arxiv.org/rss/cs
-
-//FOR MUSIC PRODUCTION
-//https://www.gearslutz.com/board/external.php?type=RSS2
-
 
 module.exports = router;

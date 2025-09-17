@@ -23,7 +23,9 @@ html, body {
 }
 
 body {
-  background-image: url('./assets/Backgrounds/SKY2.jpg');
+  /*background-image: url('./assets/Backgrounds/drop1.jpg');
+  */
+    background: #18171a;
   background-repeat: no-repeat;
   background-size: cover;
   background-position: center center;

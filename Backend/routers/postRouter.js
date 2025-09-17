@@ -6,7 +6,6 @@ const router = express.Router();
 router.get("/", async (req, res) => {
   try {
     const filters = req.query;
-    // Ensure description is included
     const posts = await postService.getAllPosts(filters);
     res.json(posts);
   } catch (error) {
@@ -81,6 +80,15 @@ router.post("/:id/save", async (req, res) => {
     res.status(500).send(error.message || 'Failed to save post');
   }
 });
+
+router.post("/:id/description", async (req, res) => {
+  try{
+    const description = await postService.getDescription(req.params.id)
+    res.json({ description })
+  } catch (error){
+    res.status(500).json({ error: error.message })
+  }
+})
 
 // ADD a tag to a post
 router.post("/:postId/tags/:userId", async (req, res) => {
