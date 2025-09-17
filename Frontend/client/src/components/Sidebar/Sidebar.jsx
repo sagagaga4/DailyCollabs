@@ -3,7 +3,7 @@ import { NavLink } from "react-router-dom";
 import "./Sidebar.css";
 
 // All the svg files
-import logo from "./icons/logo.svg"
+//import logo from "./icons/export_linux.svg"
 import Home from "./icons/home-solid.svg";
 import Team from "./icons/social.svg";
 import PowerOff from "./icons/power-off-solid.svg";
@@ -11,23 +11,15 @@ import Posts  from "./icons/posts.svg";
 
 const Sidebar = () => {
   const [click, setClick] = useState(false);
-  const handleClick = () => setClick(!click);
-
   const [profileClick, setProfileClick] = useState(false);
   const handleProfileClick = () => setProfileClick(!profileClick);
 
   return (
     <div className="container">
-      <button
-        className={`menu-button ${click ? "clicked" : ""}`}
-        onClick={handleClick}
-      >
-      </button>
+
 
       <div className="sidebar-container">
-        <div className="logo">
-          <img src={logo} alt="logo" />
-        </div>
+
 
         <ul className={`slick-bar ${click ? "expanded" : ""}`}>
           <NavLink

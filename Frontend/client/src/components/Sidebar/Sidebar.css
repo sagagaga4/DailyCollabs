@@ -37,48 +37,49 @@
 }
 
 /* === Menu Button === */
-.menu-button {
-  background-color: #19191b;
-  border: none;
-  width: 1.5rem;
-  height: 1.5rem;
-  border-radius: 50%;
-  margin: 1rem;
-  cursor: pointer;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  position: relative;
-}
+/*
+  .menu-button {
+    background-color: #19191b;
+    border: none;
+    width: 1.5rem;
+    height: 1.5rem;
+    border-radius: 50%;
+    margin: 1rem;
+    cursor: pointer;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: relative;
+  }
 
-.menu-button::before,
-.menu-button::after {
-  content: "";
-  background-color: #ddd6d6dc;
-  height: 2px;
-  width: 1rem;
-  position: absolute;
-  transition: all 0.3s ease;
-}
+  .menu-button::before,
+  .menu-button::after {
+    content: "";
+    background-color: #ddd6d6dc;
+    height: 2px;
+    width: 1rem;
+    position: absolute;
+    transition: all 0.3s ease;
+  }
 
-.menu-button::before {
-  top: 0.6rem;
-}
+  .menu-button::before {
+    top: 0.6rem;
+  }
 
-.menu-button::after {
-  top: 0.9rem;
-}
+  .menu-button::after {
+    top: 0.9rem;
+  }
 
-.menu-button.clicked::before {
-  top: 0.8rem;
-  transform: rotate(135deg);
-}
+  .menu-button.clicked::before {
+    top: 0.8rem;
+    transform: rotate(135deg);
+  }
 
-.menu-button.clicked::after {
-  top: 0.8rem;
-  transform: rotate(-135deg);
-}
-
+  .menu-button.clicked::after {
+    top: 0.8rem;
+    transform: rotate(-135deg);
+  }
+*/
 /* === Logo === */
 .logo {
   margin-bottom: 2rem;
@@ -145,7 +146,7 @@
   margin-bottom: 2rem;
   display: flex;
   align-items: center;
-  gap: 0.8rem;
+  gap: 0.5rem;
   cursor: pointer;
 }
 
@@ -157,8 +158,8 @@
 
 .details {
   display: none;
-  flex-direction: column;
-  align-items: flex-start;
+  flex-direction:row;
+  align-items: center;
 }
 
 .profile.expanded .details {
@@ -182,14 +183,15 @@
 .logout {
   background: none;
   border: none;
-  margin-top: 0.5rem;
+  margin-top: -0.5rem;
+  margin-left: 20px;
   cursor: pointer;
 }
 
 .logout img {
   width: 1.2rem;
   height: 1.2rem;
-  filter: invert(15%) sepia(70%) saturate(6573%) hue-rotate(2deg) brightness(100%) contrast(126%);
+  filter: invert(15%) sepia(70%) hue-rotate(2deg) brightness(100%) contrast(0%)opacity(900%);
   transition: opacity 0.3s ease;
 }
 

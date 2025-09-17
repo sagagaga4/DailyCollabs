@@ -9,14 +9,16 @@
   justify-content: center;
   grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
 }
-
+.card-content{
+  height: 400px;
+}
 /* Retro box style */
 .card {
   flex: 1 1 300px;
   font-family: sans-serif;
   color: white;
   width: 300px;
-  height: 380px;
+  height: 400px;
   background: #1d1b1f;
   border: 1px solid #cac5c527;
   border-radius: 20px;
@@ -113,4 +115,17 @@
   height: 100%;
   border-radius: 20px;
   margin-top: 20px;
+}
+
+.btn.liked:hover {
+  border-radius: 20px;
+  background-color: #04ff0c78; /* Green for likes */
+}
+
+.btn.disliked {
+  background-color: #f44336; /* Red for dislikes */
+}
+
+.btn.bookmarked {
+  background-color: #2196F3; /* Blue for bookmarks */
 }
