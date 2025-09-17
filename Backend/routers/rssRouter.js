@@ -7,20 +7,19 @@ const parser = new Parser();
 
 router.get('/', async (req, res) => {
   try {
-    const feedUrl = req.query.url; // 👈 Allow dynamic RSS feed via query
+    const feedUrl = req.query.url; 
     if (!feedUrl) {
       return res.status(400).json({ error: 'Missing RSS feed URL' });
     }
 
     const feed = await parser.parseURL(feedUrl);
 
-    // Normalize feed items
     const normalized = await Promise.all(
       feed.items.map(async (item) => {
         let image =
           item.enclosure?.url || item['media:content']?.url || null;
 
-        // 👇 If no image found, try Open Graph
+        // If no image found, try Open Graph
         if (!image && item.link) {
           try {
             const { result } = await ogs({ url: item.link });

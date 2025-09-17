@@ -9,17 +9,18 @@ export default function Home() {
   useEffect(() => {
     const fetchRSS = async () => {
       try {
-        // 👇 Pass feed dynamically
         const response = await fetch(
-          "http://localhost:4000/rss?url=https://techcrunch.com/feed/"
+          "http://localhost:4000/rss?url=https://www.techradar.com/feeds.xml"
         );
 
-        if (!response.ok) throw new Error("Network response was not ok");
-        const data = await response.json();
+        if (!response.ok) {
+          throw new Error("Failed to fetch news feed");
+        }
 
+        const data = await response.json();
         setArticles(data);
       } catch (err) {
-        console.error("Failed to load RSS:", err);
+        console.error("Error fetching RSS:", err);
         setError("Failed to load news");
       } finally {
         setLoading(false);
@@ -29,34 +30,51 @@ export default function Home() {
     fetchRSS();
   }, []);
 
-  if (loading) return <p className="home-container">Loading news...</p>;
-  if (error) return <p className="home-container">{error}</p>;
+  if (loading) {
+    return <p className="home-container">Loading news...</p>;
+  }
+
+  if (error) {
+    return <p className="home-container">{error}</p>;
+  }
 
   return (
+    
     <div className="home-container">
       {articles.length === 0 ? (
         <p>No news available</p>
       ) : (
         articles.map((article, idx) => (
           <div key={idx} className="card">
-            {article.image && ( // 👈 Display image if available
-              <img src={article.image} alt={article.title} className="card-img" />
-            )}
-            <div className="head">{article.title}</div>
-            <div className="content">
-              <p>
-                <strong>Date:</strong>{" "}
-                {new Date(article.pubDate).toLocaleString()}
-              </p>
-              <p>{article.description}</p>
+              <div className="button-wrapper">
               <a
                 href={article.link}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="button"
               >
-                Read Post
+                Read Post ✨
               </a>
+              </div>
+            <div className="head">
+              {
+                article.title.length < 10 
+                ? article.title 
+                : article.title.split(', ')[0] + '...' 
+              }
+            </div>
+            <div className="content">
+              <p style={{ color: "#b2a0b6ca" }}>
+                {new Date(article.pubDate).toLocaleDateString("en-GB") || "Invalid Date"}
+              </p>
+              {/* <p style={{ color: "#ded1e1ea" }}>{article.description}</p> */}
+              {article.image && (
+                <img
+                  src={article.image}
+                  alt={article.title}
+                  className="card-img"
+                />
+              )}
             </div>
           </div>
         ))
