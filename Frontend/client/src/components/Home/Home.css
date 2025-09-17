@@ -30,15 +30,17 @@
 }
 
 /* Card header */
+/* Card header (title area) */
 .head {
-  display: -webkit-box;
   font-size: 20px;
   font-weight: 900;
   width: 100%;
-  height: 200px;
+  height: auto;   
   background: #1d1b1f;
   padding: 20px 12px;
   color: #fefefe;
+ border-top: 1px solid #444;  
+  margin-top: -20px;   
 }
 
 /* Card content */
@@ -49,16 +51,15 @@
   display: flex;
   flex-direction: column;
   justify-content: space-between;
+  margin-top: -30px;   
 }
 
-/* Button wrapper for centering */
 .button-wrapper {
   display: flex;
-  margin-top: 5px;
-  margin-right: 30px;
-  justify-content: right; /* Center button horizontally */
+  justify-content: center;
+  margin: 10px 30px 0 0; 
+  z-index: 2; 
 }
-
 /* Button style */
 .button {
   text-decoration: none;
@@ -117,15 +118,46 @@
   margin-top: 20px;
 }
 
-.btn.liked:hover {
-  border-radius: 20px;
-  background-color: #04ff0c78; /* Green for likes */
+.action-buttons{
+  margin-top: 20px;
+  margin-left: 20px;
+  display: flex;       
+  align-items: center; 
+  gap: 20%;      
 }
 
-.btn.disliked {
-  background-color: #f44336; /* Red for dislikes */
+@media (max-width: 768px) {
+  .action-buttons {
+   gap: 25%; 
+  }
 }
 
-.btn.bookmarked {
-  background-color: #2196F3; /* Blue for bookmarks */
+.btn-unliked:hover{
+  background-color: rgb(15, 222, 15);
+  border-radius: 50%;
+  transform: scale(1.3);
+  transition: transform 0.2s ease-out;
+}
+
+.btn-disdisliked:hover{
+  background-color: rgb(222, 15, 15);
+  border-radius: 50%;
+  transform: scale(1.3);
+  transition: transform 0.2s ease-out;
+}
+
+.btn-bookmarked:hover{
+  transform: scale(1.3);
+  transition: transform 0.2s ease-out;
+}
+.btn-unbookmark{
+  background-color: rgb(220, 202, 6);
+  border-radius: 50%;
+  transform: scale(1.3);
+  transition: transform 0.2s ease-out;
+}
+
+.btn-cpylink:hover{
+  transform: scale(1.3);
+  transition: transform 0.2s ease-out;
 }
