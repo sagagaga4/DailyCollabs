@@ -11,9 +11,11 @@ import LinkIcon from '@mui/icons-material/Link';
 import "./Home.css";
 
 export default function Home() {
+
   const [articles, setArticles] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+
   const [likedArticles, setLikedArticles] = useState(new Set());
   const [dislikedArticles, setDislikedArticles] = useState(new Set());
   const [bookmarkedArticles, setBookmarkedArticles] = useState(new Set());
@@ -41,29 +43,24 @@ export default function Home() {
 
     // Load saved likes, dislikes, and bookmarks from localStorage
     const savedLikes = JSON.parse(localStorage.getItem("likedArticles") || "[]");
-    const savedDislikes = JSON.parse(
-      localStorage.getItem("dislikedArticles") || "[]"
-    );
-    const savedBookmarks = JSON.parse(
-      localStorage.getItem("bookmarkedArticles") || "[]"
-    );
+    const savedDislikes = JSON.parse(localStorage.getItem("dislikedArticles") || "[]");
+    const savedBookmarks = JSON.parse(localStorage.getItem("bookmarkedArticles") || "[]");
   
     setLikedArticles(new Set(savedLikes));
     setDislikedArticles(new Set(savedDislikes));
     setBookmarkedArticles(new Set(savedBookmarks));
+
   }, []);
 
   const handleLike = (articleIndex) => {
+
     const newLikedArticles = new Set(likedArticles);
     const newDislikedArticles = new Set(dislikedArticles);
 
     if (dislikedArticles.has(articleIndex)) {
       newDislikedArticles.delete(articleIndex);
       setDislikedArticles(newDislikedArticles);
-      localStorage.setItem(
-        "dislikedArticles",
-        JSON.stringify([...newDislikedArticles])
-      );
+      localStorage.setItem("dislikedArticles",JSON.stringify([...newDislikedArticles]));
     }
 
     if (likedArticles.has(articleIndex)) {
@@ -77,6 +74,7 @@ export default function Home() {
   };
 
   const handleDislike = (articleIndex) => {
+
     const newDislikedArticles = new Set(dislikedArticles);
     const newLikedArticles = new Set(likedArticles);
 
@@ -93,13 +91,11 @@ export default function Home() {
     }
 
     setDislikedArticles(newDislikedArticles);
-    localStorage.setItem(
-      "dislikedArticles",
-      JSON.stringify([...newDislikedArticles])
-    );
+    localStorage.setItem("dislikedArticles",JSON.stringify([...newDislikedArticles]));
   };
 
   const handleBookmark = (articleIndex) => {
+    
     const newBookmarkedArticles = new Set(bookmarkedArticles);
 
     if (bookmarkedArticles.has(articleIndex)) {
@@ -136,61 +132,7 @@ export default function Home() {
         <div key={idx} className="card-content">
           <div className="card">
             <div className="card-header">
-              <div className="action-buttons">
-                {/* Like Button */}
-                {likedArticles.has(idx) ? (
-                  <ThumbUpAltIcon
-                    onClick={() => handleLike(idx)}
-                    className="btn-liked"
-                    title="Remove like"
-                  />
-                ) : (
-                  <ThumbUpOffAltIcon
-                    onClick={() => handleLike(idx)}
-                    className="btn-unliked"
-                    title="Like"
-                  />
-                )}
-
-                {/* Dislike Button */}
-                {dislikedArticles.has(idx) ? (
-                  <ThumbDownAltIcon
-                    onClick={() => handleDislike(idx)}
-                    className="btn-disliked"
-                    title="Remove dislike"
-                  />
-                ) : (
-                  <ThumbDownOffAltIcon
-                    onClick={() => handleDislike(idx)}
-                    className="btn-disdisliked"
-                    title="Dislike"
-                  />
-                )}
-
-                {/* Bookmark Button */}
-                {bookmarkedArticles.has(idx) ? (
-                  <BookmarkAddIcon
-                    onClick={() => handleBookmark(idx)}
-                    className="btn-bookmarked"
-                    title="Remove bookmark"
-                  />
-                ) : (
-                  <BookmarkAddedIcon
-                    onClick={() => handleBookmark(idx)}
-                    className="btn-unbookmark"
-                    title="Bookmark"
-                  />
-                )}
-                {/* CopylinkButton */}
-                <LinkIcon
-                  onClick={() => handleSendLink(article.link)}
-                  className="btn-cpylink"
-                  title="Copy Link"
-                  style={{ cursor: "pointer" }}
-                />
-              </div>
-            </div>
-
+              
 
             <div className="button-wrapper">
               <a
@@ -227,6 +169,62 @@ export default function Home() {
                   className="card-img"
                 />
               )}
+              <div className="action-buttons">
+              
+                {/* Like Button */}
+                {likedArticles.has(idx) ? (
+                  <ThumbUpAltIcon
+                    onClick={() => handleLike(idx)}
+                    className="btn-liked"
+                    title="Remove like"
+                  />
+                ) : (
+                  <ThumbUpOffAltIcon
+                    onClick={() => handleLike(idx)}
+                    className="btn-unliked"
+                    title="Like"
+                  />
+                )}
+
+                {/* Dislike Button */}
+                {dislikedArticles.has(idx) ? (
+                  <ThumbDownAltIcon
+                    onClick={() => handleDislike(idx)}
+                    className="btn-disliked"
+                    title="Remove dislike"
+                  />
+                ) : (
+                  <ThumbDownOffAltIcon
+                    onClick={() => handleDislike(idx)}
+                    className="btn-disdisliked"
+                    title="Dislike"
+                  />
+                )}
+
+                {/* Bookmark Button */}
+                {bookmarkedArticles.has(idx) ? (
+                  <BookmarkAddedIcon
+                    onClick={() => handleBookmark(idx)}
+                    className="btn-bookmarked"
+                    title="Remove bookmark"
+                  />
+                ) : (
+                  <BookmarkAddIcon
+                    onClick={() => handleBookmark(idx)}
+                    className="btn-unbookmark"
+                    title="Bookmark"
+                  />
+                )}
+                {/* CopylinkButton */}
+                <LinkIcon
+                  onClick={() => handleSendLink(article.link)}
+                  className="btn-cpylink"
+                  title="Copy Link"
+                  style={{ cursor: "pointer" }}
+                />
+              </div>
+            </div>
+
             </div>
           </div>
         </div>
