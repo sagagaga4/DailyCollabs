@@ -1,17 +1,18 @@
-import { useEffect, useState } from "react";
-
+import React, { useEffect, useState } from "react";
 import ThumbUpOffAltIcon from "@mui/icons-material/ThumbUpOffAlt";
 import ThumbUpAltIcon from "@mui/icons-material/ThumbUpAlt";
 import ThumbDownOffAltIcon from "@mui/icons-material/ThumbDownOffAlt";
 import ThumbDownAltIcon from "@mui/icons-material/ThumbDownAlt";
 import BookmarkAddIcon from "@mui/icons-material/BookmarkAdd";
 import BookmarkAddedIcon from "@mui/icons-material/BookmarkAdded";
-import LinkIcon from '@mui/icons-material/Link';
-
+import LinkIcon from "@mui/icons-material/Link";
+import ChatIcon from "@mui/icons-material/Chat";
+import SendIcon from "@mui/icons-material/Send";
+import EditIcon from '@mui/icons-material/Edit';
+import DeleteIcon from '@mui/icons-material/Delete';
 import "./Home.css";
 
 export default function Home() {
-
   const [articles, setArticles] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -19,15 +20,18 @@ export default function Home() {
   const [likedArticles, setLikedArticles] = useState(new Set());
   const [dislikedArticles, setDislikedArticles] = useState(new Set());
   const [bookmarkedArticles, setBookmarkedArticles] = useState(new Set());
+  const [previewData, setPreviewData] = useState(null);
+  const [newComment, setNewComment] = useState("");
+  const [submittingComment, setSubmittingComment] = useState(false);
+  const [editingComment, setEditingComment] = useState(null);
+  const [editCommentText, setEditCommentText] = useState("");
+  const [currentUser, setCurrentUser] = useState(null);
 
   useEffect(() => {
     const fetchRSS = async () => {
       try {
         const response = await fetch("http://localhost:4000/rss");
-
-        if (!response.ok) {
-          throw new Error("Failed to fetch news feed");
-        }
+        if (!response.ok) throw new Error("Failed to fetch news feed");
 
         const data = await response.json();
         setArticles(data);
@@ -41,90 +45,331 @@ export default function Home() {
 
     fetchRSS();
 
-    // Load saved likes, dislikes, and bookmarks from localStorage
-    const savedLikes = JSON.parse(localStorage.getItem("likedArticles") || "[]");
-    const savedDislikes = JSON.parse(localStorage.getItem("dislikedArticles") || "[]");
-    const savedBookmarks = JSON.parse(localStorage.getItem("bookmarkedArticles") || "[]");
-  
-    setLikedArticles(new Set(savedLikes));
-    setDislikedArticles(new Set(savedDislikes));
-    setBookmarkedArticles(new Set(savedBookmarks));
-
+    try {
+      setLikedArticles(new Set(JSON.parse(localStorage.getItem("likedArticles") || "[]")));
+      setDislikedArticles(new Set(JSON.parse(localStorage.getItem("dislikedArticles") || "[]")));
+      setBookmarkedArticles(new Set(JSON.parse(localStorage.getItem("bookmarkedArticles") || "[]")));
+      
+      // Get current user from localStorage or authentication context
+      const user = JSON.parse(localStorage.getItem("currentUser") || '{"username": "Anonymous"}');
+      setCurrentUser(user);
+    } catch (err) {
+      console.warn("Failed to parse saved data", err);
+      setCurrentUser({ username: "Anonymous" });
+    }
   }, []);
 
+  //For closing the article preview 
+  useEffect(() => {
+    const onKey = (e) => {
+      if (e.key === "Escape") {
+        setPreviewData(null);
+        setNewComment("");
+      }
+    };
+
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, []);
+  
+  //Like Button Logic
   const handleLike = (articleIndex) => {
+    const newLiked = new Set(likedArticles);
+    const newDisliked = new Set(dislikedArticles);
 
-    const newLikedArticles = new Set(likedArticles);
-    const newDislikedArticles = new Set(dislikedArticles);
-
-    if (dislikedArticles.has(articleIndex)) {
-      newDislikedArticles.delete(articleIndex);
-      setDislikedArticles(newDislikedArticles);
-      localStorage.setItem("dislikedArticles",JSON.stringify([...newDislikedArticles]));
+    if (newDisliked.has(articleIndex)) {
+      newDisliked.delete(articleIndex);
+      setDislikedArticles(newDisliked);
+      localStorage.setItem("dislikedArticles", JSON.stringify([...newDisliked]));
     }
 
-    if (likedArticles.has(articleIndex)) {
-      newLikedArticles.delete(articleIndex);
-    } else {
-      newLikedArticles.add(articleIndex);
-    }
+    if (newLiked.has(articleIndex)) newLiked.delete(articleIndex);
+    else newLiked.add(articleIndex);
 
-    setLikedArticles(newLikedArticles);
-    localStorage.setItem("likedArticles", JSON.stringify([...newLikedArticles]));
+    setLikedArticles(newLiked);
+    localStorage.setItem("likedArticles", JSON.stringify([...newLiked]));
   };
 
+  //Dislike Button Logic
   const handleDislike = (articleIndex) => {
+    const newDisliked = new Set(dislikedArticles);
+    const newLiked = new Set(likedArticles);
 
-    const newDislikedArticles = new Set(dislikedArticles);
-    const newLikedArticles = new Set(likedArticles);
-
-    if (likedArticles.has(articleIndex)) {
-      newLikedArticles.delete(articleIndex);
-      setLikedArticles(newLikedArticles);
-      localStorage.setItem("likedArticles", JSON.stringify([...newLikedArticles]));
+    if (newLiked.has(articleIndex)) {
+      newLiked.delete(articleIndex);
+      setLikedArticles(newLiked);
+      localStorage.setItem("likedArticles", JSON.stringify([...newLiked]));
     }
 
-    if (dislikedArticles.has(articleIndex)) {
-      newDislikedArticles.delete(articleIndex);
-    } else {
-      newDislikedArticles.add(articleIndex);
-    }
+    if (newDisliked.has(articleIndex)) newDisliked.delete(articleIndex);
+    else newDisliked.add(articleIndex);
 
-    setDislikedArticles(newDislikedArticles);
-    localStorage.setItem("dislikedArticles",JSON.stringify([...newDislikedArticles]));
+    setDislikedArticles(newDisliked);
+    localStorage.setItem("dislikedArticles", JSON.stringify([...newDisliked]));
   };
 
+  //Bookmark Button Logic
   const handleBookmark = (articleIndex) => {
-    
-    const newBookmarkedArticles = new Set(bookmarkedArticles);
+    const newBookmarked = new Set(bookmarkedArticles);
+    if (newBookmarked.has(articleIndex)) newBookmarked.delete(articleIndex);
+    else newBookmarked.add(articleIndex);
 
-    if (bookmarkedArticles.has(articleIndex)) {
-      newBookmarkedArticles.delete(articleIndex);
-    } else {
-      newBookmarkedArticles.add(articleIndex);
-    }
-
-    setBookmarkedArticles(newBookmarkedArticles);
-    localStorage.setItem(
-      "bookmarkedArticles",
-      JSON.stringify([...newBookmarkedArticles])
-    );
+    setBookmarkedArticles(newBookmarked);
+    localStorage.setItem("bookmarkedArticles", JSON.stringify([...newBookmarked]));
+  };
+  
+  //CopyLink Button Logic
+  const handleSendLink = (link) => {
+    navigator.clipboard
+      .writeText(link)
+      .then(() => alert("✅ Link copied to clipboard!"))
+      .catch(() => alert("❌ Failed to copy link."));
   };
 
-  const handleSendLink = (link) => {
-    navigator.clipboard.writeText(link)
-    .then(() => {
-         alert("✅ Link copied to clipboard!");
-      })
-      .catch(() => {
-        alert("❌ Failed to copy link.");
-      })
-  }
+    //Comment-Preview Button Logic
+  const handlePreview = async (article) => {
+    try {
+      if (article._id) {
+        const res = await fetch(`/api/posts/${article._id}/preview`);
+        if (!res.ok) throw new Error("Failed to fetch post preview");
+        const data = await res.json(); 
+        setPreviewData({ 
+          source: "post", 
+          post: data.post, 
+          comments: data.comments ?? [],
+          articleId: article._id
+        });
+      } else {
+
+        // For RSS articles, load comments from localStorage
+        const savedComments = JSON.parse(localStorage.getItem(`comments_${article.link}`) || "[]");
+        setPreviewData({ 
+          source: "rss", 
+          post: article, 
+          comments: savedComments,
+          articleId: article.link
+        });
+      }
+    } catch (err) {
+      console.error("Error fetching preview:", err);
+      const savedComments = JSON.parse(localStorage.getItem(`comments_${article.link}`) || "[]");
+      setPreviewData({ 
+        source: "error", 
+        post: article, 
+        comments: savedComments,
+        articleId: article.link
+      });
+    }
+  };
+
+  const handleAddComment = async () => {
+    if (!newComment.trim()) {
+      alert("Please enter a comment");
+      return;
+    }
+
+    setSubmittingComment(true);
+
+    try {
+      const comment = {
+        id: Date.now().toString(),
+        content: newComment.trim(),
+        authorId: currentUser?.username || "Anonymous",
+        date: new Date().toISOString()
+      };
+
+      if (previewData.source === "post" && previewData.articleId) {
+        try {
+          const res = await fetch(`/api/posts/${previewData.articleId}/comments`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              content: comment.content,
+              authorId: comment.authorId
+            })
+          });
+
+          if (res.ok) {
+            const savedComment = await res.json();
+            setPreviewData(prev => ({
+              ...prev,
+              comments: [...prev.comments, savedComment]
+            }));
+          } else {
+            throw new Error("Server error");
+          }
+        } catch (serverErr) {
+          console.warn("Failed to save to server, saving locally:", serverErr);
+          const storageKey = `comments_${previewData.articleId}`;
+          const existingComments = JSON.parse(localStorage.getItem(storageKey) || "[]");
+          const updatedComments = [...existingComments, comment];
+          localStorage.setItem(storageKey, JSON.stringify(updatedComments));
+          
+          setPreviewData(prev => ({
+            ...prev,
+            comments: updatedComments
+          }));
+        }
+      } else {
+        const storageKey = `comments_${previewData.articleId}`;
+        const existingComments = JSON.parse(localStorage.getItem(storageKey) || "[]");
+        const updatedComments = [...existingComments, comment];
+        localStorage.setItem(storageKey, JSON.stringify(updatedComments));
+        
+        setPreviewData(prev => ({
+          ...prev,
+          comments: updatedComments
+        }));
+      }
+      
+      setNewComment("");
+      
+    } catch (err) {
+      console.error("Error adding comment:", err);
+      alert("Failed to add comment. Please try again.");
+    } finally {
+      setSubmittingComment(false);
+    }
+  };
+
+  const handleEditComment = (comment) => {
+    setEditingComment(comment.id || comment._id);
+    setEditCommentText(comment.content);
+  };
+
+  //Edit Comment Logic
+  const handleSaveEdit = async (commentId) => {
+    if (!editCommentText.trim()) {
+      alert("Comment cannot be empty");
+      return;
+    }
+
+    try {
+      if (previewData.source === "post" && previewData.articleId) {
+        try {
+          const res = await fetch(`/api/posts/${previewData.articleId}/comments/${commentId}`, {
+            method: "PUT",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ content: editCommentText.trim() })
+          });
+
+          if (res.ok) {
+            setPreviewData(prev => ({
+              ...prev,
+              comments: prev.comments.map(c => 
+                (c.id || c._id) === commentId 
+                  ? { ...c, content: editCommentText.trim(), edited: true }
+                  : c
+              )
+            }));
+          } else {
+            throw new Error("Server error");
+          }
+        } catch (serverErr) {
+          console.warn("Failed to edit on server, editing locally:", serverErr);
+          const storageKey = `comments_${previewData.articleId}`;
+          const existingComments = JSON.parse(localStorage.getItem(storageKey) || "[]");
+          const updatedComments = existingComments.map(c => 
+            c.id === commentId 
+              ? { ...c, content: editCommentText.trim(), edited: true }
+              : c
+          );
+          localStorage.setItem(storageKey, JSON.stringify(updatedComments));
+          
+          setPreviewData(prev => ({
+            ...prev,
+            comments: updatedComments
+          }));
+        }
+      } else {
+        const storageKey = `comments_${previewData.articleId}`;
+        const existingComments = JSON.parse(localStorage.getItem(storageKey) || "[]");
+        const updatedComments = existingComments.map(c => 
+          c.id === commentId 
+            ? { ...c, content: editCommentText.trim(), edited: true }
+            : c
+        );
+        localStorage.setItem(storageKey, JSON.stringify(updatedComments));
+        
+        setPreviewData(prev => ({
+          ...prev,
+          comments: updatedComments
+        }));
+      }
+
+      setEditingComment(null);
+      setEditCommentText("");
+    } catch (err) {
+      console.error("Error editing comment:", err);
+      alert("Failed to edit comment. Please try again.");
+    }
+  };
+
+  //Delete Button Logic
+  const handleDeleteComment = async (commentId) => {
+    if (!confirm("Are you sure you want to delete this comment?")) {
+      return;
+    }
+
+    try {
+      if (previewData.source === "post" && previewData.articleId) {
+        try {
+          const res = await fetch(`/api/posts/${previewData.articleId}/comments/${commentId}`, {
+            method: "DELETE"
+          });
+
+          if (res.ok) {
+            setPreviewData(prev => ({
+              ...prev,
+              comments: prev.comments.filter(c => (c.id || c._id) !== commentId)
+            }));
+          } else {
+            throw new Error("Server error");
+          }
+        } catch (serverErr) {
+          console.warn("Failed to delete from server, deleting locally:", serverErr);
+          const storageKey = `comments_${previewData.articleId}`;
+          const existingComments = JSON.parse(localStorage.getItem(storageKey) || "[]");
+          const updatedComments = existingComments.filter(c => c.id !== commentId);
+          localStorage.setItem(storageKey, JSON.stringify(updatedComments));
+          
+          setPreviewData(prev => ({
+            ...prev,
+            comments: updatedComments
+          }));
+        }
+      } else {
+        const storageKey = `comments_${previewData.articleId}`;
+        const existingComments = JSON.parse(localStorage.getItem(storageKey) || "[]");
+        const updatedComments = existingComments.filter(c => c.id !== commentId);
+        localStorage.setItem(storageKey, JSON.stringify(updatedComments));
+        
+        setPreviewData(prev => ({
+          ...prev,
+          comments: updatedComments
+        }));
+      }
+    } catch (err) {
+      console.error("Error deleting comment:", err);
+      alert("Failed to delete comment. Please try again.");
+    }
+  };
+
+  //Cancel Edit Button Logic
+  const cancelEdit = () => {
+    setEditingComment(null);
+    setEditCommentText("");
+  };
+  
+  //Close Preview Button Logic
+  const closePreview = () => {
+    setPreviewData(null);
+    setNewComment("");
+  };
 
   if (loading) return <p className="home-container">Loading news...</p>;
   if (error) return <p className="home-container">{error}</p>;
-  if (articles.length === 0)
-    return <p className="home-container">No news available</p>;
+  if (!articles || articles.length === 0) return <p className="home-container">No news available</p>;
 
   return (
     <div className="home-container">
@@ -132,103 +377,335 @@ export default function Home() {
         <div key={idx} className="card-content">
           <div className="card">
             <div className="card-header">
-              
-
-            <div className="button-wrapper">
-              <a
-                href={article.link}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="button"
-              >
-                Read Post ✨
-              </a>
-            </div>
-
-            <div className="head">
-              {article.title.length <= 30
-                ? article.title
-                : article.title.slice(0, 40) + "..."}
-            </div>
-
-            <div className="content">
-              <p style={{ color: "#b2a0b6ca" }}>
-                {new Date(article.pubDate).toLocaleDateString("en-GB")}
-              </p>
-              {article.description && (
-                <p style={{ color: "#ded1e1ea" }}>
-                  {article.description.length > 50
-                    ? article.description.slice(0, 50) + "..."
-                    : article.description}
-                </p>
-              )}
-              {article.image && (
-                <img
-                  src={article.image}
-                  alt={article.title}
-                  className="card-img"
-                />
-              )}
-              <div className="action-buttons">
-              
-                {/* Like Button */}
-                {likedArticles.has(idx) ? (
-                  <ThumbUpAltIcon
-                    onClick={() => handleLike(idx)}
-                    className="btn-liked"
-                    title="Remove like"
-                  />
-                ) : (
-                  <ThumbUpOffAltIcon
-                    onClick={() => handleLike(idx)}
-                    className="btn-unliked"
-                    title="Like"
-                  />
-                )}
-
-                {/* Dislike Button */}
-                {dislikedArticles.has(idx) ? (
-                  <ThumbDownAltIcon
-                    onClick={() => handleDislike(idx)}
-                    className="btn-disliked"
-                    title="Remove dislike"
-                  />
-                ) : (
-                  <ThumbDownOffAltIcon
-                    onClick={() => handleDislike(idx)}
-                    className="btn-disdisliked"
-                    title="Dislike"
-                  />
-                )}
-
-                {/* Bookmark Button */}
-                {bookmarkedArticles.has(idx) ? (
-                  <BookmarkAddedIcon
-                    onClick={() => handleBookmark(idx)}
-                    className="btn-bookmarked"
-                    title="Remove bookmark"
-                  />
-                ) : (
-                  <BookmarkAddIcon
-                    onClick={() => handleBookmark(idx)}
-                    className="btn-unbookmark"
-                    title="Bookmark"
-                  />
-                )}
-                {/* CopylinkButton */}
-                <LinkIcon
-                  onClick={() => handleSendLink(article.link)}
-                  className="btn-cpylink"
-                  title="Copy Link"
-                  style={{ cursor: "pointer" }}
-                />
+              <div className="button-wrapper">
+                <a href={article.link} target="_blank" rel="noopener noreferrer" className="button">
+                  Read Post ✨
+                </a>
               </div>
-            </div>
 
+              <div className="head">
+                {article.title && article.title.length <= 30
+                  ? article.title
+                  : (article.title || "Untitled").slice(0, 40) + "..."}
+              </div>
+
+              <div className="content">
+                <p style={{ color: "#b2a0b6ca" }}>
+                  {article.pubDate ? new Date(article.pubDate).toLocaleDateString("en-GB") : ""}
+                </p>
+                {article.description && (
+                  <p style={{ color: "#ded1e1ea" }}>
+                    {article.description.length > 50 ? article.description.slice(0, 50) + "..." : article.description}
+                  </p>
+                )}
+
+                <div className="bottom-section">
+                  {article.image && <img src={article.image} alt={article.title} 
+                  className="card-img" />}
+
+                  <div className="action-buttons">
+                    {likedArticles.has(idx) ? (
+                      <ThumbUpAltIcon onClick={() => handleLike(idx)} 
+                      className="btn-liked" title="Remove like" />
+                    ) : (
+                      <ThumbUpOffAltIcon onClick={() => handleLike(idx)} 
+                      className="btn-unliked" title="Like" />
+                    )}
+
+                    {dislikedArticles.has(idx) ? (
+                      <ThumbDownAltIcon onClick={() => handleDislike(idx)} 
+                      className="btn-disliked" title="Remove dislike" />
+                    ) : (
+                      <ThumbDownOffAltIcon onClick={() => handleDislike(idx)} 
+                      className="btn-disdisliked" title="Dislike" />
+                    )}
+
+                    {bookmarkedArticles.has(idx) ? (
+                      <BookmarkAddedIcon onClick={() => handleBookmark(idx)} 
+                      className="btn-bookmarked" title="Remove bookmark" />
+                    ) : (
+                      <BookmarkAddIcon onClick={() => handleBookmark(idx)} 
+                      className="btn-unbookmark" title="Bookmark" />
+                    )}
+
+                    <LinkIcon onClick={() => handleSendLink(article.link)} 
+                    className="btn-cpylink" title="Copy Link" 
+                    style={{ cursor: "pointer" }} />
+
+                    <ChatIcon onClick={() => handlePreview(article)} 
+                    className="btn-comments" title="View Comments" 
+                    style={{ cursor: "pointer" }} />
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
         </div>
       ))}
+
+      {/* Modal (preview) */}
+      {previewData && (
+        <div className="modal-overlay" onClick={closePreview}>
+          <div className="modal-card" onClick={(e) => e.stopPropagation()}>
+            <button className="modal-close" onClick={closePreview} aria-label="Close preview">×</button>
+
+            <h2 style={{ marginBottom: 6 }}>{previewData.post?.title || "Preview"}</h2>
+            <p style={{ color: "#b2a0b6ca", marginTop: 0 }}>
+              {previewData.post?.pubDate ? new Date(previewData.post.pubDate).toLocaleString() : ""}
+            </p>
+
+            {previewData.post?.image && (
+              <img src={previewData.post.image} alt={previewData.post.title} 
+              style={{ width: "100%", maxHeight: 260, objectFit: "cover", borderRadius: 8 }} />
+            )}
+
+            <div style={{ marginTop: 12 }}>
+              <p>{previewData.post?.content || previewData.post?.description ||
+                   previewData.post?.summary || "No full content available."}</p>
+            </div>
+
+            {/* Action buttons in preview */}
+            <div style={{ 
+              display: "flex", 
+              gap: "12px", 
+              justifyContent: "center", 
+              margin: "16px 0",
+              padding: "12px",
+              backgroundColor: "rgba(255,255,255,0.02)",
+              borderRadius: 8
+            }}>
+              {previewData.post && (
+                <>
+                  {likedArticles.has(articles.findIndex(a => a.link === previewData.post.link)) ? (
+                    <ThumbUpAltIcon 
+                      onClick={() => handleLike(articles.findIndex(a => a.link === previewData.post.link))} 
+                      className="btn-liked" 
+                      title="Remove like"
+                      style={{ cursor: "pointer", fontSize: 20 }}
+                    />
+                  ) : (
+                    <ThumbUpOffAltIcon 
+                      onClick={() => handleLike(articles.findIndex(a => a.link === previewData.post.link))} 
+                      className="btn-unliked" 
+                      title="Like"
+                      style={{ cursor: "pointer", fontSize: 20 }}
+                    />
+                  )}
+
+                  {dislikedArticles.has(articles.findIndex(a => a.link === previewData.post.link)) ? (
+                    <ThumbDownAltIcon 
+                      onClick={() => handleDislike(articles.findIndex(a => a.link === previewData.post.link))} 
+                      className="btn-disliked" 
+                      title="Remove dislike"
+                      style={{ cursor: "pointer", fontSize: 20 }}
+                    />
+                  ) : (
+                    <ThumbDownOffAltIcon 
+                      onClick={() => handleDislike(articles.findIndex(a => a.link === previewData.post.link))} 
+                      className="btn-disdisliked" 
+                      title="Dislike"
+                      style={{ cursor: "pointer", fontSize: 20 }}
+                    />
+                  )}
+
+                  {bookmarkedArticles.has(articles.findIndex(a => a.link === previewData.post.link)) ? (
+                    <BookmarkAddedIcon 
+                      onClick={() => handleBookmark(articles.findIndex(a => a.link === previewData.post.link))} 
+                      className="btn-bookmarked" 
+                      title="Remove bookmark"
+                      style={{ cursor: "pointer", fontSize: 20 }}
+                    />
+                  ) : (
+                    <BookmarkAddIcon 
+                      onClick={() => handleBookmark(articles.findIndex(a => a.link === previewData.post.link))} 
+                      className="btn-unbookmark" 
+                      title="Bookmark"
+                      style={{ cursor: "pointer", fontSize: 20 }}
+                    />
+                  )}
+
+                  <LinkIcon 
+                    onClick={() => handleSendLink(previewData.post.link)} 
+                    className="btn-cpylink" 
+                    title="Copy Link"
+                    style={{ cursor: "pointer", fontSize: 20 }}
+                  />
+                </>
+              )}
+            </div>
+
+            <h3 style={{ marginTop: 18, marginBottom: 12 }}>Comments ({previewData.comments?.length || 0})</h3>
+            
+            {/* Add Comment Section */}
+            <div style={{ marginBottom: 16, padding: "12px", backgroundColor: "rgba(255,255,255,0.02)", borderRadius: 8 }}>
+              <div style={{ display: "flex", gap: 8 }}>
+                <textarea
+                  placeholder={`Add a comment as ${currentUser?.username || "Anonymous"}...`}
+                  value={newComment}
+                  onChange={(e) => setNewComment(e.target.value)}
+                  style={{
+                    flex: 1,
+                    padding: "8px 12px",
+                    borderRadius: 6,
+                    border: "1px solid rgba(255,255,255,0.2)",
+                    backgroundColor: "rgba(0,0,0,0.3)",
+                    color: "#fff",
+                    fontSize: 14,
+                    minHeight: 60,
+                    resize: "vertical"
+                  }}
+                />
+                <button
+                  onClick={handleAddComment}
+                  disabled={submittingComment || !newComment.trim()}
+                  style={{
+                    padding: "8px 16px",
+                    borderRadius: 6,
+                    border: "none",
+                    backgroundColor: submittingComment || !newComment.trim() 
+                      ? "rgba(255,255,255,0.1)" 
+                      : "#007bff",
+                    color: "#fff",
+                    cursor: submittingComment || !newComment.trim() 
+                      ? "not-allowed" 
+                      : "pointer",
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    minWidth: 80
+                  }}
+                >
+                  {submittingComment ? "..." : <SendIcon style={{ fontSize: 18 }} />}
+                </button>
+              </div>
+            </div>
+
+            {/* Comments List */}
+            <div style={{ maxHeight: 300, overflowY: "auto" }}>
+              {previewData.comments && previewData.comments.length > 0 ? (
+                previewData.comments.map((c, index) => {
+                  const commentId = c._id || c.id;
+                  const isCurrentUser = c.authorId === currentUser?.username;
+                  const isEditing = editingComment === commentId;
+
+                  return (
+                    <div key={commentId || index} style={{ 
+                      padding: "12px", 
+                      marginBottom: "8px",
+                      borderRadius: 8,
+                      backgroundColor: "rgba(255,255,255,0.02)",
+                      border: isCurrentUser ? "1px solid rgba(0,123,255,0.3)" : "1px solid rgba(255,255,255,0.04)"
+                    }}>
+                      {isEditing ? (
+                        <div style={{ marginBottom: 8 }}>
+                          <textarea
+                            value={editCommentText}
+                            onChange={(e) => setEditCommentText(e.target.value)}
+                            style={{
+                              width: "100%",
+                              padding: "8px 12px",
+                              borderRadius: 6,
+                              border: "1px solid rgba(255,255,255,0.2)",
+                              backgroundColor: "rgba(0,0,0,0.3)",
+                              color: "#fff",
+                              fontSize: 14,
+                              minHeight: 60,
+                              resize: "vertical"
+                            }}
+                          />
+                          <div style={{ display: "flex", gap: 8, marginTop: 8 }}>
+                            <button
+                              onClick={() => handleSaveEdit(commentId)}
+                              style={{
+                                padding: "4px 12px",
+                                borderRadius: 4,
+                                border: "none",
+                                backgroundColor: "#42b0b1ff",
+                                color: "#fff",
+                                fontSize: 12,
+                                cursor: "pointer"
+                              }}
+                            >
+                              Save
+                            </button>
+                            <button
+                              onClick={cancelEdit}
+                              style={{
+                                padding: "4px 12px",
+                                borderRadius: 4,
+                                border: "1px solid rgba(255,255,255,0.2)",
+                                backgroundColor: "transparent",
+                                color: "#fff",
+                                fontSize: 12,
+                                cursor: "pointer"
+                              }}
+                            >
+                              Cancel
+                            </button>
+                          </div>
+                        </div>
+                      ) : (
+                        <>
+                          <div style={{ fontSize: 14, color: "#ddd", marginBottom: 4 }}>
+                            {c.content}
+                            {c.edited && <span style={{ fontSize: 11, color: "#999", fontStyle: "italic" }}> (edited)</span>}
+                          </div>
+                          <div style={{ 
+                            display: "flex", 
+                            justifyContent: "space-between", 
+                            alignItems: "center",
+                            fontSize: 12, 
+                            color: "#999" 
+                          }}>
+                            <div>
+                              <strong>{c.authorId || "Anonymous"}</strong>
+                              {c.date && ` • ${new Date(c.date).toLocaleString()}`}
+                            </div>
+                            
+                            {isCurrentUser && (
+                              <div style={{ display: "flex", gap: 8 }}>
+                                <EditIcon
+                                  onClick={() => handleEditComment(c)}
+                                  style={{
+                                    background: "none",
+                                    border: "none",
+                                    color: "#aac2dbff",
+                                    fontSize: 13,
+                                    cursor: "pointer",
+                                  }}
+                                >
+                                  Edit
+                                </EditIcon>
+                                <DeleteIcon
+                                  onClick={() => handleDeleteComment(commentId)}
+                                  style={{
+                                    background: "none",
+                                    border: "none",
+                                    color: "#aac2dbff",
+                                    fontSize: 13,
+                                    cursor: "pointer",
+                                    textDecoration: "underline"
+                                  }}
+                                >
+                                  Delete
+                                </DeleteIcon>
+                              </div>
+                            )}
+                          </div>
+                        </>
+                      )}
+                    </div>
+                  );
+                })
+              ) : (
+                <p style={{ color: "#cfcfcf", textAlign: "center", padding: "20px 0" }}>
+                  No comments yet. Be the first to comment!
+                </p>
+              )}
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

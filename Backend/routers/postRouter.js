@@ -112,4 +112,18 @@ router.delete("/:postId/tags/:userId", async (req, res) => {
   }
 });
 
+router.get('/:id/preview', async (req, res) => {
+  try {
+    const { id } = req.params;
+    const post = postService.getPostById(id);
+    if (!post) return res.status(404).json({ message: 'post not found'})
+
+    const comments = await commentService.getCommentByPost(id);
+    res.json({ post, comments })
+  }catch (error) {
+    res.status(500).json({ message: error.message })
+  }
+    }
+)
+
 module.exports = router;

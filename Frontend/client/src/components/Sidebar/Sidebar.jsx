@@ -16,10 +16,16 @@ const Sidebar = () => {
 
   return (
     <div className="container">
-
-
+      
       <div className="sidebar-container">
-
+        
+        <div className={`profile ${profileClick ? "expanded" : ""}`}>
+          <img
+            onClick={handleProfileClick}
+            src="https://picsum.photos/200"
+            alt="Profile"
+          />
+        </div>
 
         <ul className={`slick-bar ${click ? "expanded" : ""}`}>
           <NavLink
@@ -50,24 +56,6 @@ const Sidebar = () => {
             <span className={`text ${click ? "show" : ""}`}>Community</span>
           </NavLink>
         </ul>
-
-        <div className={`profile ${profileClick ? "expanded" : ""}`}>
-          <img
-            onClick={handleProfileClick}
-            src="https://picsum.photos/200"
-            alt="Profile"
-          />
-
-          <div className={`details ${profileClick ? "show" : ""}`}>
-            <div className="name">
-              <h4>Jhon&nbsp;Doe</h4>
-              <a href="/#">view&nbsp;profile</a>
-            </div>
-            <button className="logout">
-              <img src={PowerOff} alt="logout" />
-            </button>
-          </div>
-        </div>
       </div>
     </div>
   );

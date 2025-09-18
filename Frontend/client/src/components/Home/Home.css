@@ -1,4 +1,24 @@
-/* Layout for all cards */
+::-webkit-scrollbar {
+    width: 12px;
+}
+
+/* Track */
+::-webkit-scrollbar-track {
+    -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0.3); 
+    -webkit-border-radius: 10px;
+    border-radius: 10px;
+}
+
+/* Handle */
+::-webkit-scrollbar-thumb {
+    -webkit-border-radius: 10px;
+    border-radius: 10px;
+    background: rgba(83, 102, 121, 0.8); 
+    -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0.5); 
+}
+::-webkit-scrollbar-thumb:window-inactive {
+    background: rgba(0,0,0,0.5); 
+}
 .home-container {
   display: flex;
   flex-wrap: wrap;
@@ -9,10 +29,10 @@
   justify-content: center;
   grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
 }
-.card-content{
+.card-content {
   height: 400px;
 }
-/* Retro box style */
+
 .card {
   flex: 1 1 300px;
   font-family: sans-serif;
@@ -29,37 +49,73 @@
   -moz-osx-font-smoothing: grayscale;
 }
 
-/* Card header */
-/* Card header (title area) */
+/* Card Title */
 .head {
   font-size: 20px;
   font-weight: 900;
   width: 100%;
-  height: auto;   
+  height: auto;
   background: #1d1b1f;
   padding: 20px 12px;
   color: #fefefe;
   margin-top: -25px;
 }
 
-/* Card content */
 .content {
   padding: 8px 12px;
   font-size: 13px;
   flex: 1;
   display: flex;
   flex-direction: column;
-  justify-content: space-between;
-  margin-top: -30px;   
+  margin-top: -30px;
 }
 
+.bottom-section {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  margin-top: auto;
+  justify-content: space-between;
+}
+
+.card-img {
+  width: 100%;
+  height: 150px;
+  object-fit: cover;
+  border-radius: 10px;
+  margin-top: 10px;
+}
+
+.action-buttons {
+  margin-top: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: space-around;
+  gap: 15px;
+  padding: 10px 0;
+}
+
+.btn-unliked,
+.btn-disdisliked,
+.btn-unbookmark,
+.btn-cpylink,
+.btn-liked,
+.btn-disliked,
+.btn-bookmarked {
+  font-size: 20px;
+  cursor: pointer;
+  flex: 1;
+  text-align: center;
+}
+
+/* ReadPost wrapper */
 .button-wrapper {
   display: flex;
   justify-content: right;
-  margin: 10px 30px 0 0; 
-  z-index: 2; 
+  margin: 10px 30px 0 0;
+  z-index: 2;
 }
-/* Button style */
+/*ReadPost wrapper */
 .button {
   text-decoration: none;
   padding: 5px 10px;
@@ -93,12 +149,12 @@
   box-shadow: 0 0 0 #000000;
 }
 
-/* Media query for mobile */
+/* Mobile adjustments */
 @media (max-width: 768px) {
   .home-container {
     flex-direction: column;
     align-items: center;
-    margin-top: 20px;
+    margin-top: 110px;
     margin-left: -70px;
     gap: 20px;
     grid-template-columns: none;
@@ -107,74 +163,107 @@
   .card {
     border-radius: 20px;
     width: 100%;
+    max-width: 350px;
   }
-}
 
-.card-img {
-  width: 100%;
-  height: 100%;
-  border-radius: 20px;
-  margin-top: 10%;
-}
-
-.action-buttons{
-  margin-top: 20px;
-  margin-left: 20px;
-  display: flex;       
-  align-items: center; 
-  gap: 20%;      
-}
-
-@media (max-width: 768px) {
   .action-buttons {
-   gap: 25%; 
+    gap: 10px;
+    justify-content: space-evenly;
+  }
+
+  .card-img {
+    height: 120px;
   }
 }
 
-.btn-unliked:hover{
+/* action buttons effects */
+.btn-unliked:hover {
   background-color: rgb(15, 222, 15);
   border-radius: 20%;
   transform: scale(1.1);
   transition: transform 0.2s ease-out;
-  color:green;
+  color: green;
 }
 
-.btn-disdisliked:hover{
+.btn-disdisliked:hover {
   background-color: rgb(222, 63, 15);
   border-radius: 20%;
   transform: scale(1.1);
   transition: transform 0.2s ease-out;
-  color:rgb(115, 39, 32);
+  color: rgb(115, 39, 32);
 }
 
-.btn-unbookmark:hover{
+.btn-unbookmark:hover {
   background-color: rgb(239, 205, 49);
   border-radius: 20%;
   transform: scale(1.1);
   transition: transform 0.2s ease-out;
-  color:rgb(85, 67, 44);
+  color: rgb(85, 67, 44);
 }
-.btn-bookmarked{
+
+.btn-bookmarked {
   background-color: rgb(220, 181, 6);
   border-radius: 20%;
   transform: scale(1.3);
   transition: transform 0.2s ease-out;
 }
 
-.btn-cpylink:hover{
+.btn-cpylink:hover {
   background-color: rgb(142, 6, 220);
   border-radius: 20%;
   transform: scale(1.1);
   transition: transform 0.2s ease-out;
-  color:rgb(51, 18, 40);
+  color: rgb(51, 18, 40);
 }
 
-.btn-liked{
+.btn-liked {
   color: rgb(15, 222, 15);
   transform: scale(1.2);
 }
 
-.btn-disliked{
+.btn-disliked {
   color: rgb(222, 63, 15);
   transform: scale(1.2);
+}
+.btn-comments:hover{
+  background-color: rgb(6, 195, 220);
+  border-radius: 20%;
+  transform: scale(1.1);
+  transition: transform 0.2s ease-out;
+  color: rgb(51, 18, 40);
+}
+/* Modal overlay + card */
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.6);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
+  padding: 24px;
+}
+
+.modal-card {
+  width: 100%;
+  max-width: 900px;
+  background: #171617;
+  border-radius: 12px;
+  padding: 18px;
+  color: #fff;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.6);
+  position: relative;
+  overflow: auto;
+  max-height: 90vh;
+}
+
+.modal-close {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  background: transparent;
+  border: none;
+  color: #fff;
+  font-size: 18px;
+  cursor: pointer;
 }
