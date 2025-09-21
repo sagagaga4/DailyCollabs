@@ -13,6 +13,7 @@ import DeleteIcon from '@mui/icons-material/Delete';
 import "./Home.css";
 
 export default function Home() {
+  
   const [articles, setArticles] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
