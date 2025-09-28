@@ -6,10 +6,10 @@ import Sidebar from "./components/Sidebar/Sidebar";
 import Communities from "./components/Communities/Communities";
 import Posts from "./components/Posts/Posts";
 import Comments from "./components/Comments/Comments";
+import Bookmarked from "./components/Bookmarked/Bookmarked";
 
 export default function App() {
   const token = sessionStorage.getItem("token");
-
   return (
     <Router>
       {!token ? (
@@ -29,6 +29,7 @@ export default function App() {
               <Route path="/Communities" element={<Communities />} />
               <Route path="/Posts" element={<Posts />} />
               <Route path="/Comments" element={<Comments />} />
+              <Route path="/Bookmarked" element={<Bookmarked />}/>
             </Routes>
           </div>
         </div>

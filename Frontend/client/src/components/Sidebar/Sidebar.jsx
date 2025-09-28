@@ -6,8 +6,8 @@ import "./Sidebar.css";
 //import logo from "./icons/export_linux.svg"
 import Home from "./icons/home-solid.svg";
 import Team from "./icons/social.svg";
-import PowerOff from "./icons/power-off-solid.svg";
 import Posts  from "./icons/posts.svg";
+import CollectionsBookmarkIcon from '@mui/icons-material/CollectionsBookmark';
 
 const Sidebar = () => {
   const [click, setClick] = useState(false);
@@ -53,6 +53,15 @@ const Sidebar = () => {
             onClick={() => setClick(false)}
           >
             <img src={Posts} alt="Posts" />
+            <span className={`text ${click ? "show" : ""}`}>Community</span>
+          </NavLink>
+
+          <NavLink
+            to= "/Bookmarked"
+            activeclassname="active"
+            onClick={()=> setClick(false)}
+          >
+            <CollectionsBookmarkIcon style={{color:'#f8f8f6eb'}}></CollectionsBookmarkIcon>
             <span className={`text ${click ? "show" : ""}`}>Community</span>
           </NavLink>
         </ul>
