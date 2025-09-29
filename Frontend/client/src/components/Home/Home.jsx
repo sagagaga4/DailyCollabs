@@ -271,24 +271,18 @@ export default function Home() {
           const storageKey = `comments_${previewData.articleId}`;
           const existingComments = JSON.parse(localStorage.getItem(storageKey) || "[]");
           const updatedComments = existingComments.map(c => 
-            c.id === commentId 
-              ? { ...c, content: editCommentText.trim(), edited: true }
-              : c
+            c.id === commentId ? { ...c, content: editCommentText.trim(), edited: true } : c
           );
+
           localStorage.setItem(storageKey, JSON.stringify(updatedComments));
           
-          setPreviewData(prev => ({
-            ...prev,
-            comments: updatedComments
-          }));
+          setPreviewData(prev => ({...prev, comments: updatedComments}));
         }
       } else {
         const storageKey = `comments_${previewData.articleId}`;
         const existingComments = JSON.parse(localStorage.getItem(storageKey) || "[]");
         const updatedComments = existingComments.map(c => 
-          c.id === commentId 
-            ? { ...c, content: editCommentText.trim(), edited: true }
-            : c
+          c.id === commentId ? { ...c, content: editCommentText.trim(), edited: true } : c
         );
         localStorage.setItem(storageKey, JSON.stringify(updatedComments));
         
@@ -373,7 +367,7 @@ export default function Home() {
   if (!articles || articles.length === 0) return <p className="home-container">No news available</p>;
 
   return (
-    <div className="home-container">
+  <div className="home-container">
       {articles.map((article, idx) => (
         <div key={idx} className="card-content">
           <div className="card">
