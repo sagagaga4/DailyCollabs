@@ -328,10 +328,7 @@ export default function Home() {
           const updatedComments = existingComments.filter(c => c.id !== commentId);
           localStorage.setItem(storageKey, JSON.stringify(updatedComments));
           
-          setPreviewData(prev => ({
-            ...prev,
-            comments: updatedComments
-          }));
+          setPreviewData(prev => ({...prev, comments: updatedComments}));
         }
       } else {
         const storageKey = `comments_${previewData.articleId}`;

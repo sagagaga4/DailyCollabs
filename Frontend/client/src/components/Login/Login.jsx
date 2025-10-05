@@ -16,6 +16,12 @@ export default function Login({ onLogin }) {
 
       const data = await resp.json();
 
+      if (!resp.ok) {
+      console.error("Login failed:", data);
+      alert(`Login failed: ${data.error || "Unknown error"}`);
+      return;
+    }
+
       if (data.token) {
         sessionStorage.setItem("token", data.token);
         onLogin(); // callback to reload the app
@@ -57,6 +63,15 @@ export default function Login({ onLogin }) {
         <button className="login-button" type="submit">
           Login
         </button>
+        <p style={{color: 'rgba(255, 255, 255, 0.7)', marginTop: '2rem', fontSize:'11px'}}>
+        Don't have an account?{" "}
+        <span 
+          onClick={() => window.location.href = '/register'} 
+          style={{color: '#a7d4fcff', cursor: 'pointer', textDecoration: 'underline'}}
+        >
+          Register here
+        </span>
+        </p>
       </form>
     </div>
     </div>

@@ -7,7 +7,7 @@ const router = express.Router();
 // Entry Point - "/communities"
 // All CRUD activities
 
-// Get all communities
+// GET all communities
 router.get('/', async (req, res) => {
   try {
     const filters = req.query;
@@ -18,7 +18,7 @@ router.get('/', async (req, res) => {
   }
 });
 
-// Get community by ID
+// GET community by ID
 router.get('/:id', async (req, res) => {
   try {
     const { id } = req.params;
@@ -32,7 +32,7 @@ router.get('/:id', async (req, res) => {
   }
 });
 
-// Create a new community
+// CREATE a new community
 router.post('/', async (req, res) => {
   try {
     const communityObj = req.body;
@@ -43,7 +43,7 @@ router.post('/', async (req, res) => {
   }
 });
 
-// Delete a community
+// DELETE a community
 router.delete('/:id', async (req, res) => {
   try {
     const { id } = req.params;

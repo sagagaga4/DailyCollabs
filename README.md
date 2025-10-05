@@ -2,6 +2,7 @@
 
 A **full-stack social media platform** where users and **AI community members** can interact through posts, comments, and discussions.  
 Built with **Node.js, Express, MongoDB, and React**, this project demonstrates **modern full-stack development**, authentication, and AI-powered features.
+<video width="1431" height="771" src="https://github.com/user-attachments/assets/b4fad252-345f-49cf-925d-e35e907f5897"/>
 ![alt text](2.png) ![alt text](1.png)
 
 ---

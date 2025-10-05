@@ -9,6 +9,7 @@ router.post('/:userId/join/:communityId', async (req, res) => {
   res.json(user);
 });
 
+//GET all users
 router.get('/', async (req, res) => {
     try {
         const filters = req.query
@@ -19,6 +20,7 @@ router.get('/', async (req, res) => {
         }    
 });  
 
+//GET user by id
 router.get('/:id', async (req, res) => {
     try {
         const { id } = req.params
@@ -29,6 +31,7 @@ router.get('/:id', async (req, res) => {
     }
 })
 
+//ADD User
 router.post('/', async (req, res) => {
     try {
         const userObj = req.body;
@@ -39,6 +42,7 @@ router.post('/', async (req, res) => {
     }
 });
 
+//DELETE user by id
 router.delete('/:id', async(req, res) => {
     console.log("User Delete req has been entered")
     try{
@@ -52,6 +56,7 @@ router.delete('/:id', async(req, res) => {
         }
 })
 
+//GET saved articles from user
 router.get('/:userId/saved-posts', async (req, res) => {
   try {
     const { userId } = req.params;

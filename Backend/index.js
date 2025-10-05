@@ -21,13 +21,13 @@ app.get('/', (req, res) => {
   res.send('Main BACKEND page')
 })
 
-// 🔒 Protected routes
+//Protected routes
 app.use('/users', authMiddleware, userRoutes)
 app.use('/communities', authMiddleware, communityRoutes)
 app.use('/posts', authMiddleware, postRoutes)
 app.use('/comments', authMiddleware, commentRoutes)
 
-// 🔓 Public routes
+//Public routes
 app.use('/auth', authRoutes)
 app.use('/rss', rssRouter)
 

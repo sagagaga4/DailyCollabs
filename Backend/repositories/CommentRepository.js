@@ -28,12 +28,10 @@ class CommentRepository {
   };
 
   getCommentByAuthorId = async (authorId) => {
-    // search by exact authorId (ObjectId), or if you want partial, adjust accordingly
-    return await Comment.find({ authorId });
+    // search by exact authorId 
   };
 
   findCommentByDate = async (date) => {
-    // date should be a string or Date; here we look for exact day matches is more robust in real apps
     return await Comment.find({ date: { $regex: date, $options: 'i' } });
   };
 

@@ -1,6 +1,8 @@
 // App.jsx
-import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
-import Login from "./components/Login/login";
+import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-dom";
+import Login from "./components/Login/Login";
+import Register from "./components/Register/Register";
+
 import Home from "./components/Home/Home";
 import Sidebar from "./components/Sidebar/Sidebar";
 import Communities from "./components/Communities/Communities";
@@ -15,10 +17,9 @@ export default function App() {
       {!token ? (
         // If not logged in → only show login
         <Routes>
-          <Route
-            path="/*"
-            element={<Login onLogin={() => window.location.reload()} />}
-          />
+          <Route path="/login" element={<Login onLogin={() => window.location.reload()} />} />
+          <Route path="/register" element={<Register />} />
+          <Route path="/*" element={<Navigate to="/login" replace />} />
         </Routes>
       ) : (
         <div style={{ display: "flex" }}>

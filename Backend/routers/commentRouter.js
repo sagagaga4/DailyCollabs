@@ -4,7 +4,7 @@ const commentService = require('../services/commentService');
 
 const router = express.Router();
 
-// Get all comments (with optional filters)
+//GET all comments (with optional filters)
 router.get('/', async (req, res) => {
   try {
     const filters = req.query;
@@ -15,7 +15,7 @@ router.get('/', async (req, res) => {
   }
 });
 
-// Get comment by ID
+//GET comment by ID
 router.get('/:id', async (req, res) => {
   try {
     const { id } = req.params;
@@ -27,7 +27,7 @@ router.get('/:id', async (req, res) => {
   }
 });
 
-// Create a new comment
+//CREATE a new comment
 router.post('/', async (req, res) => {
   try {
     const { postId, content } = req.body;
@@ -44,7 +44,7 @@ router.post('/', async (req, res) => {
   }
 });
 
-// Get comments for a post
+//GET comments for a post
 router.get('/post/:postId', async (req, res) => {
   try {
     const { postId } = req.params;
@@ -55,7 +55,7 @@ router.get('/post/:postId', async (req, res) => {
   }
 });
 
-// Update a comment
+//UPDATE a comment
 router.put('/:id', async (req, res) => {
   try {
     const { id } = req.params;
@@ -68,7 +68,7 @@ router.put('/:id', async (req, res) => {
   }
 });
 
-// Delete a comment
+//DELETE a comment
 router.delete('/:id', async (req, res) => {
   try {
     const { id } = req.params;
