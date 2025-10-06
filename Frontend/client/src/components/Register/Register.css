@@ -1,0 +1,104 @@
+.register-container{
+  display: flex;
+  color: aliceblue;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  width: 100vw;
+  position: fixed;
+  top: 0;
+  left: 0;
+}
+::placeholder{
+    color: #e8e3e3f4;
+}
+.user-register {
+  position: relative;
+  display: flex;
+  font-weight: 600;
+  color: var(--lg-text);
+  cursor: pointer;
+  background: transparent;
+  border-radius: 2rem;
+  overflow: hidden;
+  box-shadow: 0 6px 6px rgba(0, 0, 0, 0.2), 0 0 20px rgba(0, 0, 0, 0.1);
+  transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 2.2);
+  font-family: sans-serif;
+  background: rgba(242, 237, 237, 0.087);
+  backdrop-filter: blur(4px);
+  /* Responsive dimensions */
+  min-height: 350px;
+  width: 90%;
+  max-width: 300px;
+  min-width: 200px;
+  
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  padding: 2rem;
+  margin: 0;
+  overflow: hidden;
+  text-align: center;
+  box-sizing: border-box;
+}
+
+.input-field{
+  outline: none;
+  font-family: sans-serif;
+  height: 35px;
+  width: 100%;
+  max-width: 250px;
+  margin-top: 15px;
+  padding: 5px 10px;
+  border: none;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.804);
+  background-color: rgba(10, 19, 59, 0);
+  color: rgb(255, 255, 255);
+  transition: border-color 0.3s ease;
+  box-sizing: border-box;
+}
+
+
+.register-button {
+  outline: none;
+  border: none;
+  font-family: sans-serif;
+  font-weight:bold;
+    font-size: 14px;
+  margin-top: 40px;
+  min-width: 90px;
+  height: 45px;
+  padding: 8px 16px;
+  border-radius: 20px;
+  background: rgba(232, 227, 227, 0.05);
+  backdrop-filter: blur(3px);
+  box-shadow: inset 2px 2px 1px 0 rgba(255, 255, 255, 0.44),
+    inset -2px -2px 2px 1px rgba(255, 255, 255, 0.3), 
+    0 4px 8px 0 rgba(116, 112, 112, 0.2), 
+    0 6px 20px 0 rgba(148, 146, 146, 0.2);
+  color: rgb(255, 255, 255);
+  transition: all 0.3s cubic-bezier(0.2, 0.9, 0.3, 1.5);
+  cursor: pointer;
+}
+.register-button:hover {
+scale: 1.05;
+background-color: color-mix(in srgb, var(--c-glass) 20%, transparent);
+}
+
+@media (max-width: 768px) {
+  .user-login {
+    width: 85%;
+    min-height: 350px;
+    padding: 1.5rem;
+    border-radius: 15px;
+  }
+}
+
+@media (max-width: 480px) {
+  .user-login {
+    width: 90%;
+    min-height: 320px;
+    padding: 1rem;
+  }
+}

@@ -14,6 +14,7 @@ const userSchema = new mongoose.Schema(
     password:{
         type: String,   required:true
     },
+    /*
     genres:{
       type:String,      required:true
     },
@@ -24,7 +25,7 @@ const userSchema = new mongoose.Schema(
         ref: 'community', // <-- reference to Community model 
       },
     ],
-   /* collaborationsWall: [{
+    collaborationsWall: [{
       type: mongoose.Schema.Types.ObjectId,
       ref: 'Video',
       amountOfcollabs: Number,required: true

@@ -8,7 +8,6 @@ const communityRoutes = require('./routers/communityRouter.js')
 const postRoutes = require('./routers/postRouter.js')
 const commentRoutes = require('./routers/commentRouter.js')
 const authRoutes = require('./routers/authRouter.js')
-const authMiddleware = require('./middleware/authMiddleware.js')
 const rssRouter = require('./routers/rssRouter')
 
 const app = express()
@@ -21,13 +20,11 @@ app.get('/', (req, res) => {
   res.send('Main BACKEND page')
 })
 
-//Protected routes
-app.use('/users', authMiddleware, userRoutes)
-app.use('/communities', authMiddleware, communityRoutes)
-app.use('/posts', authMiddleware, postRoutes)
-app.use('/comments', authMiddleware, commentRoutes)
 
-//Public routes
+app.use('/users', userRoutes)
+app.use('/communities', communityRoutes)
+app.use('/posts', postRoutes)
+app.use('/comments', commentRoutes)
 app.use('/auth', authRoutes)
 app.use('/rss', rssRouter)
 
