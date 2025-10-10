@@ -2,6 +2,7 @@ from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
 import subprocess
 import json
+import re
 
 app = FastAPI()
 
@@ -13,29 +14,37 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+@app.get("/")
+def read_root():
+    return {"message": "FastAPI is working!"}
+
 @app.post("/news-urls")
 async def get_news_urls(request: Request):
     data = await request.json()
     query = data.get("query", "")
 
+    # Make prompt clear and enforce JSON output
     prompt = f"""
     You are a helpful AI that recommends relevant, up-to-date English news websites.
-    Given the topic "{query}", list 3 news website URLs that frequently cover this topic.
-    Return ONLY a JSON array of URLs, e.g. ["https://example1.com", "https://example2.com"].
+    Given the topic "{query}", output exactly a JSON array of 3 URLs of news sites that frequently cover this topic.
+    Do not include any explanations, only the array.
+    Example: ["https://bbc.com", "https://cnn.com", "https://reuters.com"]
     """
 
-    # Run Ollama locally via subprocess
+    # Run Ollama locally
     result = subprocess.run(
         ["ollama", "run", "llama3", prompt],
         capture_output=True,
         text=True
     )
 
-    # Ollama outputs plain text — try to parse JSON
     output = result.stdout.strip()
-    try:
-        urls = json.loads(output)
-    except json.JSONDecodeError:
-        urls = []
+    print("🧠 Raw Ollama output:", output)  # Debugging line
 
-    return {"urls": urls}
+    try:
+        res = json.loads(output)
+    except json.JSONDecodeError:
+        # fallback: extract URLs with regex if JSON parsing fails
+        res = re.findall(r'https?://[^\s"\]]+', output)
+
+    return {"urls": res}
