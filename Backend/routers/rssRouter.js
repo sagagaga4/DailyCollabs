@@ -2,10 +2,12 @@
 const express = require("express");
 const Parser = require("rss-parser");
 const ogs = require("open-graph-scraper");
+const axios = require("axios");
 
 const router = express.Router();
 const parser = new Parser();
 
+// --- Helper to safely fetch Open Graph images ---
 async function safeOGS(url) {
   try {
     const controller = new AbortController();
@@ -23,14 +25,24 @@ async function safeOGS(url) {
   }
 }
 
-const feeds = [
-  // Tech news
-  "https://www.techradar.com/feeds.xml"
-];
+// POST /rss endpoint
+router.post("/", async (req, res) => {
+  const { query } = req.body; // e.g. "Technology", "AI news", etc.
 
-// --- GET /rss endpoint ---
-router.get("/", async (req, res) => {
+  if (!query) {
+    return res.status(400).json({ error: "Query is required" });
+  }
+
   try {
+    //Ask the FastAPI AI service for relevant RSS URLs
+    const aiResponse = await axios.post("http://127.0.0.1:5000/news-urls", { query });
+    const feeds = aiResponse.data.urls || [];
+
+    if (feeds.length === 0) {
+      return res.status(404).json({ error: "No RSS feeds found from AI" });
+    }
+
+    //Parse RSS feeds and normalize their data
     let allItems = [];
 
     for (const feedUrl of feeds) {
@@ -39,11 +51,9 @@ router.get("/", async (req, res) => {
 
         const normalized = await Promise.all(
           feed.items.map(async (item) => {
-            // Try enclosure/media first
-            let image =
-              item.enclosure?.url || item["media:content"]?.url || null;
+            let image = item.enclosure?.url || item["media:content"]?.url || null;
 
-            // If no image, try Open Graph
+            // If no image in the feed, try fetching Open Graph image
             if (!image) {
               image = await safeOGS(item.link);
             }
@@ -63,14 +73,12 @@ router.get("/", async (req, res) => {
 
         allItems.push(...normalized);
       } catch (err) {
-        console.error(`❌ Failed to load ${feedUrl}`, err.message);
+        console.error(`Failed to load ${feedUrl}:`, err.message);
       }
     }
 
-    // Sort by date (newest first)
-    allItems.sort(
-      (a, b) => new Date(b.pubDate) - new Date(a.pubDate)
-    );
+    //Sort articles by date (newest first)
+    allItems.sort((a, b) => new Date(b.pubDate) - new Date(a.pubDate));
 
     res.json(allItems);
   } catch (error) {

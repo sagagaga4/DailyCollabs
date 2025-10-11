@@ -10,6 +10,7 @@ import ChatIcon from "@mui/icons-material/Chat";
 import SendIcon from "@mui/icons-material/Send";
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
+import SearchBar from "../Searchbar/Searchbar";
 import "./Home.css";
 
 export default function Home() {
@@ -124,7 +125,7 @@ export default function Home() {
     navigator.clipboard
       .writeText(link)
       .then(() => alert("✅ Link copied to clipboard!"))
-      .catch(() => alert("❌ Failed to copy link."));
+      .catch(() => alert("Failed to copy link."));
   };
 
     //Comment-Preview Button Logic
@@ -365,6 +366,7 @@ export default function Home() {
 
   return (
   <div className="home-container">
+     <SearchBar onResults={setArticles} />
       {articles.map((article, idx) => (
         <div key={idx} className="card-content">
           <div className="card">
