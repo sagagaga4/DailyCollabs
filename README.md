@@ -1,7 +1,10 @@
-# 🌐 Social Media + AI Community Platform
+# 🌐 AI-Powered News + Community Platform
 
-A **full-stack social media platform** where users and **AI community members** can interact through posts, comments, and discussions.  
-Built with **Node.js, Express, MongoDB, and React**, this project demonstrates **modern full-stack development**, authentication, and AI-powered features.
+A **full-stack platform** where users and **community members** interact around the latest news.  
+Users can comment, save, dislike, or bookmark news posts, while members contribute **sentiment-aware, contextually relevant responses**.  
+
+Built with **Node.js, Express, MongoDB, Python, and React**, this project demonstrates **modern full-stack development**, authentication, AI integration, and interactive UI features.  
+
 <video width="1431" height="771" src="https://github.com/user-attachments/assets/b4fad252-345f-49cf-925d-e35e907f5897"/>
 ![alt text](2.png) ![alt text](1.png)
 
@@ -9,41 +12,44 @@ Built with **Node.js, Express, MongoDB, and React**, this project demonstrates *
 
 ## ✨ Key Features
 
-- 🔑 **User Authentication** – Secure login system with daily action limits.  
-- 👥 **Communities** – Users can join communities, create posts, and interact with others.  
-- 🤖 **AI Members** – Automated AI users respond to posts & comments with sentiment-aware replies.  
-- 📝 **Posts & Comments** – Rich discussion system with nested replies.  
-- 📊 **Action Tracking** – All user actions logged for transparency and limits.  
-- 🎨 **Responsive Frontend** – Built with React (or Vanilla JS alternative).  
+- 🔑 **User Authentication** – Secure login with daily action limits.  
+- 📰 **Dynamic News Feed** – AI-powered RSS aggregation for any topic, delivering **up-to-date news**.  
+- 👥 **Communities** – Users can join or create communities to discuss news and share opinions.  
+- 📝 **Posts & Comments** – Users can comment, reply, and engage in nested discussions.  
+- 💾 **Save, Dislike, Bookmark** – Curate personal feeds by saving favorites, bookmarking, or expressing opinions.  
+- 📊 **Action Tracking** – All user interactions logged for transparency and activity limits.  
+- 🎨 **Responsive Frontend** – Built with React (or Vanilla JS alternative) for a smooth, modern UI.  
 
 ---
 
 ## 🛠️ Tech Stack
 
-- **Frontend:** React / Vanilla JS + CSS  
-- **Backend:** Node.js + Express (Go optional)  
-- **Database:** MongoDB (Mongoose ODM)  
-- **AI Layer:** Rule-based + sentiment-aware responses  
+- **Frontend:** React / Vanilla JS + CSS (responsive, interactive UI)  
+- **Backend:** Node.js + Express  
+- **Database:** MongoDB with Mongoose ODM  
+- **AI Layer:** External AI service for news aggregation, recommendation, and summarization  
+- **RSS Aggregation:** Fetch latest, media-rich news feeds  
 
 ---
 
 ## 🚀 What I Focused On
 
 - Building a **scalable backend architecture** with services & repositories.  
-- Designing **clean, reusable APIs** for users, communities, posts, and comments.  
+- Designing **clean, reusable APIs** for users, communities, posts, comments, and news.  
 - Implementing **authentication & access control** for real users.  
-- Creating a **responsive UI** that highlights full-stack integration.  
-- Experimenting with **AI features** to make communities more engaging.  
+- Creating a **responsive, recruiter-friendly UI** that showcases full-stack integration.  
+- Integrating an **AI-powered news service** to deliver relevant, high-quality news.  
+- Curating **media-rich news feeds** for interactive discussion.  
 
----
 
 ## 📌 Why This Project?
 
-This project was designed as a **real-world full-stack application**, showcasing:  
-- Backend architecture (REST APIs, database models, services).  
-- Frontend development (React components, forms, data fetching).  
-- AI integration in a social media context.  
-- Practical **full-stack engineering** experience for professional roles.  
+This project demonstrates **real-world full-stack development** for professional roles:  
+
+- Backend architecture: REST APIs, database models, repositories, and AI integration.  
+- Frontend development: interactive React components, forms, dynamic news feed.  
+- AI-assisted news aggregation for up-to-date content delivery.  
+- Practical **full-stack engineering skills** that stand out to recruiters.  
 
 ---
 
