@@ -24,6 +24,56 @@ async function safeOGS(url) {
     return null; // fallback if OGS fails
   }
 }
+router.get("/", async (req, res) => {
+  try {
+    const defaultFeeds = [
+      "https://www.techradar.com/feeds.xml",
+
+    ];
+
+    const Parser = require("rss-parser");
+    const parser = new Parser();
+    let allItems = [];
+
+    for (const feedUrl of defaultFeeds) {
+      try {
+        const feed = await parser.parseURL(feedUrl);
+        
+        const normalized = await Promise.all(
+          feed.items.map(async (item) => {
+            let image = item.enclosure?.url || item["media:content"]?.url || null;
+
+            // If no image in the feed, try fetching Open Graph image
+            if (!image) {
+              image = await safeOGS(item.link);
+            }
+
+            return {
+              title: item.title || "No title",
+              link: item.link || "#",
+              image,
+              pubDate: item.pubDate || new Date().toISOString(),
+              description:
+                item.contentSnippet ||
+                item.description ||
+                "No description available",
+            };
+          })
+        );
+        
+        allItems.push(...normalized);
+      } catch (err) {
+        console.error(`Failed to load ${feedUrl}:`, err.message);
+      }
+    }
+
+    allItems.sort((a, b) => new Date(b.pubDate) - new Date(a.pubDate));
+    res.json(allItems);
+  } catch (error) {
+    console.error("Default RSS fetch error:", error.message);
+    res.status(500).json({ error: "Failed to load default feeds" });
+  }
+});
 
 // POST /rss endpoint
 router.post("/", async (req, res) => {
@@ -77,7 +127,7 @@ router.post("/", async (req, res) => {
       }
     }
 
-    //Sort articles by date (newest first)
+    // Sort articles by date (newest first)
     allItems.sort((a, b) => new Date(b.pubDate) - new Date(a.pubDate));
 
     res.json(allItems);

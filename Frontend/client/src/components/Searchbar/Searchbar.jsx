@@ -14,21 +14,25 @@ export default function SearchBar({ onResults }) {
     setError(null);
 
     try {
-      // Send search to Node.js backend
-      const res = await fetch("http://localhost:4000/rss", {
+      // Send query directly to Node.js server
+      const response = await fetch("http://localhost:4000/rss", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ query }),
       });
 
-      if (!res.ok) throw new Error("Failed to fetch results");
+      if (!response.ok) throw new Error("Failed to fetch articles.");
 
-      const data = await res.json();
+      const articles = await response.json();
 
-      // Pass results to parent (Home.jsx)
-      if (onResults) onResults(data);
+      if (!articles || articles.length === 0) {
+        setError("No articles found for this topic.");
+      } else {
+        // Send articles up to Home.jsx for display
+        onResults?.(articles);
+      }
     } catch (err) {
-      console.error("AI Search Error:", err);
+      console.error("Search error:", err);
       setError("Something went wrong, please try again.");
     } finally {
       setLoading(false);
@@ -36,21 +40,17 @@ export default function SearchBar({ onResults }) {
   };
 
   return (
-    <div className="searcherbar">
+    <div className="searchbar">
       <form onSubmit={handleSearch} className="searchbar-form">
         <input
           type="text"
           value={query}
           onChange={(e) => setQuery(e.target.value)}
-          placeholder="What interest you today?"
-          className="search-input"
+          placeholder="What interests you today?"
+          className="searchbar-input"
         />
-        <button
-          type="submit"
-          disabled={loading}
-          className="searchbar-btn"
-        >
-          {loading ? "Searching..." : "Search"}
+        <button type="submit" disabled={loading} className="searchbar-btn">
+          {loading ? "Thinking..." : "Search"}
         </button>
       </form>
 

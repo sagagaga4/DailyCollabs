@@ -367,6 +367,7 @@ export default function Home() {
   return (
   <div className="home-container">
      <SearchBar onResults={setArticles} />
+      <div className="grid-container">
       {articles.map((article, idx) => (
         <div key={idx} className="card-content">
           <div className="card">
@@ -700,6 +701,7 @@ export default function Home() {
           </div>
         </div>
       )}
+    </div>
     </div>
   );
 }
