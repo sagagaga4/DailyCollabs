@@ -7,7 +7,7 @@ async function getNewsUrlsFromAI(query) {
     });
     return response.data.urls || [];
   } catch (error) {
-    console.error("❌ AI service error:", error.message);
+    console.error(" AI service error:", error.message);
     return [];
   }
 }

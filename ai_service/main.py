@@ -26,12 +26,13 @@ async def get_news_urls(request: Request):
     # Make prompt clear and enforce JSON output
     prompt = f"""
     You are a helpful AI that recommends relevant, high-quality, up-to-date English news websites.
-    Given the topic "{query}", output exactly a JSON array of 3 **reliable, popular, and media-rich** RSS/XML feed URLs.
+    Given the topic "{query}", output exactly a JSON array of 10 **reliable, popular, and media-rich** RSS/XML feed URLs.
     
     **Crucially, prioritize feeds known to consistently include image links in the <enclosure> or <media:content> XML tags for each item.**
     
     Do not include any explanations, only the array.
     Example: ["https://www.techradar.com/feeds.xml", "https://feedx.net/rss/ap.xml", "https://feeds.bbci.co.uk/news/rss.xml"]
+    **if you can find xml which contains this qualitties in its structure generate images yourself
     """
 
     # Run Ollama locally
