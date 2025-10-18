@@ -6,9 +6,6 @@ Users can interact with each other by commenting, Like & Dislike, Share links an
 
 Built with **Node.js, Express, MongoDB, Python, and React**, this project demonstrates **modern full-stack development**, authentication, AI integration, and interactive UI features.  
 
-<video width="1431" height="771" src="https://github.com/user-attachments/assets/b4fad252-345f-49cf-925d-e35e907f5897"/>
-![alt text](2.png) ![alt text](1.png)
-
 
 ---
 
@@ -55,7 +52,8 @@ This project demonstrates **real-world full-stack development** for professional
 
 ---
 <video width="1431" height="771" src="https://github.com/user-attachments/assets/dd701ff4-c36f-4672-8533-8be25b29149c"/>
-
+<video width="1431" height="771" src="https://github.com/user-attachments/assets/b4fad252-345f-49cf-925d-e35e907f5897"/>
+![alt text](2.png) ![alt text](1.png)
 ## 🧑‍💻 Setup (Quick Start)
 
 ```bash
