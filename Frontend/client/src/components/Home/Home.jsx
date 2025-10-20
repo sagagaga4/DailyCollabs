@@ -18,6 +18,7 @@ export default function Home() {
   const [articles, setArticles] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [isInitialLoad, setIsInitialLoad] = useState(true);
 
   const [likedArticles, setLikedArticles] = useState(new Set());
   const [dislikedArticles, setDislikedArticles] = useState(new Set());
@@ -30,36 +31,59 @@ export default function Home() {
   const [currentUser, setCurrentUser] = useState(null);
 
   useEffect(() => {
-    const fetchRSS = async () => {
+    const initializeData = async () => {
       try {
+        // Load user preferences
+        setLikedArticles(new Set(JSON.parse(localStorage.getItem("likedArticles") || "[]")));
+        setDislikedArticles(new Set(JSON.parse(localStorage.getItem("dislikedArticles") || "[]")));
+        setBookmarkedArticles(new Set(JSON.parse(localStorage.getItem("bookmarkedArticles") || "[]")));
+        
+        const user = JSON.parse(localStorage.getItem("currentUser") || '{"username": "Anonymous"}');
+        setCurrentUser(user);
+
+        // Check if we have cached articles from a previous session
+        const cachedArticles = sessionStorage.getItem("cachedArticles");
+        const cacheTimestamp = sessionStorage.getItem("cacheTimestamp");
+        
+        if (cachedArticles && cacheTimestamp) {
+          // Use cached articles if they exist (preserves search results or previous view)
+          const parsedArticles = JSON.parse(cachedArticles);
+          setArticles(parsedArticles);
+          setLoading(false);
+          setIsInitialLoad(false);
+          return;
+        }
+
+        // If no cache, fetch default RSS feed
         const response = await fetch("http://localhost:4000/rss");
         if (!response.ok) throw new Error("Failed to fetch news feed");
 
         const data = await response.json();
         setArticles(data);
+        
+        // Cache the default articles
+        sessionStorage.setItem("cachedArticles", JSON.stringify(data));
+        sessionStorage.setItem("cacheTimestamp", Date.now().toString());
+        
       } catch (err) {
-        console.error("Error fetching RSS:", err);
+        console.error("Error initializing data:", err);
         setError("Failed to load news");
       } finally {
         setLoading(false);
+        setIsInitialLoad(false);
       }
     };
 
-    fetchRSS();
-
-    try {
-      setLikedArticles(new Set(JSON.parse(localStorage.getItem("likedArticles") || "[]")));
-      setDislikedArticles(new Set(JSON.parse(localStorage.getItem("dislikedArticles") || "[]")));
-      setBookmarkedArticles(new Set(JSON.parse(localStorage.getItem("bookmarkedArticles") || "[]")));
-      
-      // Get current user from localStorage or authentication context
-      const user = JSON.parse(localStorage.getItem("currentUser") || '{"username": "Anonymous"}');
-      setCurrentUser(user);
-    } catch (err) {
-      console.warn("Failed to parse saved data", err);
-      setCurrentUser({ username: "Anonymous" });
-    }
+    initializeData();
   }, []);
+
+  // Update cache whenever articles change (from search or other updates)
+  useEffect(() => {
+    if (!isInitialLoad && articles.length > 0) {
+      sessionStorage.setItem("cachedArticles", JSON.stringify(articles));
+      sessionStorage.setItem("cacheTimestamp", Date.now().toString());
+    }
+  }, [articles, isInitialLoad]);
 
   //For closing the article preview 
   useEffect(() => {
@@ -128,7 +152,7 @@ export default function Home() {
       .catch(() => alert("Failed to copy link."));
   };
 
-    //Comment-Preview Button Logic
+  //Comment-Preview Button Logic
   const handlePreview = async (article) => {
     try {
       if (article._id) {
@@ -142,7 +166,6 @@ export default function Home() {
           articleId: article._id
         });
       } else {
-
         // For RSS articles, load comments from localStorage
         const savedComments = JSON.parse(localStorage.getItem(`comments_${article.link}`) || "[]");
         setPreviewData({ 
@@ -360,13 +383,18 @@ export default function Home() {
     setNewComment("");
   };
 
+  // Handler for SearchBar results - updates articles and cache
+  const handleSearchResults = (results) => {
+    setArticles(results);
+  };
+
   if (loading) return <p className="home-container">Loading news...</p>;
   if (error) return <p className="home-container">{error}</p>;
   if (!articles || articles.length === 0) return <p className="home-container">No news available</p>;
 
   return (
   <div className="home-container">
-     <SearchBar onResults={setArticles} />
+     <SearchBar onResults={handleSearchResults} />
       <div className="grid-container">
       {articles.map((article, idx) => (
         <div key={idx} className="card-content">

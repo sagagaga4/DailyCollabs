@@ -1,10 +1,12 @@
 import React, { useEffect, useState } from "react";
+import SearchIcon from '@mui/icons-material/Search';
 import "./SearchBar.css";
 
 export default function SearchBar({ onResults }) {
   const [query, setQuery] = useState("");
+  
+  // Load tags from localStorage on initial render
   const [tags, setTags] = useState(() => {
-    // Load tags from localStorage on initial render
     try {
       const storedTags = localStorage.getItem("tags");
       return storedTags ? JSON.parse(storedTags) : [];
@@ -12,7 +14,8 @@ export default function SearchBar({ onResults }) {
       return [];
     }
   });
-  const [loading, setLoading] = useState(false);
+
+  const [loading, setLoading] = useState(false); // For showing "Thinking..." animation
   const [error, setError] = useState(null);
 
   // Save tags to localStorage whenever they change
@@ -20,16 +23,17 @@ export default function SearchBar({ onResults }) {
     localStorage.setItem("tags", JSON.stringify(tags));
   }, [tags]);
 
+  // Handle search submission
   const handleSearch = async (e, searchQuery) => {
     if (e) e.preventDefault();
     const q = searchQuery || query; // allow tag click to trigger search
     if (!q.trim()) return;
 
-    setLoading(true);
+    setLoading(true); // start loading animation
     setError(null);
 
     try {
-      // Send query directly to Node.js server
+      // Send query to Node.js server
       const response = await fetch("http://localhost:4000/rss", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -50,19 +54,20 @@ export default function SearchBar({ onResults }) {
       console.error("Search error:", err);
       setError("Something went wrong, please try again.");
     } finally {
-      setLoading(false);
+      setLoading(false); // stop loading animation
     }
   };
 
+  // Add a new tag
   const handleAddTag = (e) => {
     e.preventDefault();
     const newTag = query.trim();
     if (newTag && !tags.includes(newTag)) {
       let updatedTags = [...tags, newTag];
 
-      // Keep only the 10 most recent tags
-      if (updatedTags.length > 10) {
-        updatedTags = updatedTags.slice(updatedTags.length - 10);
+      // Keep only the 12 most recent tags
+      if (updatedTags.length > 12) {
+        updatedTags = updatedTags.slice(updatedTags.length - 12);
       }
 
       setTags(updatedTags);
@@ -70,13 +75,14 @@ export default function SearchBar({ onResults }) {
     }
   };
 
+  // Click on tag to perform search
   const handleTagClick = (tag) => {
     handleSearch(null, tag);
   };
 
-  //Remove tags
+  // Remove a tag from the list
   const handleRemoveTag = (tagToRemove) => {
-    setTags(tags.filter((tag) => tag !== tagToRemove));
+    setTags(tags.filter(tag => tag !== tagToRemove));
   };
 
   return (
@@ -90,9 +96,15 @@ export default function SearchBar({ onResults }) {
           className="searchbar-input"
         />
         <button type="submit" disabled={loading} className="searchbar-btn">
-          {loading ? "Thinking..." : "Search"}
+          <SearchIcon style={{ fontSize: '1.2rem', marginRight: '4px' }} />
+          {loading ? (
+            <span className="loading-dots">
+              Thinking<span>.</span><span>.</span><span>.</span>
+            </span>
+          ) : ""}
         </button>
-        {/* ADD TAG BUTTON */}
+
+        {/* Add tag button */}
         <button
           type="button"
           onClick={handleAddTag}
@@ -103,7 +115,7 @@ export default function SearchBar({ onResults }) {
         </button>
       </form>
 
-      {/* TAG LIST */}
+      {/* Display saved tags */}
       <div className="tag-container">
         {tags.map((tag, index) => (
           <div key={index} className="tag">
@@ -121,6 +133,7 @@ export default function SearchBar({ onResults }) {
         ))}
       </div>
 
+      {/* Display error messages */}
       {error && <p className="searchbar-error">{error}</p>}
     </div>
   );
