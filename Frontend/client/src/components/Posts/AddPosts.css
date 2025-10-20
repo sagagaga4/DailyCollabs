@@ -70,3 +70,20 @@
   box-shadow: 0 0 0 #000000;
   background-color: rgb(84, 244, 113);
 }
+
+@media (max-width: 768px) {
+  .add-post-form {
+    grid-template-columns: 1fr; /* one card per row on mobile */
+    width: 100vw;
+    justify-content: center;
+    flex-direction: column;
+    align-items: center;
+  }
+  .hash-area{
+    grid-template-columns: 1fr; /* one card per row on mobile */
+    width: 100vw;
+    justify-content: center;
+    align-self: center;
+  
+  }
+}

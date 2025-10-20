@@ -203,37 +203,42 @@
 @media screen and (max-width: 768px) {
   .container {
     flex-direction: row;
+    align-items: center;
+    justify-content: center;
     height: auto;
     width: 100vw;
   }
 
   .sidebar-container {
-    flex-direction: row;
-    justify-content: flex-end;
-    align-items: right;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
     margin-top:3px;
     height: 100%;
     width: 100%;
-    padding: 0 1rem;
+    padding: 0 23rem;
     border-radius: 0 0 10px 10px;
+    position: relative;
   }
 
   .sidebar-container.expanded {
     height: 12rem;
     flex-direction: column;
-    align-items: flex-start;
+    align-items: center;
+    justify-content: center;
     padding-top: 2rem;
   }
 
   .menu-button {
-    margin: 0 1rem 0 0;
-  }
+   margin: 0 auto 0.5rem auto;  }
 
   .slick-bar {
     flex-direction: row;
     justify-content: flex-start;
     align-items: center;
     width: auto;
+    gap: 0.1rem;
+    margin-left: 3.5rem; 
   }
 
   .slick-bar a {
@@ -247,9 +252,13 @@
   }
 
   .profile {
+    position: absolute;
+    left: 1rem;
+    top: 50%;
     flex-direction: row;
-    margin-left: auto;
-    margin-right: 1rem;
+    align-items: center;
+    justify-content: flex-start;
+    margin: 0;
   }
 
 }

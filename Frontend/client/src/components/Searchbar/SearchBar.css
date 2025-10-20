@@ -56,7 +56,6 @@
 }
 .addTag-btn:hover {
   background-color: #676666;
-  transform: translateY(-1px);
 }
 .addTag-btn:disabled {
   background-color: #393b3d;

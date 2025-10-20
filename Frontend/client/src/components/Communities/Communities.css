@@ -73,7 +73,11 @@
   translate: -6px;
 }
 @media (max-width: 768px) {
-  .home-container {
+  .com-home-container {
     grid-template-columns: 1fr; /* one card per row on mobile */
+    width: 100vw;
+    justify-content: center;
+    align-self: center;
+    margin-left: -55px;
   }
 }
