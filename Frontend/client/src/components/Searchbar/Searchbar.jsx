@@ -1,11 +1,24 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import "./SearchBar.css";
 
 export default function SearchBar({ onResults }) {
   const [query, setQuery] = useState("");
-  const [tags, setTags] = useState([]); // changed from "" to []
+  const [tags, setTags] = useState(() => {
+    // Load tags from localStorage on initial render
+    try {
+      const storedTags = localStorage.getItem("tags");
+      return storedTags ? JSON.parse(storedTags) : [];
+    } catch {
+      return [];
+    }
+  });
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
+
+  // Save tags to localStorage whenever they change
+  useEffect(() => {
+    localStorage.setItem("tags", JSON.stringify(tags));
+  }, [tags]);
 
   const handleSearch = async (e, searchQuery) => {
     if (e) e.preventDefault();
@@ -45,11 +58,14 @@ export default function SearchBar({ onResults }) {
     e.preventDefault();
     const newTag = query.trim();
     if (newTag && !tags.includes(newTag)) {
-      if (tags.length >= 10) {
-        alert("10 tags limit :(");
-        return;
+      let updatedTags = [...tags, newTag];
+
+      // Keep only the 10 most recent tags
+      if (updatedTags.length > 10) {
+        updatedTags = updatedTags.slice(updatedTags.length - 10);
       }
-      setTags([...tags, newTag]);
+
+      setTags(updatedTags);
       setQuery("");
     }
   };
@@ -58,7 +74,7 @@ export default function SearchBar({ onResults }) {
     handleSearch(null, tag);
   };
 
-  // 🧹 REMOVE TAG FUNCTION
+  //Remove tags
   const handleRemoveTag = (tagToRemove) => {
     setTags(tags.filter((tag) => tag !== tagToRemove));
   };
@@ -80,7 +96,7 @@ export default function SearchBar({ onResults }) {
         <button
           type="button"
           onClick={handleAddTag}
-          disabled={!query.trim() || tags.length >= 10}
+          disabled={!query.trim()}
           className="addTag-btn"
         >
           Tag

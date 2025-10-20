@@ -104,3 +104,14 @@
 .tag-remove:hover {
   color: #ff4d4d;
 }
+
+@media (max-width: 768px) {
+  .tag-container {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr); /* 3 columns */
+    justify-items: center;
+    align-items: center;
+    margin-top: 12px;
+    width: 100vw;
+  }
+}
