@@ -2,65 +2,106 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  width: 100%;
+  gap: 12px;
 }
 
 .searchbar-form {
   display: flex;
-  justify-content: center;
   align-items: center;
-  gap: 12px;
-  width: 100%;
-  max-width: 300px;
+  gap: 10px;
+  width: 70%;
+  justify-content: center;
 }
 
-/* Input with only bottom border */
+/* BIGGER SEARCH INPUT */
 .searchbar-input {
-  flex: 1;
+  width: 400px;
+  max-width: 80%;
+  padding: 10px 14px;
+  font-size: 1.1rem;
+  border: none;
+  border-bottom: 2px solid #ccccccdc;
   background: transparent;
-  border: none;
-  border-bottom: 3px solid rgba(255, 255, 255, 0.6);
-  color: #fff;
-  font-size: 12px;
-  padding: 10px 5px;
   outline: none;
-  transition: all 0.3s ease;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
 }
 
-.searchbar-input::placeholder {
-  color: rgba(255, 255, 255, 0.7);
-}
 
-.searchbar-input:focus {
-  border-bottom-color: #42b0b1;
-  background: rgba(0, 0, 0, 0.1);
-  box-shadow: 0 4px 8px rgba(66, 176, 177, 0.2);
-}
 
-/* Search button */
-.searchbar-btn {
-  padding: 10px 20px;
+.searchbar-btn,
+.addTag-btn {
+  padding: 8px 12px;
+  font-size: 0.9rem;
+  font-weight: bold;
   border: none;
-  border-radius: 8px;
-  background-color: #42b0b1;
-  color: white;
-  font-weight: 600;
+  border-radius: 9px;
   cursor: pointer;
-  transition: all 0.3s ease;
+  transition: background-color 0.2s ease, transform 0.1s ease;
+  white-space: nowrap;
 }
 
+/* SEARCH button */
+.searchbar-btn {
+  background-color: #393b3d;
+  color: white;
+}
 .searchbar-btn:hover {
-  background-color: rgb(43, 210, 196);
+  background-color: #444242;
 }
 
-.searchbar-btn:disabled {
-  opacity: 0.7;
+/* ADD TAG button */
+.addTag-btn {
+  background-color: #656b6a;
+  color: white;
+}
+.addTag-btn:hover {
+  background-color: #676666;
+  transform: translateY(-1px);
+}
+.addTag-btn:disabled {
+  background-color: #393b3d;
   cursor: not-allowed;
 }
 
-/* Error message */
-.searchbar-error {
-  color: #ff6b6b;
-  margin-top: 8px;
-  font-size: 14px;
+/* TAG STYLING */
+.tag-container {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 12px;
+}
+
+.tag {
+  display: flex;
+  align-items: center;
+  background-color: #3c3a3a2e;
+  border:1px solid rgba(255, 255, 255, 0.295);
+  border-radius: 8px;
+  padding: 1px 4px;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.tag:hover {
+  background-color: #36373b;
+}
+
+.tag-text {
+  font-size: small;
+  font-weight: bold;
+  margin-right: 6px;
+  user-select: none;
+}
+
+.tag-remove {
+  font-weight: bold;
+  font-size: 10px;
+  color: #777;
+  margin-left: 4px;
+  cursor: pointer;
+  transition: color 0.2s ease;
+}
+
+.tag-remove:hover {
+  color: #ff4d4d;
 }
