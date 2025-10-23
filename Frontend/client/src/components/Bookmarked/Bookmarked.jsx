@@ -16,7 +16,8 @@ export default function Bookmarked() {
     const fetchArticles = async () => {
       try {
         
-        const response = await fetch("http://localhost:4000/rss");
+        //const response = await fetch("http://localhost:4000/rss");
+        const response = await fetch("http://192.168.68.117:4000/rss");
         if (!response.ok) throw new Error("Failed to fetch news feed");
 
         const data = await response.json();

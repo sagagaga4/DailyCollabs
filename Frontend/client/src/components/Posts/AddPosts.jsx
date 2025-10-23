@@ -11,7 +11,8 @@ export default function AddPost({ onPostCreated }) {
     e.preventDefault();
 
     try {
-      const res = await fetch("http://localhost:4000/posts", {
+      //const res = await fetch("http://localhost:4000/posts", {
+      const res = await fetch("http://192.168.68.117:4000/posts", {  
         method: "POST",
         headers: {
           "Content-Type": "application/json",

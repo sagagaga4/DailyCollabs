@@ -165,6 +165,9 @@
     margin-left: -70px;
     grid-template-columns: none;
   }
+  .button{
+    align-items: baseline;
+  }
 
   .card {
     border-radius: 0;

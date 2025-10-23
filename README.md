@@ -5,12 +5,6 @@ Users can comment, save, dislike, or bookmark news posts, while members contribu
 
 Built with **Node.js, Express, MongoDB, Python, and React**, this project demonstrates **modern full-stack development**, authentication, AI integration, and interactive UI features.  
 
-<video width="1431" height="771" src="https://github.com/user-attachments/assets/dd701ff4-c36f-4672-8533-8be25b29149c"/>
-
-<video width="1431" height="771" src="https://github.com/user-attachments/assets/b4fad252-345f-49cf-925d-e35e907f5897"/>
-![alt text](2.png) ![alt text](1.png)
-
-
 ---
 
 ## ✨ Key Features
@@ -55,6 +49,7 @@ This project demonstrates **real-world full-stack development** for professional
 - Practical **full-stack engineering skills** that stand out to recruiters.  
 
 ---
+<video width="1431" height="771" src="https://github.com/user-attachments/assets/d755fc88-01d2-4cb3-a4c7-09821ac48f1b"/>
 
 ## 🧑‍💻 Setup (Quick Start)
 

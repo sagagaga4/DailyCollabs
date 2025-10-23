@@ -23,9 +23,9 @@ html, body {
 }
 
 body {
-  /*background-image: url('./assets/Backgrounds/drop1.jpg');
-  */
-    background: #19191b;
+  /*background-image: url('./assets/Backgrounds/SKY3.jpg');*/
+  
+  background: #19191b; 
   background-repeat: no-repeat;
   background-size: cover;
   background-position: center center;

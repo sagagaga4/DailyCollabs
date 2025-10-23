@@ -4,8 +4,8 @@ import "./SearchBar.css";
 
 export default function SearchBar({ onResults }) {
   const [query, setQuery] = useState("");
-  
-  // Load tags from localStorage on initial render
+
+  //Load tags from localStorage on initial render
   const [tags, setTags] = useState(() => {
     try {
       const storedTags = localStorage.getItem("tags");
@@ -18,15 +18,16 @@ export default function SearchBar({ onResults }) {
   const [loading, setLoading] = useState(false); // For showing "Thinking..." animation
   const [error, setError] = useState(null);
 
-  // Save tags to localStorage whenever they change
+  // ✅ Save tags to localStorage whenever they change
   useEffect(() => {
     localStorage.setItem("tags", JSON.stringify(tags));
   }, [tags]);
 
-  // Handle search submission
+  // ✅ Handle search submission
   const handleSearch = async (e, searchQuery) => {
     if (e) e.preventDefault();
     const q = searchQuery || query; // allow tag click to trigger search
+
     if (!q.trim()) return;
 
     setLoading(true); // start loading animation
@@ -34,7 +35,7 @@ export default function SearchBar({ onResults }) {
 
     try {
       // Send query to Node.js server
-      const response = await fetch("http://localhost:4000/rss", {
+      const response = await fetch("http://192.168.68.117:4000/rss", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ query: q }),
@@ -47,8 +48,7 @@ export default function SearchBar({ onResults }) {
       if (!articles || articles.length === 0) {
         setError("No articles found for this topic.");
       } else {
-        // Send articles up to Home.jsx for display
-        onResults?.(articles);
+        onResults?.(articles); // Send articles up to Home.jsx for display
       }
     } catch (err) {
       console.error("Search error:", err);
@@ -58,10 +58,11 @@ export default function SearchBar({ onResults }) {
     }
   };
 
-  // Add a new tag
+  // ✅ Add a new tag
   const handleAddTag = (e) => {
     e.preventDefault();
     const newTag = query.trim();
+
     if (newTag && !tags.includes(newTag)) {
       let updatedTags = [...tags, newTag];
 
@@ -75,12 +76,12 @@ export default function SearchBar({ onResults }) {
     }
   };
 
-  // Click on tag to perform search
+  // ✅ Click on tag to perform search
   const handleTagClick = (tag) => {
     handleSearch(null, tag);
   };
 
-  // Remove a tag from the list
+  // ✅ Remove a tag from the list
   const handleRemoveTag = (tagToRemove) => {
     setTags(tags.filter(tag => tag !== tagToRemove));
   };
@@ -95,13 +96,13 @@ export default function SearchBar({ onResults }) {
           placeholder="Search"
           className="searchbar-input"
         />
-        <button type="submit" disabled={loading} className="searchbar-btn">
+
+        <button
+          type="submit"
+          disabled={loading}
+          className="searchbar-btn"
+        >
           <SearchIcon style={{ fontSize: '1.2rem', marginRight: '4px' }} />
-          {loading ? (
-            <span className="loading-dots">
-              Thinking<span>.</span><span>.</span><span>.</span>
-            </span>
-          ) : ""}
         </button>
 
         {/* Add tag button */}
@@ -115,11 +116,21 @@ export default function SearchBar({ onResults }) {
         </button>
       </form>
 
-      {/* Display saved tags */}
+      {loading && (
+        <div className="thinking-container">
+          <span className="loading-dots" style={{fontWeight:"bolder", fontSize: "20px",fontFamily:"monospace"}}>
+            🤔Thinking<span>.</span><span>.</span><span>.</span>
+          </span>
+        </div>
+      )}
+
       <div className="tag-container">
         {tags.map((tag, index) => (
           <div key={index} className="tag">
-            <span className="tag-text" onClick={() => handleTagClick(tag)}>
+            <span
+              className="tag-text"
+              onClick={() => handleTagClick(tag)}
+            >
               #{tag}
             </span>
             <span

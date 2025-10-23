@@ -55,7 +55,8 @@ export default function Home() {
         }
 
         // If no cache, fetch default RSS feed
-        const response = await fetch("http://localhost:4000/rss");
+        //const response = await fetch("http://localhost:4000/rss");
+        const response = await fetch("http://192.168.68.117:4000/rss");
         if (!response.ok) throw new Error("Failed to fetch news feed");
 
         const data = await response.json();

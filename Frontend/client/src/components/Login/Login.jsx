@@ -8,7 +8,8 @@ export default function Login({ onLogin }) {
 
   const handleLogin = async () => {
     try {
-      const resp = await fetch("http://localhost:4000/auth/login", {
+     // const resp = await fetch("http://localhost:4000/auth/login", {
+      const resp = await fetch("http://192.168.68.117:4000/auth/login", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ username, password }),
