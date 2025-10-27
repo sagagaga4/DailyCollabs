@@ -5,6 +5,7 @@ import ThumbDownOffAltIcon from "@mui/icons-material/ThumbDownOffAlt";
 import ThumbDownAltIcon from "@mui/icons-material/ThumbDownAlt";
 import BookmarkAddIcon from "@mui/icons-material/BookmarkAdd";
 import BookmarkAddedIcon from "@mui/icons-material/BookmarkAdded";
+import CancelIcon from '@mui/icons-material/Cancel';
 import LinkIcon from "@mui/icons-material/Link";
 import ChatIcon from "@mui/icons-material/Chat";
 import SendIcon from "@mui/icons-material/Send";
@@ -20,19 +21,20 @@ export default function Home() {
   const [error, setError] = useState(null);
   const [isInitialLoad, setIsInitialLoad] = useState(true);
 
+  //Action Buttons
   const [likedArticles, setLikedArticles] = useState(new Set());
   const [dislikedArticles, setDislikedArticles] = useState(new Set());
   const [bookmarkedArticles, setBookmarkedArticles] = useState(new Set());
+
+  //Comment Sections
   const [previewData, setPreviewData] = useState(null);
   const [newComment, setNewComment] = useState("");
   const [submittingComment, setSubmittingComment] = useState(false);
   const [editingComment, setEditingComment] = useState(null);
   const [editCommentText, setEditCommentText] = useState("");
+  
   const [currentUser, setCurrentUser] = useState(null);
   
-  //Load user tags
-
-
   //Load user perferences
   useEffect(() => {
     const initializeData = async () => {
@@ -41,7 +43,6 @@ export default function Home() {
         setLikedArticles(new Set(JSON.parse(localStorage.getItem("likedArticles") || "[]")));
         setDislikedArticles(new Set(JSON.parse(localStorage.getItem("dislikedArticles") || "[]")));
         setBookmarkedArticles(new Set(JSON.parse(localStorage.getItem("bookmarkedArticles") || "[]")));
-        //setTaggedArticles(new Set(JSON.parse(localStorage.getItem("tags") || "[]")));
       
         const user = JSON.parse(localStorage.getItem("currentUser") || '{"username": "Anonymous"}');
         setCurrentUser(user);
@@ -475,8 +476,9 @@ export default function Home() {
       {/* Modal (preview) */}
       {previewData && (
         <div className="modal-overlay" onClick={closePreview}>
+            <CancelIcon className="modal-close" onClick={closePreview} aria-label="Close preview"></CancelIcon>
+
           <div className="modal-card" onClick={(e) => e.stopPropagation()}>
-            <button className="modal-close" onClick={closePreview} aria-label="Close preview">×</button>
 
             <h2 style={{ marginBottom: 6 }}>{previewData.post?.title || "Preview"}</h2>
             <p style={{ color: "#b2a0b6ca", marginTop: 0 }}>
