@@ -7,8 +7,8 @@ export default function PostCard({ item }) {
 
   const handleLike = async () => {
     if(!item.postId) return;
-//    const res = await fetch(`http://localhost:4000/posts/${item.postId}/like`, {
-    const res = await fetch(`http://192.168.68.117:4000/posts/${item.postId}/like`, {
+      const res = await fetch(`http://localhost:4000/posts/${item.postId}/like`, {
+//    const res = await fetch(`http://192.168.68.117:4000/posts/${item.postId}/like`, {
       method: 'POST', headers: {'Authorization': `Bearer ${token}`}
     });
     const json = await res.json();

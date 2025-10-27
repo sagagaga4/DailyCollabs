@@ -6,7 +6,9 @@ export default function Comments({ postId }) {
   const token = sessionStorage.getItem('token');
 
   useEffect(() => {
-    fetch(`http://localhost:4000/comments/${postId}`).then(r => r.json()).then(setComments);
+    fetch(`http://localhost:4000/comments/${postId}`)
+    .then(r => r.json())
+    .then(setComments);
   }, [postId]);
 
   const submit = async (e) => {
@@ -17,7 +19,7 @@ export default function Comments({ postId }) {
                 'Authorization': `Bearer ${token}`
             },
       body: JSON.stringify({content: text})
-    }
+      }
     );
     setText('');
     const r = await fetch(`http://localhost:4000/comments/${postId}`);

@@ -150,7 +150,7 @@ router.post("/", async (req, res) => {
             // First try to get image from feed
             let image = extractImage(item);
 
-            // If no image in the feed, try fetching Open Graph image
+            // If no image in the feed use this default
             if (!image && item.link) {
               image = "https://cdn.esahubble.org/archives/images/screen/heic0715a.jpg";
             }

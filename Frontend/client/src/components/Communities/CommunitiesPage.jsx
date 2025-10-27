@@ -8,8 +8,8 @@ export default function CommunityPage() {
 
   useEffect(() => {
     async function load() {
-      //const res = await fetch(`http://localhost:4000/communities/${id}/feed`);
-      const res = await fetch(`http://192.168.68.117:4000/communities/${id}/feed`);
+      const res = await fetch(`http://localhost:4000/communities/${id}/feed`);
+      //const res = await fetch(`http://192.168.68.117:4000/communities/${id}/feed`);
       setItems(await res.json());
     }
     load();

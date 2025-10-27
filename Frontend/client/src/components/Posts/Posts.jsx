@@ -7,8 +7,8 @@ export default function Posts() {
   const token = sessionStorage.getItem("token");
 
   const fetchPosts = () => {
-//    fetch("http://localhost:4000/posts", {
-    fetch("http://192.168.68.117:4000/posts", {
+      fetch("http://localhost:4000/posts", {
+    //fetch("http://192.168.68.117:4000/posts", {
 
       headers: {
         Authorization: `Bearer ${token}`,

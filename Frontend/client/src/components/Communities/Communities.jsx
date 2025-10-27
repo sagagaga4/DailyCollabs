@@ -8,9 +8,8 @@ export default function Communities() {
   useEffect(() => {
     async function fetchCommunities() {
       try {
-//        const res = await fetch("http://localhost:4000/communities", {
-        const res = await fetch("http://192.168.68.117:4000/communities", {
-          
+        const res = await fetch("http://localhost:4000/communities", {
+        //const res = await fetch("http://192.168.68.117:4000/communities", {
           headers: { Authorization: `Bearer ${token}` },
         });
         const data = await res.json();

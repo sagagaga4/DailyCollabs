@@ -34,7 +34,7 @@
   padding: 10px 14px;
   font-size: 1.1rem;
   border: none;
-  border-bottom: 2px solid #ccccccdc;
+  border-bottom: 2px solid #cccccc;
   background: transparent;
   outline: none;
   transition: border-color 0.2s ease, box-shadow 0.2s ease;
@@ -60,7 +60,7 @@
 
 /* SEARCH button */
 .searchbar-btn {
-  background-color: #393b3d;
+  background-color: #26262a;
   color: white;
 }
 .searchbar-btn:hover {
@@ -69,21 +69,22 @@
 
 /* ADD TAG button */
 .addTag-btn {
-  background-color: #656b6a;
+  background-color: #383c3c;
   color: white;
 }
 .addTag-btn:hover {
-  background-color: #676666;
+  background-color: #444242;
 }
 .addTag-btn:disabled {
-  background-color: #393b3d;
+  background-color: #282a2a;
   cursor: not-allowed;
 }
 
 /* TAG STYLING */
 .tag-container {
-  display: flex;
-  flex-wrap: wrap;
+  display: grid;
+  grid-template-columns: repeat(6, 1fr); /* 3 columns */
+  grid-template-rows: repeat(7, auto); /* 3 rows */
   gap: 8px;
   margin-top: 12px;
 }
@@ -91,8 +92,8 @@
 .tag {
   display: flex;
   align-items: center;
-  background-color: #0000002d;
-  border:1px solid rgba(255, 255, 255, 0.795);
+  background-color: #2b342b0c;
+  border: 1px solid #cac5c527;
   border-radius: 8px;
   padding: 1px 4px;
   cursor: pointer;
@@ -100,7 +101,7 @@
 }
 
 .tag:hover {
-  background-color: #38393b;
+  background-color: #38393b7a;
 }
 
 .tag-text {
@@ -113,15 +114,15 @@
 
 .tag-remove {
   font-weight: bold;
-  font-size: 25px;
-  color: #efebeb;
-  margin-left: 6px;
+  font-size: 23px;
+  color: #878383;
+  margin-left: auto;
   cursor: pointer;
   transition: color 0.2s ease;
 }
 
 .tag-remove:hover {
-  color: #fbf9f9;
+  color: #f4c05e;
 }
 
 /* Responsive Design */

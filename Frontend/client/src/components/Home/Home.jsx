@@ -29,7 +29,11 @@ export default function Home() {
   const [editingComment, setEditingComment] = useState(null);
   const [editCommentText, setEditCommentText] = useState("");
   const [currentUser, setCurrentUser] = useState(null);
+  
+  //Load user tags
 
+
+  //Load user perferences
   useEffect(() => {
     const initializeData = async () => {
       try {
@@ -37,7 +41,8 @@ export default function Home() {
         setLikedArticles(new Set(JSON.parse(localStorage.getItem("likedArticles") || "[]")));
         setDislikedArticles(new Set(JSON.parse(localStorage.getItem("dislikedArticles") || "[]")));
         setBookmarkedArticles(new Set(JSON.parse(localStorage.getItem("bookmarkedArticles") || "[]")));
-        
+        //setTaggedArticles(new Set(JSON.parse(localStorage.getItem("tags") || "[]")));
+      
         const user = JSON.parse(localStorage.getItem("currentUser") || '{"username": "Anonymous"}');
         setCurrentUser(user);
 
@@ -55,8 +60,8 @@ export default function Home() {
         }
 
         // If no cache, fetch default RSS feed
-        //const response = await fetch("http://localhost:4000/rss");
-        const response = await fetch("http://192.168.68.117:4000/rss");
+        const response = await fetch("http://localhost:4000/rss");
+        //const response = await fetch("http://192.168.68.117:4000/rss");
         if (!response.ok) throw new Error("Failed to fetch news feed");
 
         const data = await response.json();
@@ -325,7 +330,7 @@ export default function Home() {
     }
   };
 
-  //Delete Button Logic
+  //Delete Comment Button Logic
   const handleDeleteComment = async (commentId) => {
     if (!confirm("Are you sure you want to delete this comment?")) {
       return;

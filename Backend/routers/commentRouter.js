@@ -31,7 +31,6 @@ router.get('/:id', async (req, res) => {
 router.post('/', async (req, res) => {
   try {
     const { postId, content } = req.body;
-    // NOTE: ensure req.user exists (authentication) or allow authorId via body for testing
     const authorId = (req.user && req.user.id) ? req.user.id : req.body.authorId;
     const newComment = await commentService.createComment({
       postId,

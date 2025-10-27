@@ -2,28 +2,79 @@ import React, { useEffect, useState } from "react";
 import SearchIcon from '@mui/icons-material/Search';
 import "./SearchBar.css";
 
-export default function SearchBar({ onResults }) {
+export default function SearchBar({ onResults, userId, token }) {
   const [query, setQuery] = useState("");
 
-  //Load tags from localStorage on initial render
-  const [tags, setTags] = useState(() => {
-    try {
-      const storedTags = localStorage.getItem("tags");
-      return storedTags ? JSON.parse(storedTags) : [];
-    } catch {
-      return [];
-    }
-  });
 
-  const [loading, setLoading] = useState(false); // For showing "Thinking..." animation
+  // Load tags from backend on initial render
+const [tags, setTags] = useState([]);
+
+useEffect(() => {
+  const loadTags = async () => {
+    try {
+      const res = await fetch("http://localhost:4000/tags");
+      const data = await res.json();
+      setTags(data);
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
+  loadTags();
+}, []);
+
+  // Add a new tag (save to DB AND state)
+  const handleAddTag = async (e) => {
+    e.preventDefault();
+    const newTag = query.trim();
+    if (!newTag || tags.includes(newTag)) return;
+
+    try {
+      const res = await fetch("http://localhost:4000/tags", {
+      //const res = await fetch("http://192.168.68.117:4000/tags", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`, // include token
+        },
+          body: JSON.stringify({
+          userId,
+          tagName: newTag,
+        }),
+      });
+
+      if (!res.ok) {
+        const error = await res.text();
+        throw new Error(error);
+      }
+
+      //Append the new tag to the already existing tags
+      let updatedTags = [...tags, newTag];
+
+      // Keep only the 12 most recent tags
+      if (updatedTags.length > 12) {
+        alert("12 TAGS LIMIT");
+        return;
+      }
+
+      setTags(updatedTags);
+      setQuery("");
+
+    } catch (err) {
+      console.error("Failed to add tag:", err.message);
+      alert(err.message);
+    }
+  };
+
+  const [loading, setLoading] = useState(false); 
   const [error, setError] = useState(null);
 
-  // ✅ Save tags to localStorage whenever they change
+  // Save tags to localStorage whenever they change
   useEffect(() => {
     localStorage.setItem("tags", JSON.stringify(tags));
   }, [tags]);
 
-  // ✅ Handle search submission
+  // Handle search submission
   const handleSearch = async (e, searchQuery) => {
     if (e) e.preventDefault();
     const q = searchQuery || query; // allow tag click to trigger search
@@ -34,8 +85,9 @@ export default function SearchBar({ onResults }) {
     setError(null);
 
     try {
-      // Send query to Node.js server
-      const response = await fetch("http://192.168.68.117:4000/rss", {
+        // Send query to Node.js server
+        const response = await fetch("http://localhost:4000/rss", {
+        // const response = await fetch("http://192.168.68.117:4000/rss", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ query: q }),
@@ -58,32 +110,14 @@ export default function SearchBar({ onResults }) {
     }
   };
 
-  // ✅ Add a new tag
-  const handleAddTag = (e) => {
-    e.preventDefault();
-    const newTag = query.trim();
-
-    if (newTag && !tags.includes(newTag)) {
-      let updatedTags = [...tags, newTag];
-
-      // Keep only the 12 most recent tags
-      if (updatedTags.length > 12) {
-        updatedTags = updatedTags.slice(updatedTags.length - 12);
-      }
-
-      setTags(updatedTags);
-      setQuery("");
-    }
-  };
-
-  // ✅ Click on tag to perform search
+  // Click on tag to perform search
   const handleTagClick = (tag) => {
     handleSearch(null, tag);
   };
 
-  // ✅ Remove a tag from the list
+  // Remove a tag from the list
   const handleRemoveTag = (tagToRemove) => {
-    setTags(tags.filter(tag => tag !== tagToRemove));
+    setTags(tags.filter(tag => tag.tagName !== tagToRemove));
   };
 
   return (
@@ -93,7 +127,7 @@ export default function SearchBar({ onResults }) {
           type="text"
           value={query}
           onChange={(e) => setQuery(e.target.value)}
-          placeholder="Search"
+          placeholder="Type here..."
           className="searchbar-input"
         />
 
@@ -116,6 +150,7 @@ export default function SearchBar({ onResults }) {
         </button>
       </form>
 
+      {/* Thinking animation outside the button */}
       {loading && (
         <div className="thinking-container">
           <span className="loading-dots" style={{fontWeight:"bolder", fontSize: "20px",fontFamily:"monospace"}}>
@@ -125,20 +160,20 @@ export default function SearchBar({ onResults }) {
       )}
 
       <div className="tag-container">
-        {tags.map((tag, index) => (
-          <div key={index} className="tag">
+        {tags.map((tag) => (
+          <div key={tag._id} className="tag">
             <span
               className="tag-text"
-              onClick={() => handleTagClick(tag)}
+              onClick={() => handleTagClick(tag.tagName)}
             >
-              #{tag}
+              #{tag.tagName}
             </span>
             <span
               className="tag-remove"
-              onClick={() => handleRemoveTag(tag)}
+              onClick={() => handleRemoveTag(tag.tagName)}
               title="Remove tag"
             >
-              ✕
+              ×
             </span>
           </div>
         ))}
