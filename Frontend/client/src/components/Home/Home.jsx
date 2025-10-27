@@ -481,7 +481,7 @@ export default function Home() {
           <div className="modal-card" onClick={(e) => e.stopPropagation()}>
 
             <h2 style={{ marginBottom: 6 }}>{previewData.post?.title || "Preview"}</h2>
-            <p style={{ color: "#b2a0b6ca", marginTop: 0 }}>
+            <p style={{ color: "#cac8bbca",fontWeight:"bold", marginTop: 0 }}>
               {previewData.post?.pubDate ? new Date(previewData.post.pubDate).toLocaleString() : ""}
             </p>
 
@@ -502,8 +502,8 @@ export default function Home() {
               justifyContent: "center", 
               margin: "16px 0",
               padding: "12px",
-              backgroundColor: "rgba(255,255,255,0.02)",
-              borderRadius: 8
+              border:"1px solid #cac5c527",
+              borderRadius: 15
             }}>
               {previewData.post && (
                 <>
@@ -568,7 +568,7 @@ export default function Home() {
             <h3 style={{ marginTop: 18, marginBottom: 12 }}>Comments ({previewData.comments?.length || 0})</h3>
             
             {/* Add Comment Section */}
-            <div style={{ marginBottom: 16, padding: "12px", backgroundColor: "rgba(255,255,255,0.02)", borderRadius: 8 }}>
+            <div style={{ marginBottom: 16, padding: "12px", backgroundColor: "#101012", borderRadius: 8 }}>
               <div style={{ display: "flex", gap: 8 }}>
                 <textarea
                   placeholder={`Add a comment as ${currentUser?.username || "Anonymous"}...`}
@@ -594,8 +594,8 @@ export default function Home() {
                     borderRadius: 6,
                     border: "none",
                     backgroundColor: submittingComment || !newComment.trim() 
-                      ? "rgba(255,255,255,0.1)" 
-                      : "#007bff",
+                      ? "#1f1f21ff" 
+                      : "#1dc37eff",
                     color: "#fff",
                     cursor: submittingComment || !newComment.trim() 
                       ? "not-allowed" 
@@ -625,7 +625,7 @@ export default function Home() {
                       marginBottom: "8px",
                       borderRadius: 8,
                       backgroundColor: "rgba(255,255,255,0.02)",
-                      border: isCurrentUser ? "1px solid rgba(0,123,255,0.3)" : "1px solid rgba(255,255,255,0.04)"
+                      border: isCurrentUser ? "1px solid rgba(237, 236, 230, 0.3)" : "1px solid rgba(255,255,255,0.04)"
                     }}>
                       {isEditing ? (
                         <div style={{ marginBottom: 8 }}>
@@ -651,7 +651,7 @@ export default function Home() {
                                 padding: "4px 12px",
                                 borderRadius: 4,
                                 border: "none",
-                                backgroundColor: "#42b0b1ff",
+                                backgroundColor: "#3f3f47ff",
                                 color: "#fff",
                                 fontSize: 12,
                                 cursor: "pointer"
