@@ -69,4 +69,4 @@ npm start
 cd client
 npm start
 ```
-<video width="1431" height="771" src="https://github.com/user-attachments/assets/d755fc88-01d2-4cb3-a4c7-09821ac48f1b"\>
+<video width="1431" height="771" src="https://github.com/user-attachments/assets/d755fc88-01d2-4cb3-a4c7-09821ac48f1b"/>
