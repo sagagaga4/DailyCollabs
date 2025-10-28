@@ -1,28 +1,28 @@
+// ReactionsRepository.js
 const Reactions = require('../model/Reactions');
 
-class Reactions {
-    findReaction = async(userId,articleLink) => {
-        await Reactions.findOne({userId,articleLink});
-    }
+class ReactionsRepository {
+  async findReaction(userId, articleLink) {
+    return await Reactions.findOne({ userId, articleLink });
+  }
 
-    createReaction = async(userId,articleLink,type) => {
-        await Reactions.createLike({userId,articleLink,type});
-    }
+  async createReaction(userId, articleLink, type) {
+    return await Reactions.create({ userId, articleLink, type });
+  }
 
-    updateReacrtion = async(userId,articleLink,type) => {
-        await Reactions.updateOne({userId,articleLink}, {type});
-    }
+  async updateReaction(userId, articleLink, type) {
+    return await Reactions.findOneAndUpdate({ userId, articleLink },{ type },{ new: true });
+  }
 
-    deleteReaction = async(userId,articleLink) => {
-        await Reactions.deleteOne({userId,articleLink});
-    }
+  async deleteReaction(userId, articleLink) {
+    return await Reactions.deleteOne({ userId, articleLink });
+  }
 
-    countReactions = async(articleLink) => {
-        const likes = await Reactions.countDocuments({articleLink,type:'like'})
-        const dislikes = await Reactions.countDocuments({articleLink,type:'dislike'})
-        return({likes,dislikes});
-    }
+  async countReactions(articleLink) {
+    const likes = await Reactions.countDocuments({ articleLink, type: "like" });
+    const dislikes = await Reactions.countDocuments({ articleLink, type: "dislike" });
+    return { likes, dislikes };
+  }
 }
 
-
-module.exports = Reactions
+module.exports = ReactionsRepository;
