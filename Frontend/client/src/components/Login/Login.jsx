@@ -2,7 +2,7 @@
 import { useState } from "react";
 import "./Login.css";
 
-export default function Login({ onLogin }) {
+export default function Login() {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
 
@@ -25,7 +25,7 @@ export default function Login({ onLogin }) {
 
       if (data.token) {
         sessionStorage.setItem("token", data.token);
-        onLogin(); // callback to reload the app
+        window.location.href="/";
       } else {
         alert( "Login failed");
       }
