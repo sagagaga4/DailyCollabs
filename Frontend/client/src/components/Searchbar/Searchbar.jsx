@@ -49,7 +49,7 @@ useEffect(() => {
       }
 
       //Append the new tag to the already existing tags
-      let updatedTags = [...tags, newTag];
+      let updatedTags = [...tags, { _id: Date.now(), tagName: newTag }];
 
       // Keep only the 12 most recent tags
       if (updatedTags.length > 12) {
@@ -115,10 +115,30 @@ useEffect(() => {
     handleSearch(null, tag);
   };
 
-  // Remove a tag from the list
-  const handleRemoveTag = (tagToRemove) => {
+// Remove a tag from the list
+const handleRemoveTag = async (tagToRemove) => {
+  try {
+    const res = await fetch(`http://localhost:4000/tags/${encodeURIComponent(tagToRemove)}`, {
+      method: "DELETE",
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+
+    if (!res.ok) {
+      const error = await res.text();
+      throw new Error(error);
+    }
+
+    // Update the UI after successful deletion
     setTags(tags.filter(tag => tag.tagName !== tagToRemove));
-  };
+
+  } catch (err) {
+    console.error("Failed to delete tag:", err.message);
+    alert("Failed to delete tag from database.");
+  }
+};
+
 
   return (
     <div className="searchbar">
