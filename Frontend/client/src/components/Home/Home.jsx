@@ -274,15 +274,17 @@ export default function Home() {
           comments: data.comments ?? [],
           articleId: article._id
         });
-      } else {
-        const savedComments = JSON.parse(localStorage.getItem(`comments_${article.link}`) || "[]");
-        setPreviewData({ 
-          source: "rss", 
-          post: article, 
-          comments: savedComments,
-          articleId: article.link
-        });
-      }
+      } 
+      else
+        {
+          const savedComments = JSON.parse(localStorage.getItem(`comments_${article.link}`) || "[]");
+          setPreviewData({ 
+            source: "rss", 
+            post: article, 
+            comments: savedComments,
+            articleId: article.link
+          });
+        }
     } catch (err) {
       console.error("Error fetching preview:", err);
       const savedComments = JSON.parse(localStorage.getItem(`comments_${article.link}`) || "[]");
