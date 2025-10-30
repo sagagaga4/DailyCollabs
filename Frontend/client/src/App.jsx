@@ -30,7 +30,7 @@ export default function App() {
               <Route path="/Communities" element={<Communities />} />
               <Route path="/Posts" element={<Posts />} />
               <Route path="/Comments" element={<Comments />} />
-              <Route path="/Bookmarked" element={<Bookmarked />}/>
+              <Route path="/Bookmarked" element={<Bookmarked token={token}/>} />
             </Routes>
           </div>
         </div>

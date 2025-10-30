@@ -44,7 +44,7 @@ export default function Home() {
     const initializeData = async () => {
       try {
         // Get auth token
-        const savedToken = localStorage.getItem("token");
+        const savedToken = sessionStorage.getItem("token");
         setToken(savedToken);
 
         // Load bookmarks from localStorage
@@ -220,7 +220,6 @@ export default function Home() {
               ...prev,
               [articleLink]: data.count
             };
-            //Storing the reactionCounts "like" inside of localStorage for showing on reload
             localStorage.setItem("reactionCounts", JSON.stringify(updated));
             return updated;
           });
@@ -260,7 +259,7 @@ export default function Home() {
             [articleLink]: data.status?.includes("removed") ? null : "dislike"
           };
           //Storing the userReaction "like" inside of localStorage for showing on reload
-          localStorage.setItem("userReactions", JSON.stringify(updated)); // <-- Add this
+          localStorage.setItem("userReactions", JSON.stringify(updated)); 
           return updated;
         });
 
@@ -271,8 +270,8 @@ export default function Home() {
               ...prev,
               [articleLink]: data.count
             };
-            //Storing the reactionCounts "like" inside of localStorage for showing on reload
-            localStorage.setItem("reactionCounts", JSON.stringify(updated)); // <-- Add this
+            //Storing the reactionCounts "dilike" inside of localStorage for showing on reload
+            localStorage.setItem("reactionCounts", JSON.stringify(updated)); 
             return updated;
           });
         }
@@ -283,15 +282,20 @@ export default function Home() {
     }
   };
 
-  // Bookmark Button Logic (local storage)
-  const handleBookmark = (articleIndex) => {
+  // Bookmark Button Logic (by article link)
+  const handleBookmark = (articleLink) => {
     const newBookmarked = new Set(bookmarkedArticles);
-    if (newBookmarked.has(articleIndex)) newBookmarked.delete(articleIndex);
-    else newBookmarked.add(articleIndex);
+    
+    if (newBookmarked.has(articleLink)) {
+      newBookmarked.delete(articleLink);
+    } else {
+      newBookmarked.add(articleLink);
+    }
 
     setBookmarkedArticles(newBookmarked);
     localStorage.setItem("bookmarkedArticles", JSON.stringify([...newBookmarked]));
   };
+
   
   // CopyLink Button Logic
   const handleSendLink = (link) => {
@@ -614,11 +618,11 @@ export default function Home() {
                       </div>
                     )}
 
-                    {bookmarkedArticles.has(idx) ? (
-                      <BookmarkAddedIcon onClick={() => handleBookmark(idx)} 
+                    {bookmarkedArticles.has(article.link) ? (
+                      <BookmarkAddedIcon onClick={() => handleBookmark(article.link)} 
                       className="btn-bookmarked" title="Remove bookmark" />
                     ) : (
-                      <BookmarkAddIcon onClick={() => handleBookmark(idx)} 
+                      <BookmarkAddIcon onClick={() => handleBookmark(article.link)} 
                       className="btn-unbookmark" title="Bookmark" />
                     )}
 

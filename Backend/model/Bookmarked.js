@@ -1,4 +1,4 @@
-import mongoose from "mongoose";
+const mongoose = require('mongoose')
 
 const BookmarkedSchema = new mongoose.Schema(
     {
@@ -18,4 +18,5 @@ const BookmarkedSchema = new mongoose.Schema(
     }
 );
 
-export default mongoose.model("Bookmarked", BookmarkedSchema);
+const Bookmarked = mongoose.model('Bookmarked', BookmarkedSchema)
+module.exports = Bookmarked

@@ -6,6 +6,9 @@ class BookmarkedRepository {
         return await Bookmarked.findOne({userId, articleLink});
     }
 
+    async findAllBookmarksByUserId(userId) {
+        return await Bookmarked.find({userId})
+    }
     async createBookmark(userId, articleLink) {
         return await Bookmarked.create({userId, articleLink});
     }

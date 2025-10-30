@@ -3,7 +3,7 @@ const BookmarkedRepository = require('../repositories/BookmarkedRepository.js');
 const BookRepo = new BookmarkedRepository();
 
 const getAllBookmarked = async (userId) => {
-  return await BookRepo.getAllBookmarks(userId);
+  return await BookRepo.findAllBookmarksByUserId(userId);
 };
 
 const createBookmark = async (userId, articleLink) => {

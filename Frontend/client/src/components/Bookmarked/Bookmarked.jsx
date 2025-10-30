@@ -4,36 +4,27 @@ import { useEffect, useState } from "react";
 import "../Home/Home.css";
 
 
-export default function Bookmarked() {
+export default function Bookmarked({token}) {
   const [articles, setArticles] = useState([]);
 
   useEffect(() => {
-    // Get bookmarks from localStorage
-    const savedBookmarks = new Set(
-      JSON.parse(localStorage.getItem("bookmarkedArticles") || "[]")
-    );
-    // Fetch RSS feed
-    const fetchArticles = async () => {
+    const fetchBookmarked = async () => {
       try {
-        
-        //const response = await fetch("http://localhost:4000/rss");
-        const response = await fetch("http://192.168.68.117:4000/rss");
-        if (!response.ok) throw new Error("Failed to fetch news feed");
-
-        const data = await response.json();
-        
-        // Filter only bookmarked articles
-        const filtered = data.filter((_, idx) => savedBookmarks.has(idx));
-        setArticles(filtered);
+        const res = await fetch("http://localhost:4000/bookmarked", {
+          headers: { Authorization: `Bearer ${token}` },
+        });
+        if (!res.ok) throw new Error("Failed to load bookmarks");
+        const data = await res.json();
+        setArticles(data);
       } catch (err) {
-        console.error("Error fetching articles:", err);
+        console.error("Error fetching bookmarks:", err);
       }
     };
 
-    fetchArticles();
-  }, []);
+    fetchBookmarked();
+  }, [token]);
 
-  if (!articles.length) return <p style={{ padding: 20, color: "#f8f8f6eb" }}>No bookmarks yet 📌</p>;
+  if (!articles.length) return <p style={{ padding: 20, color: "#f8f8f6eb", display:"flex",justifyContent:"center" }}>No bookmarks yet 📌</p>;
 
 return (
   <div className="home-container">
