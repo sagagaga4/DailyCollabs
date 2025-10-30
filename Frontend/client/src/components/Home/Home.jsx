@@ -38,6 +38,7 @@ export default function Home() {
   
   const [currentUser, setCurrentUser] = useState(null);
   
+  
   // Load user preferences and auth token
   useEffect(() => {
     const initializeData = async () => {
@@ -102,6 +103,7 @@ export default function Home() {
   // Fetch user's reactions for articles
   const fetchReactionsForArticles = async (articlesList, authToken) => {
     try {
+      
       const reactions = {};
       const counts = {};
 
@@ -110,7 +112,7 @@ export default function Home() {
           // Get user's reaction
           const userReactionRes = await fetch(`http://localhost:4000/reactions/${article.link}/my`, {
             headers: {
-              Authorization: `Bearer ${authToken}`,
+              authorization: `Bearer ${authToken}`,
             },
           });
           
@@ -122,7 +124,7 @@ export default function Home() {
           // Get reaction counts
           const countRes = await fetch(`http://localhost:4000/reactions/${article.link}/count`, {
             headers: {
-              Authorization: `Bearer ${authToken}`,
+              authorization: `Bearer ${authToken}`,
             },
           });
           
@@ -135,7 +137,11 @@ export default function Home() {
         }
       }
 
-      setUserReactions(reactions);
+      setUserReactions(prev => {
+        const updatedReactions = {...prev, ...reactions};
+        localStorage.setItem("userReactions",JSON.stringify(updatedReactions));
+        return updatedReactions;
+      });
       setReactionCounts(counts);
     } catch (err) {
       console.error("Error fetching reactions:", err);
@@ -175,14 +181,14 @@ export default function Home() {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
+          authorization: `Bearer ${token}`,
         },
         body: JSON.stringify({ articleLink, type: "like" }),
       });
 
       if (res.ok) {
         const data = await res.json();
-        
+
         // Update user reaction
         setUserReactions(prev => ({
           ...prev,
@@ -215,7 +221,7 @@ export default function Home() {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
+          authorization: `Bearer ${token}`,
         },
         body: JSON.stringify({ articleLink, type: "dislike" }),
       });
