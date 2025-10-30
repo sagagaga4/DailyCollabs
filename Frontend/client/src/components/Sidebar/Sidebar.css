@@ -5,7 +5,7 @@
   box-sizing: border-box;
 }
 
-/* === Container === */
+/* === Container (Vertical for Desktop) === */
 .container {
   border: 1px solid #cac5c527;
   position: fixed;
@@ -37,63 +37,7 @@
   width: 12rem;
 }
 
-/* === Menu Button === */
-/*
-  .menu-button {
-    background-color: #19191b;
-    border: none;
-    width: 1.5rem;
-    height: 1.5rem;
-    border-radius: 50%;
-    margin: 1rem;
-    cursor: pointer;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    position: relative;
-  }
-
-  .menu-button::before,
-  .menu-button::after {
-    content: "";
-    background-color: #ddd6d6dc;
-    height: 2px;
-    width: 1rem;
-    position: absolute;
-    transition: all 0.3s ease;
-  }
-
-  .menu-button::before {
-    top: 0.6rem;
-  }
-
-  .menu-button::after {
-    top: 0.9rem;
-  }
-
-  .menu-button.clicked::before {
-    top: 0.8rem;
-    transform: rotate(135deg);
-  }
-
-  .menu-button.clicked::after {
-    top: 0.8rem;
-    transform: rotate(-135deg);
-  }
-*/
-/* === Logo === */
-/*.logo {
-  margin-bottom: 2rem;
-}
-
-.logo img {
-  width: 2rem;
-  height: 2rem;
-  margin-top: 40px;
-  padding-left: 2px;
-}
-*/
-/* === Navigation === */
+/* === Navigation (Desktop) === */
 .slick-bar {
   list-style: none;
   width: 100%;
@@ -113,6 +57,7 @@
   text-decoration: none;
   font-size: 0.9rem;
   transition: all 0.3s ease;
+  position: relative; 
 }
 
 .slick-bar a img {
@@ -121,12 +66,18 @@
   filter: invert(80%);
 }
 
+/* Active style for desktop (vertical border) */
 .slick-bar a.active {
   border-right: 3px solid #f8f8f6eb;
 }
 
 .slick-bar a.active img {
   filter: contrast(-100%);
+}
+
+/* Hide the fixed-width indicator on desktop */
+.slick-bar a .active-indicator {
+    display: none;
 }
 
 /* === Text Visibility (when expanded) === */
@@ -140,7 +91,7 @@
   opacity: 1;
 }
 
-/* === Profile Section === */
+/* === Profile Section (Desktop) === */
 .profile {
   margin-top: auto;
   margin-bottom: 2rem;
@@ -155,113 +106,92 @@
   height: 1.3rem;
   border-radius: 50%;
 }
-/*
-.details {
-  display: none;
-  flex-direction:row;
-  align-items: center;
-}
 
-.profile.expanded .details {
-  display: flex;
-}
+/* ------------------------------------------------ */
 
-.name {
-  font-size: 0.9rem;
-}
-
-.name a {
-  font-size: 0.8rem;
-  text-decoration: none;
-  color: grey;
-}
-
-.name a:hover {
-  text-decoration: underline;
-}
-
-.logout {
-  background: none;
-  border: none;
-  margin-top: -0.5rem;
-  margin-left: 20px;
-  cursor: pointer;
-}
-
-.logout img {
-  width: 1.2rem;
-  height: 1.2rem;
-  filter: invert(15%) sepia(70%) hue-rotate(2deg) brightness(100%) contrast(0%)opacity(900%);
-  transition: opacity 0.3s ease;
-}
-
-.logout img:hover {
-  opacity: 0.5;
-}
-*/
-/* === Responsive Layout for Smaller Screens === */
+/* === Responsive Layout for Smaller Screens (Max-Width: 768px) === */
 @media screen and (max-width: 768px) {
+  /* CONTAINER: Horizontal bar at the top */
   .container {
     flex-direction: row;
     align-items: center;
     justify-content: center;
-    height: auto;
+    height: 3.5rem; 
     width: 100%;
+    position: fixed; 
+    top: 0;
+    left: 0;
   }
 
+  /* SIDEBAR CONTAINER: Uses row-reverse to place profile on the right */
   .sidebar-container {
-    flex-direction: column;
-    justify-content: center;
+    /* FIX: Reverses the order (Profile -> Right, Slick-Bar -> Left/Center) */
+    flex-direction: row-reverse; 
+    justify-content: space-between; 
     align-items: center;
-    margin-top:3px;
+    margin-top: 0;
     height: 100%;
     width: 100%;
     padding: 0 1rem;
-    border-radius: 0 0 10px 10px;
+    border-radius: 0;
     position: relative;
   }
 
   .sidebar-container.expanded {
-    height: 12rem;
-    flex-direction: column;
+    height: 3.5rem;
+    flex-direction: row-reverse; 
     align-items: center;
-    justify-content: center;
-    padding-top: 2rem;
+    justify-content: space-between;
+    padding: 0 1rem;
   }
 
+  /* SLICK BAR (NAVIGATION): Centered */
   .slick-bar {
     flex-direction: row;
-    justify-content: flex-start;
+    flex-grow: 1; /* Takes up all available space for centering */
+    justify-content: space-evenly; /* FIX: Center the icons horizontally */
     align-items: center;
     width: auto;
-    margin-left: 130px; 
+  }
+  
+  /* Hide the text links on mobile */
+  .slick-bar .text {
+    display: none;
   }
 
+  /* LINK: Adjust link padding for mobile icon bar */
   .slick-bar a {
-    border-radius: 20px 20px 0 0;
-    padding: 0.5rem;
+    position: relative; 
+    border-radius: 0; 
+    padding: 0.5rem 1rem;
+    width: auto;
+    gap: 0;
+    justify-content: center;
   }
 
+  /* ACTIVE LINK: Remove the inconsistent border-bottom */
   .slick-bar a.active {
     border-right: none;
-    border-bottom: 4px solid #e1dcdc;
+    border-bottom: none; 
   }
 
-  .profile {
+  /* NEW: Active Tab Indicator (Fixed Length) */
+  .slick-bar a .active-indicator {
+    display: block; /* Show on mobile */
     position: absolute;
-    left: 1rem;
-    top: 50%;
-    flex-direction: row;
-    align-items: center;
-    justify-content: flex-start;
-    margin: 0;
-    top:11px;
+    bottom: 0;
+    width: 25px; /* Consistent length across all tabs */
+    height: 4px;
+    background-color: #e1dcdc;
+    left: 50%;
+    transform: translateX(-50%); /* Centering the indicator */
+    border-radius: 2px;
   }
 
+  /* PROFILE: Now on the right */
+  .profile {
+    position: static; 
+    margin: 0;
+    margin-left: 1rem; /* Add some space between profile and navigation */
+  }
 }
-/*
-  .profile.expanded .details {
-      display: flex;
-      margin-left: 0.5rem;
-    }
-*/

@@ -3,22 +3,27 @@ import { NavLink } from "react-router-dom";
 import "./Sidebar.css";
 
 // All the svg files
-//import logo from "./icons/export_linux.svg"
 import Home from "./icons/home-solid.svg";
 import Team from "./icons/social.svg";
 import Posts  from "./icons/posts.svg";
 import CollectionsBookmarkIcon from '@mui/icons-material/CollectionsBookmark';
 
 const Sidebar = () => {
-  const [click, setClick] = useState(false);
+  // Keeping the profile state
   const [profileClick, setProfileClick] = useState(false);
   const handleProfileClick = () => setProfileClick(!profileClick);
+
+  // Helper function to check if the NavLink is active
+  const getNavLinkClass = ({ isActive }) => {
+    return isActive ? "active" : "";
+  };
 
   return (
     <div className="container">
       
       <div className="sidebar-container">
         
+        {/* The profile will appear on the right on mobile due to CSS flex-direction: row-reverse */}
         <div className={`profile ${profileClick ? "expanded" : ""}`}>
           <img
             onClick={handleProfileClick}
@@ -27,42 +32,43 @@ const Sidebar = () => {
           />
         </div>
 
-        <ul className={`slick-bar ${click ? "expanded" : ""}`}>
+        {/* The navigation links */}
+        <ul className="slick-bar">
+          
           <NavLink
-            exact="true"
             to="/"
-            activeclassname="active"
-            onClick={() => setClick(false)}
+            className={getNavLinkClass}
           >
             <img src={Home} alt="Home" />
-            <span className={`text ${click ? "show" : ""}`}>Home</span>
+            <span className="text">Home</span>
+            <span className="active-indicator"></span> {/* FIXED-WIDTH INDICATOR */}
           </NavLink>
 
           <NavLink
             to="/Communities"
-            activeclassname="active"
-            onClick={() => setClick(false)}
+            className={getNavLinkClass}
           >
             <img src={Team} alt="Team" />
-            <span className={`text ${click ? "show" : ""}`}>Community</span>
+            <span className="text">Community</span>
+            <span className="active-indicator"></span> {/* FIXED-WIDTH INDICATOR */}
           </NavLink>
 
-            <NavLink
+          <NavLink
             to="/Posts"
-            activeclassname="active"
-            onClick={() => setClick(false)}
+            className={getNavLinkClass}
           >
             <img src={Posts} alt="Posts" />
-            <span className={`text ${click ? "show" : ""}`}>Community</span>
+            <span className="text">Posts</span>
+            <span className="active-indicator"></span> {/* FIXED-WIDTH INDICATOR */}
           </NavLink>
 
           <NavLink
             to= "/Bookmarked"
-            activeclassname="active"
-            onClick={()=> setClick(false)}
+            className={getNavLinkClass}
           >
             <CollectionsBookmarkIcon style={{color:'#f8f8f6eb'}}></CollectionsBookmarkIcon>
-            <span className={`text ${click ? "show" : ""}`}>Community</span>
+            <span className="text">Bookmarked</span>
+            <span className="active-indicator"></span> {/* FIXED-WIDTH INDICATOR */}
           </NavLink>
         </ul>
       </div>
