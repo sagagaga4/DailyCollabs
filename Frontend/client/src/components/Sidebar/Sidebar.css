@@ -159,17 +159,23 @@
     border-bottom: none; 
   }
 
-  .slick-bar a .active-indicator {
-    display: block; 
-    position: absolute;
-    bottom: 0;
-    width: 25px;
-    height: 4px;
-    background-color: #e1dcdc;
-    left: 50%;
-    transform: translateX(-50%); 
-    border-radius: 2px;
-  }
+ /* hide by default */
+.slick-bar a .active-indicator {
+  display: none;
+}
+
+/* show only when link is active */
+.slick-bar a.active .active-indicator {
+  display: block; 
+  position: absolute;
+  bottom: 0;
+  width: 25px;
+  height: 4px;
+  background-color: #e1dfdc;
+  left: 50%;
+  transform: translateX(-50%); 
+  border-radius: 2px;
+}
 
   .profile {
     position: static; 

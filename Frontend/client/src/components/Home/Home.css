@@ -181,9 +181,23 @@
   .card-content{
     height:350px;
   }
-  .action-buttons {
-    gap: 8px;
-    justify-content: space-evenly;
+   .action-buttons {
+    justify-content: space-around; 
+    flex-wrap: wrap; 
+    gap: 40px; 
+    padding: 8px;
+  }
+    .btn-unliked,
+  .btn-disdisliked,
+  .btn-unbookmark,
+  .btn-cpylink,
+  .btn-comments,
+  .btn-liked,
+  .btn-disliked,
+  .btn-bookmarked {
+    flex: 1 1 40px; 
+    min-width: 30px;
+    text-align: center;
   }
 
   .card-img {
