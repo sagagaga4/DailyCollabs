@@ -11,6 +11,7 @@ const authRoutes = require('./routers/authRouter.js')
 const rssRouter = require('./routers/rssRouter')
 const tagRoutes = require('./routers/tagRouter.js')
 const reactionRoutes = require('./routers/reactionsRouter.js')
+const bookmarkRoutes = require('./routers/bookmarkedRouter.js')
 const app = express()
 const PORT = 4000
 
@@ -30,6 +31,7 @@ app.use('/auth', authRoutes)
 app.use('/rss', rssRouter)
 app.use('/tags', tagRoutes)
 app.use('/reactions', reactionRoutes)
+app.use('/bookmarked', bookmarkRoutes)
 
 connectDB().then(() => {
   app.listen(PORT, () => {

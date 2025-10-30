@@ -2,11 +2,19 @@ import mongoose from "mongoose";
 
 const BookmarkedSchema = new mongoose.Schema(
     {
-        articleLink: { type: String, required: true },
-        title: String,
-        description: String,
-        image: String,
-        createdAt: { type: Date, default: Date.now },
+        userId: { 
+            type: mongoose.Schema.Types.ObjectId,
+            ref: "User",
+            required: true,
+        },
+        articleLink: { 
+            type: String,
+            required: true
+        },
+        createdAt: {
+            type: Date,
+            default: Date.now 
+        },
     }
 );
 
