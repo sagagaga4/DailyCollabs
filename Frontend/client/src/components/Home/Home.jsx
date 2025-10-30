@@ -50,6 +50,13 @@ export default function Home() {
         // Load bookmarks from localStorage
         setBookmarkedArticles(new Set(JSON.parse(localStorage.getItem("bookmarkedArticles") || "[]")));
       
+        //Load user reactions from localStorage
+        const savedUserReactions = JSON.parse(localStorage.getItem("userReactions") || "{}");
+        setUserReactions(savedUserReactions);
+        
+        const savedReactionCounts = JSON.parse(localStorage.getItem("reactionCounts") || "{}");
+        setReactionCounts(savedReactionCounts);
+
         const user = JSON.parse(localStorage.getItem("currentUser") || '{"username": "Anonymous"}');
         setCurrentUser(user);
 
@@ -142,7 +149,13 @@ export default function Home() {
         localStorage.setItem("userReactions",JSON.stringify(updatedReactions));
         return updatedReactions;
       });
-      setReactionCounts(counts);
+      
+      setReactionCounts(prev => { // <-- Change setReactionCounts(counts); to this
+        const updatedCounts = {...prev, ...counts};
+        localStorage.setItem("reactionCounts", JSON.stringify(updatedCounts)); // <-- Add this
+        return updatedCounts;
+      });
+
     } catch (err) {
       console.error("Error fetching reactions:", err);
     }
@@ -170,6 +183,8 @@ export default function Home() {
   }, []);
   
   // Like Button - Database backed
+  // Like Button - Database backed
+ // Like Button - Database backed
   const handleLike = async (articleLink) => {
     if (!token) {
       alert("Please log in to like articles");
@@ -190,17 +205,25 @@ export default function Home() {
         const data = await res.json();
 
         // Update user reaction
-        setUserReactions(prev => ({
-          ...prev,
-          [articleLink]: data.status?.includes("removed") ? null : "like"
-        }));
+        setUserReactions(prev => {
+          const updated = {
+            ...prev,
+            [articleLink]: data.status?.includes("removed") ? null : "like"
+          };
+          localStorage.setItem("userReactions", JSON.stringify(updated));
+          return updated;
+        });
 
         // Update counts
         if (data.count) {
-          setReactionCounts(prev => ({
-            ...prev,
-            [articleLink]: data.count
-          }));
+          setReactionCounts(prev => {
+            const updated = {
+              ...prev,
+              [articleLink]: data.count
+            };
+            localStorage.setItem("reactionCounts", JSON.stringify(updated));
+            return updated;
+          });
         }
       }
     } catch (err) {
@@ -230,17 +253,25 @@ export default function Home() {
         const data = await res.json();
         
         // Update user reaction
-        setUserReactions(prev => ({
-          ...prev,
-          [articleLink]: data.status?.includes("removed") ? null : "dislike"
-        }));
+          setUserReactions(prev => {
+          const updated = {
+            ...prev,
+            [articleLink]: data.status?.includes("removed") ? null : "dislike"
+          };
+          localStorage.setItem("userReactions", JSON.stringify(updated)); // <-- Add this
+          return updated;
+        });
 
         // Update counts
-        if (data.count) {
-          setReactionCounts(prev => ({
-            ...prev,
-            [articleLink]: data.count
-          }));
+          if (data.count) {
+          setReactionCounts(prev => {
+            const updated = {
+              ...prev,
+              [articleLink]: data.count
+            };
+            localStorage.setItem("reactionCounts", JSON.stringify(updated)); // <-- Add this
+            return updated;
+          });
         }
       }
     } catch (err) {
@@ -612,7 +643,7 @@ export default function Home() {
           <div className="modal-card" onClick={(e) => e.stopPropagation()}>
 
             <h2 style={{ marginBottom: 6 }}>{previewData.post?.title || "Preview"}</h2>
-            <p style={{ color: "#cac8bbca",fontWeight:"bold", marginTop: 0 }}>
+            <p style={{ color: "#585853ca", marginTop: 0 }}>
               {previewData.post?.pubDate ? new Date(previewData.post.pubDate).toLocaleString() : ""}
             </p>
 
@@ -621,7 +652,7 @@ export default function Home() {
               style={{ width: "100%", maxHeight: 260, objectFit: "cover", borderRadius: 8 }} />
             )}
 
-            <div style={{ marginTop: 12 }}>
+            <div style={{ marginTop: 12 , color:"#b8b7b5ca"}}>
               <p>{previewData.post?.content || previewData.post?.description ||
                    previewData.post?.summary || "No full content available."}</p>
             </div>
@@ -726,7 +757,7 @@ export default function Home() {
                     border: "none",
                     backgroundColor: submittingComment || !newComment.trim() 
                       ? "#1f1f21ff" 
-                      : "#1dc37eff",
+                      : "#dca524ff",
                     color: "#fff",
                     cursor: submittingComment || !newComment.trim() 
                       ? "not-allowed" 

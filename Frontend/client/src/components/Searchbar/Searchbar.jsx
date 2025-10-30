@@ -174,7 +174,7 @@ const handleRemoveTag = async (tagToRemove) => {
       {loading && (
         <div className="thinking-container">
           <span className="loading-dots" style={{fontWeight:"bolder", fontSize: "20px",fontFamily:"monospace"}}>
-            🤔Thinking<span>.</span><span>.</span><span>.</span>
+            🔍Searching<span>.</span><span>.</span><span>.</span>
           </span>
         </div>
       )}
