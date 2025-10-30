@@ -181,16 +181,14 @@ export default function Home() {
     window.addEventListener("keydown", onKey);
     return () => window.removeEventListener("keydown", onKey);
   }, []);
-  
-  // Like Button - Database backed
-  // Like Button - Database backed
- // Like Button - Database backed
+
+  //Like button handler
   const handleLike = async (articleLink) => {
     if (!token) {
       alert("Please log in to like articles");
       return;
     }
-
+    //Send like to the db - sends article link + type of "like". 
     try {
       const res = await fetch("http://localhost:4000/reactions", {
         method: "POST",
@@ -204,12 +202,13 @@ export default function Home() {
       if (res.ok) {
         const data = await res.json();
 
-        // Update user reaction
+        // Update user reaction, checks if already clicked or not
         setUserReactions(prev => {
           const updated = {
             ...prev,
             [articleLink]: data.status?.includes("removed") ? null : "like"
           };
+          //Storing the userReaction "like" inside of localStorage for showing on reload
           localStorage.setItem("userReactions", JSON.stringify(updated));
           return updated;
         });
@@ -221,6 +220,7 @@ export default function Home() {
               ...prev,
               [articleLink]: data.count
             };
+            //Storing the reactionCounts "like" inside of localStorage for showing on reload
             localStorage.setItem("reactionCounts", JSON.stringify(updated));
             return updated;
           });
@@ -240,6 +240,7 @@ export default function Home() {
     }
 
     try {
+      //Send dilike to the db - sends article link + type of "like". 
       const res = await fetch("http://localhost:4000/reactions", {
         method: "POST",
         headers: {
@@ -252,12 +253,13 @@ export default function Home() {
       if (res.ok) {
         const data = await res.json();
         
-        // Update user reaction
+        // Update user reaction, checks if already clicked or not
           setUserReactions(prev => {
           const updated = {
             ...prev,
             [articleLink]: data.status?.includes("removed") ? null : "dislike"
           };
+          //Storing the userReaction "like" inside of localStorage for showing on reload
           localStorage.setItem("userReactions", JSON.stringify(updated)); // <-- Add this
           return updated;
         });
@@ -269,6 +271,7 @@ export default function Home() {
               ...prev,
               [articleLink]: data.count
             };
+            //Storing the reactionCounts "like" inside of localStorage for showing on reload
             localStorage.setItem("reactionCounts", JSON.stringify(updated)); // <-- Add this
             return updated;
           });

@@ -9,7 +9,6 @@ import Posts  from "./icons/posts.svg";
 import CollectionsBookmarkIcon from '@mui/icons-material/CollectionsBookmark';
 
 const Sidebar = () => {
-  // Keeping the profile state
   const [profileClick, setProfileClick] = useState(false);
   const handleProfileClick = () => setProfileClick(!profileClick);
 
@@ -23,7 +22,6 @@ const Sidebar = () => {
       
       <div className="sidebar-container">
         
-        {/* The profile will appear on the right on mobile due to CSS flex-direction: row-reverse */}
         <div className={`profile ${profileClick ? "expanded" : ""}`}>
           <img
             onClick={handleProfileClick}
@@ -41,7 +39,7 @@ const Sidebar = () => {
           >
             <img src={Home} alt="Home" />
             <span className="text">Home</span>
-            <span className="active-indicator"></span> {/* FIXED-WIDTH INDICATOR */}
+            <span className="active-indicator"></span> 
           </NavLink>
 
           <NavLink
@@ -50,7 +48,7 @@ const Sidebar = () => {
           >
             <img src={Team} alt="Team" />
             <span className="text">Community</span>
-            <span className="active-indicator"></span> {/* FIXED-WIDTH INDICATOR */}
+            <span className="active-indicator"></span> 
           </NavLink>
 
           <NavLink
@@ -59,7 +57,7 @@ const Sidebar = () => {
           >
             <img src={Posts} alt="Posts" />
             <span className="text">Posts</span>
-            <span className="active-indicator"></span> {/* FIXED-WIDTH INDICATOR */}
+            <span className="active-indicator"></span> 
           </NavLink>
 
           <NavLink
@@ -68,7 +66,7 @@ const Sidebar = () => {
           >
             <CollectionsBookmarkIcon style={{color:'#f8f8f6eb'}}></CollectionsBookmarkIcon>
             <span className="text">Bookmarked</span>
-            <span className="active-indicator"></span> {/* FIXED-WIDTH INDICATOR */}
+            <span className="active-indicator"></span> 
           </NavLink>
         </ul>
       </div>
