@@ -43,7 +43,7 @@ export default function Register() {
   };
 
   return (
-
+<div className="register-page">
 <div className="register-container">
       <h2>Create Account</h2>
       <div className="user-register">
@@ -96,6 +96,7 @@ export default function Register() {
         </button>
       </form>
       </div>
+    </div>
     </div>
   );
 }

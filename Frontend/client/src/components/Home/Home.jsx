@@ -552,6 +552,7 @@ export default function Home() {
   if (!articles || articles.length === 0) return <p className="home-container">No news available</p>;
 
   return (
+  <div className="login-page">
   <div className="home-container">
      <SearchBar onResults={handleSearchResults} />
       <div className="grid-container">
@@ -906,6 +907,7 @@ export default function Home() {
           </div>
         </div>
       )}
+    </div>
     </div>
     </div>
   );

@@ -1,3 +1,14 @@
+.register-page {
+  background: url('../Login/Backgrounds/mount2.jpg') ;
+  background-size: cover;
+  min-height: 100vh;
+  min-height: 100dvh;
+  width: 100vw;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
 .register-container{
   display: flex;
   color: aliceblue;

@@ -36,6 +36,7 @@ export default function Login() {
   };
 
   return (
+    <div className="login-page">
     <div className="login-container">
     <div className="user-login">
       <h2 style={{color:' rgba(255, 255, 255, 1)',fontWeight:'normal' ,fontFamily:'sans-serif'}}>Welcome Back!</h2>
@@ -74,6 +75,7 @@ export default function Login() {
         </span>
         </p>
       </form>
+    </div>
     </div>
     </div>
   );

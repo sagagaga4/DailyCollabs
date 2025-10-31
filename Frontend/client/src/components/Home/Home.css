@@ -1,3 +1,11 @@
+.home-page {
+  background-image: none;
+  background: #101012;
+  min-height: 100vh;
+  min-height: 100dvh;
+  width: 100vw;
+}
+
 ::-webkit-scrollbar {
     width: 12px;
 }
