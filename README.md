@@ -1,38 +1,34 @@
 # 🌐 AI-Powered News + Community Platform
 
-A **full-stack platform** where users and **community members** can find the hottest and latest news in whatever fascinates them atm and interact with each other on them.  
-Users can comment, save, dislike, or bookmark news posts, while members contribute **sentiment-aware, contextually relevant responses**.  
-
-Built with **Node.js, Express, MongoDB, Python, and React**, this project demonstrates **modern full-stack development**, authentication, AI integration, and interactive UI features.  
+A **full-stack platform** where users and **community members** can find the hottest and latest news in whatever fascinates them atm and interact with each other on them using OLLAMA Llama3 model + JWT authentication.  
+- Users can comment, save, dislike, or bookmark news posts, while members contribute **sentiment-aware, contextually relevant responses**.  
+- Built with **Node.js, Express, MongoDB, Python, and React**, this project demonstrates **modern full-stack development**, authentication, AI integration, and interactive UI features.  
 
 ---
 <img width="1440" height="780" alt="Screenshot 2025-10-27 at 22 54 17" src="https://github.com/user-attachments/assets/fe53c431-ce01-4145-b18e-9a24537ef0c4" />
 <img width="307" height="665" alt="Screenshot 2025-10-27 at 23 22 24" src="https://github.com/user-attachments/assets/986cb022-7ca0-436f-8f8c-21c302f37f97" />
 <img width="307" height="673" alt="Screenshot 2025-10-27 at 23 24 17" src="https://github.com/user-attachments/assets/50ed5ea9-27ec-48f3-9bfd-896ea849f10f" />
 
-## ✨ Key Features
-
-- 🔑 **User Authentication** – Secure login with daily action limits.  
-- 📰 **Dynamic News Feed** – AI-powered RSS aggregation for any topic, delivering **up-to-date news**.  
-- 👥 **Communities** – Users can join or create communities to discuss news and share opinions.  
-- 📝 **Posts & Comments** – Users can comment, reply, and engage in nested discussions.  
-- 💾 **Save, Dislike, Bookmark** – Curate personal feeds by saving favorites, bookmarking, or expressing opinions.  
-- 📊 **Action Tracking** – All user interactions logged for transparency and activity limits.  
-- 🎨 **Responsive Frontend** – Built with React (or Vanilla JS alternative) for a smooth, modern UI.  
+## Key Features
+- **User Authentication** – Secure login and registration with JWT implementation.  
+- **Dynamic News Feed** – AI-powered RSS aggregation for any topic, delivering **up-to-date news**.  
+- **Communities** – Users can join or create communities to discuss news and share opinions.  
+- **Posts & Comments** – Users can comment, reply, and engage in nested discussions.  
+- **Save,Like, Dislike, Bookmark** – Users can Like\Dislike,share,bookmark,comment and share their opinion on each post.  
 
 ---
 
 ## 🛠️ Tech Stack
 
-- **Frontend:** React / Vanilla JS + CSS (responsive, interactive UI)  
-- **Backend:** Node.js + Express  
+- **Frontend:** Reactjs + React Router + CSS 
+- **Backend:** Node.js + Express.js  
 - **Database:** MongoDB with Mongoose ODM  
 - **AI Layer:** External AI service for news aggregation, recommendation, and summarization  
 - **RSS Aggregation:** Fetch latest, media-rich news feeds  
 
 ---
 
-## 🚀 What I Focused On
+## What I Focused On
 
 - Building a **scalable backend architecture** with services & repositories.  
 - Designing **clean, reusable APIs** for users, communities, posts, comments, and news.  
