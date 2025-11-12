@@ -426,6 +426,7 @@ export default function Home() {
     }
 
     try {
+      //Adding a comment inside preview section
       if (previewData.source === "post" && previewData.articleId) {
         try {
           const res = await fetch(`/api/posts/${previewData.articleId}/comments/${commentId}`, {
@@ -435,6 +436,7 @@ export default function Home() {
           });
 
           if (res.ok) {
+            //Append the latest comment to the top of the list
             setPreviewData(prev => ({
               ...prev,
               comments: prev.comments.map(c => 
@@ -447,6 +449,7 @@ export default function Home() {
             throw new Error("Server error");
           }
         } catch (serverErr) {
+          //Store failing comment if accured
           console.warn("Failed to edit on server, editing locally:", serverErr);
           const storageKey = `comments_${previewData.articleId}`;
           const existingComments = JSON.parse(localStorage.getItem(storageKey) || "[]");
@@ -459,6 +462,7 @@ export default function Home() {
           setPreviewData(prev => ({...prev, comments: updatedComments}));
         }
       } else {
+        //Add the comments to the localStorage and append it to the latest comment
         const storageKey = `comments_${previewData.articleId}`;
         const existingComments = JSON.parse(localStorage.getItem(storageKey) || "[]");
         const updatedComments = existingComments.map(c => 
@@ -480,13 +484,14 @@ export default function Home() {
     }
   };
 
-  // Delete Comment
+  // Delete Comment from the preview section
   const handleDeleteComment = async (commentId) => {
     if (!confirm("Are you sure you want to delete this comment?")) {
       return;
     }
 
     try {
+      //Delete CRUD for clicking the trash can
       if (previewData.source === "post" && previewData.articleId) {
         try {
           const res = await fetch(`/api/posts/${previewData.articleId}/comments/${commentId}`, {
@@ -502,6 +507,7 @@ export default function Home() {
             throw new Error("Server error");
           }
         } catch (serverErr) {
+          //If deletion failed store failing deleted comment 
           console.warn("Failed to delete from server, deleting locally:", serverErr);
           const storageKey = `comments_${previewData.articleId}`;
           const existingComments = JSON.parse(localStorage.getItem(storageKey) || "[]");
@@ -511,6 +517,7 @@ export default function Home() {
           setPreviewData(prev => ({...prev, comments: updatedComments}));
         }
       } else {
+        //Delete the comment from localStorage
         const storageKey = `comments_${previewData.articleId}`;
         const existingComments = JSON.parse(localStorage.getItem(storageKey) || "[]");
         const updatedComments = existingComments.filter(c => c.id !== commentId);
