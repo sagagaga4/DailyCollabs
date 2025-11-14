@@ -37,8 +37,7 @@ A **full-stack platform** where users and **community members** can find the hot
 - Integrating an **AI-powered news service** to deliver relevant, high-quality news.  
 - Curating **media-rich news feeds** for interactive discussion.  
 
-
-## 📌 Why This Project?
+##  Why This Project?
 
 This project demonstrates **real-world full-stack development** for professional roles:  
 
@@ -48,7 +47,7 @@ This project demonstrates **real-world full-stack development** for professional
 - Practical **full-stack engineering skills** that stand out to recruiters.  
 
 ---
-## 🧑‍💻 Setup (Quick Start)
+##  Setup (Quick Start)
 
 ```bash
 # Clone the repo
