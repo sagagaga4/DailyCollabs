@@ -1,0 +1,11 @@
+const express=require('express');
+const auth=require('../middleware/authMiddleware');
+const service=require('../services/feedService');
+const router=express.Router();router.use(auth);
+const route=handler=>async(req,res)=>{try{await handler(req,res);}catch(error){res.status(error.status||500).json({message:error.status?error.message:'Your feed preferences could not be updated.'});}};
+router.get('/preferences',route(async(req,res)=>res.json(await service.getPreferences(req.user.id))));
+router.patch('/preferences',route(async(req,res)=>res.json(await service.updatePreferences(req.user.id,req.body))));
+router.post('/reset',route(async(req,res)=>res.json(await service.resetSignals(req.user.id))));
+const limits=new Map();
+router.post('/signals',route(async(req,res)=>{const id=String(req.user.id),now=Date.now();let limit=limits.get(id);if(!limit||limit.until<now){limit={count:0,until:now+60000};limits.set(id,limit);}if(limits.size>1000)for(const[key,value]of limits)if(value.until<now)limits.delete(key);if(++limit.count>120)return res.status(429).json({message:'Please give the feed a moment before sending more feedback.'});res.json(await service.recordSignal(req.user.id,req.body));}));
+module.exports=router;

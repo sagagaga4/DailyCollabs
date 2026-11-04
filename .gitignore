@@ -1,1 +1,11 @@
 .env
+.venv/
+__pycache__/
+*.pyc
+node_modules/
+Frontend/client/dist/
+Backend/agent-progress/*.log
+Backend/agent-progress/*.tmp
+
+# Generated health snapshot (created by the local watcher)
+Backend/agent-progress/quality.json

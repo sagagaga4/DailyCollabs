@@ -1,0 +1,209 @@
+[
+  {
+    "domain": "research.google",
+    "url": "https://research.google/pubs/deep-neural-networks-for-youtube-recommendations/",
+    "title": "Deep Neural Networks for YouTube Recommendations",
+    "takeaway": "Candidate generation and final ranking serve different objectives and can be maintained as separate stages.",
+    "decision": "Preserve topic and language constraints during retrieval, then personalize only eligible candidates. Do not claim the local weighted ranker is a trained deep model.",
+    "evidence": "read",
+    "category": "recommendation"
+  },
+  {
+    "domain": "fb.com",
+    "url": "https://engineering.fb.com/2026/01/14/ml-applications/adapting-the-facebook-reels-recsys-ai-model-based-on-user-feedback/",
+    "title": "Adapting the Facebook Reels RecSys AI Model Based on User Feedback",
+    "takeaway": "Direct interest feedback provides information beyond likes or watch time; sparse feedback and sampling bias still require care.",
+    "decision": "Give explicit saved topics, saves and hides clear influence; provide an editable preference view rather than treating time spent as proof of satisfaction.",
+    "evidence": "read",
+    "category": "recommendation"
+  },
+  {
+    "domain": "linkedin.com",
+    "url": "https://www.linkedin.com/blog/engineering/feed/engineering-the-next-generation-of-linkedins-feed",
+    "title": "Engineering the next generation of LinkedIn’s Feed",
+    "takeaway": "Content understanding, evolving interaction history, freshness and production latency jointly shape a useful feed.",
+    "decision": "Keep recent topic signals distinct from longer-lived interests, use bounded history, and retain a simple explainable baseline at this project’s scale.",
+    "evidence": "read",
+    "category": "recommendation"
+  },
+  {
+    "domain": "pinterest.com",
+    "url": "https://labs.pinterest.com/",
+    "title": "Pinterest Labs — Research & Innovation",
+    "takeaway": "Pinterest describes content representations that connect pins, boards, products and queries across retrieval and ranking, with responsible AI throughout the lifecycle.",
+    "decision": "Use shared content metadata across communities, bookmarks and search instead of isolated feature-specific profiles. The original pinterestlabs.com URL redirected to this actual domain.",
+    "evidence": "read",
+    "category": "recommendation"
+  },
+  {
+    "domain": "netflixtechblog.com",
+    "url": "https://netflixtechblog.com/netflix-recommendations-beyond-the-5-stars-part-1-55838468f429",
+    "title": "Netflix Recommendations: Beyond the 5 stars (Part 1)",
+    "takeaway": "This historical engineering account distinguishes rating accuracy from the whole recommendation experience and emphasizes diversity, freshness and explanations.",
+    "decision": "Show why an item was recommended, diversify the list, and avoid presenting a proxy metric as demonstrated user benefit. These are historical design lessons, not current Netflix weights.",
+    "evidence": "read",
+    "category": "recommendation"
+  },
+  {
+    "domain": "spotify.com",
+    "url": "https://newsroom.spotify.com/2026-09-23/taste-profile-shape-home-feed/",
+    "title": "How to Use Our Taste Profile Feature to Shape Your Spotify Homepage",
+    "takeaway": "Spotify exposes a readable interpretation of taste and permits users to steer or remove preference input.",
+    "decision": "Expose interest sources and a reset/pause or chronological control so a one-off interaction does not permanently define the feed.",
+    "evidence": "read",
+    "category": "recommendation"
+  },
+  {
+    "domain": "amazon.science",
+    "url": "https://www.amazon.science/the-history-of-amazons-recommendation-algorithm",
+    "title": "The history of Amazon’s recommendation algorithm",
+    "takeaway": "Item relationships can be a practical recommendation signal; chronological evaluation better reflects predicting subsequent preferences than reconstructing old consumption.",
+    "decision": "Bootstrap from metadata of genuinely saved items and selected communities, and evaluate ordering on time-separated fixtures before considering a learned model.",
+    "evidence": "read",
+    "category": "recommendation"
+  },
+  {
+    "domain": "microsoft.com",
+    "url": "https://learn.microsoft.com/en-us/sharepoint/search/overview-of-search-result-ranking",
+    "title": "Overview of search result ranking in SharePoint Server",
+    "takeaway": "Ranking combines query-dependent and query-independent features, with cheaper early stages and more selective later work.",
+    "decision": "Keep query relevance separate from freshness and account affinity, and calculate expensive enrichment only for the candidates actually returned.",
+    "evidence": "read",
+    "category": "recommendation"
+  },
+  {
+    "domain": "apple.com",
+    "url": "https://machinelearning.apple.com/research/semorec",
+    "title": "SEMORec: A Scalarized Efficient Multi-Objective Recommendation Framework",
+    "takeaway": "Multiple recommendation objectives require an explicit tradeoff, and the ability to tune objective importance can matter operationally.",
+    "decision": "Keep relevance, recency and diversity weights named and bounded; retain deterministic tests and user controls instead of an opaque single engagement score.",
+    "evidence": "read",
+    "category": "recommendation"
+  },
+  {
+    "domain": "tiktok.com",
+    "url": "https://newsroom.tiktok.com/how-tiktok-recommends-videos-for-you?lang=en",
+    "title": "How TikTok recommends videos #ForYou",
+    "takeaway": "The published explanation separates strong and weak feedback, cold-start interests, negative controls and deliberate interruption of repetitive patterns.",
+    "decision": "Offer not-interested feedback, deduplicate results, and avoid repeated same-source runs while keeping explicit topic search relevant.",
+    "evidence": "read",
+    "category": "recommendation"
+  },
+  {
+    "domain": "x.com",
+    "url": "https://help.x.com/en/resources/recommender-systems/for-you-home-timeline-recommendations",
+    "title": "For You Home Timeline Recommendations",
+    "takeaway": "X describes sourcing recent relevant candidates, interaction-based ranking, filtering and a reverse-chronological Following alternative.",
+    "decision": "Separate personalized For you from a chronological Latest mode and ensure users can hide irrelevant recommendations.",
+    "evidence": "read",
+    "category": "recommendation"
+  },
+  {
+    "domain": "github.com",
+    "url": "https://github.com/twitter/the-algorithm",
+    "title": "X’s Recommendation Algorithm — repository architecture",
+    "takeaway": "The published repository documents distinct user-signal, candidate-source, ranking and post-mixing/filtering components.",
+    "decision": "Keep event capture, interest-profile assembly and pure list ranking in separate local modules; use architectural lessons without copying repository implementation code.",
+    "evidence": "read",
+    "category": "recommendation"
+  },
+  {
+    "domain": "arxiv.org",
+    "url": "https://arxiv.org/abs/1606.07792",
+    "title": "Wide & Deep Learning for Recommender Systems",
+    "takeaway": "The paper’s complete abstract explains the tradeoff between memorizing known feature interactions and generalizing to unseen combinations, including sparse-data risks.",
+    "decision": "Use content metadata for cold start and bounded account evidence for affinity. Defer learned embeddings until sufficient legitimate training data exists.",
+    "evidence": "read",
+    "category": "recommendation"
+  },
+  {
+    "domain": "acm.org",
+    "url": "https://recsys.acm.org/recsys26/call/",
+    "title": "ACM RecSys 2026 — Call for Contributions",
+    "takeaway": "The conference’s evaluation guidance values reproducibility, user control, diversity and metrics beyond accuracy, with evidence aligned to claims.",
+    "decision": "Document ranking inputs and limitations, add reproducible tests for intended behavior, and avoid claiming increased retention from source review or unit tests.",
+    "evidence": "read",
+    "category": "recommendation"
+  },
+  {
+    "domain": "scipy.org",
+    "url": "https://docs.scipy.org/doc/scipy/reference/generated/scipy.spatial.distance.cosine.html",
+    "title": "SciPy cosine distance reference",
+    "takeaway": "Cosine distance is one minus normalized dot-product similarity; confusing distance with similarity reverses ranking intent.",
+    "decision": "Use normalized, bounded affinity and explicit zero-evidence behavior in ranking tests. This successfully read source replaces the IEEE bot-verification shell.",
+    "evidence": "read",
+    "category": "recommendation"
+  },
+  {
+    "domain": "stanford.edu",
+    "url": "https://web.stanford.edu/class/cs246/slides/07-recsys1.pdf",
+    "title": "Stanford CS246 — Recommender Systems I",
+    "takeaway": "The course distinguishes content-based and collaborative methods and identifies cold start, sparsity, first-rater and popularity-bias limitations.",
+    "decision": "Start with content-based topic overlap plus explicit user choices; reserve some source variety instead of assuming popularity is universal relevance.",
+    "evidence": "read",
+    "category": "recommendation"
+  },
+  {
+    "domain": "cornell.edu",
+    "url": "https://www.cs.cornell.edu/~tj/publications/joachims_02c.pdf",
+    "title": "Optimizing Search Engines using Clickthrough Data",
+    "takeaway": "Clicks depend on the displayed ranking as well as relevance; an unclicked item may simply have been unseen, so a click is not an absolute relevance judgment.",
+    "decision": "Do not interpret all unclicked stories as dislikes. Weight explicit hides and saves distinctly, and use impression-aware evaluation before learning from click logs.",
+    "evidence": "read",
+    "category": "recommendation"
+  },
+  {
+    "domain": "mit.edu",
+    "url": "https://news.mit.edu/2022/privacy-online-recommendations-0512",
+    "title": "Technique protects privacy when making online recommendations",
+    "takeaway": "MIT describes privacy risks in feature-vector recommendation and research separating useful nearest-neighbor output from unnecessary disclosure.",
+    "decision": "Keep each interest profile private to its account, bound retained event metadata, and do not expose other users’ histories. The project does not claim to implement the paper’s cryptographic protocol.",
+    "evidence": "read",
+    "category": "recommendation"
+  },
+  {
+    "domain": "recsyschallenge.com",
+    "url": "https://www.recsyschallenge.com/2024/",
+    "title": "RecSys Challenge 2024 — News recommendation task and evaluation",
+    "takeaway": "News recommendation combines rapidly decaying items and implicit interests; evaluation includes nDCG/MRR/AUC and diversity, novelty, serendipity and coverage.",
+    "decision": "Apply recency decay to news, deduplicate repeated stories and test source coverage alongside relevance; do not optimize only clicks.",
+    "evidence": "read",
+    "category": "recommendation"
+  },
+  {
+    "domain": "jmlr.org",
+    "url": "https://jmlr.org/papers/v10/gunawardana09a.html",
+    "title": "A Survey of Accuracy Evaluation Metrics of Recommendation Tasks",
+    "takeaway": "The complete published abstract explains that evaluation metrics must match the task; an inappropriate metric can select the wrong algorithm.",
+    "decision": "Use ordering and coverage checks appropriate to a news feed, and label offline results separately from real user outcomes. This source replaces unreadable RecBole pages.",
+    "evidence": "read",
+    "category": "recommendation"
+  },
+  {
+    "domain": "tensorflow.org",
+    "url": "https://www.tensorflow.org/recommenders/examples/basic_retrieval",
+    "title": "TensorFlow Recommenders — Recommending movies: retrieval",
+    "takeaway": "The tutorial separates efficient candidate retrieval from fine ranking and illustrates training/test preparation and implicit versus explicit evidence.",
+    "decision": "Keep the current retrieval/ranking boundary explicit and measure a simple baseline before adding training infrastructure; absence of interaction is not a product-level dislike signal.",
+    "evidence": "read",
+    "category": "recommendation"
+  },
+  {
+    "domain": "pytorch.org",
+    "url": "https://docs.pytorch.org/tutorials/intermediate/torchrec_intro_tutorial.html",
+    "title": "Introduction to TorchRec",
+    "takeaway": "Embedding representations are trained from labeled examples; large-scale recommendation tables require deliberate memory and infrastructure planning.",
+    "decision": "Do not label random or untrained vectors as intelligence. Use real account metadata and transparent rules now, and keep a future learned-model interface separate.",
+    "evidence": "read",
+    "category": "recommendation"
+  },
+  {
+    "domain": "scikit-learn.org",
+    "url": "https://scikit-learn.org/stable/modules/generated/sklearn.metrics.ndcg_score.html",
+    "title": "scikit-learn — ndcg_score",
+    "takeaway": "nDCG discounts lower-ranked items and normalizes against the ideal ordering; cutoff and tie handling affect the measured result.",
+    "decision": "When graded relevance labels exist, evaluate top-k ordering with a documented cutoff and tie policy; retain deterministic order for equal scores.",
+    "evidence": "read",
+    "category": "recommendation"
+  }
+]

@@ -1,56 +1,10 @@
-// components/Posts/AddPost.jsx
-import { useState } from "react";
-import "./AddPosts.css"
-
-export default function AddPost({ onPostCreated }) {
-  const [content, setContent] = useState("");
-  const [communityID, setCommunityID] = useState("");
-  const token = sessionStorage.getItem("token");
-
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-
-    try {
-      const res = await fetch("http://localhost:4000/posts", {
-     //const res = await fetch("http://192.168.68.117:4000/posts", {  
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`, 
-        },
-        body: JSON.stringify({
-          content,
-          hashtags: ["#general"],
-          communityId: communityID || "default-community",
-          AuthorID: "12345", // TEMP → I will replace with logged-in user ID from token/session
-          date: new Date().toISOString(),
-        }),
-      });
-
-      if (!res.ok) {
-        const error = await res.text();
-        throw new Error(error);
-      }
-
-      const data = await res.json();
-      setContent("");
-      setCommunityID("");
-      onPostCreated?.(data); 
-    } catch (err) {
-      console.error("Failed to create post:", err.message);
-      alert(err.message);
-    }
-  };
-
-  return (
-    <form onSubmit={handleSubmit} className="add-post-form">
-      <textarea className="text-area"
-        placeholder="Share something..."
-        value={content}
-        onChange={(e) => setContent(e.target.value)}
-        required
-      />
-      <button type="submit" className="post-btn">Post</button>
-    </form>
-  );
+import { useEffect, useState } from 'react';
+import { API_URL } from '../../config';
+export default function AddPost({ onPostCreated, onClose }) {
+  const [form,setForm]=useState({title:'',content:'',communityId:'personal',hashtags:''});
+  const [communities,setCommunities]=useState([]);const [pending,setPending]=useState(false);const [error,setError]=useState('');
+  useEffect(()=>{const controller=new AbortController();fetch(API_URL+'/communities?joined=true',{headers:{Authorization:'Bearer '+sessionStorage.getItem('token')},signal:controller.signal}).then(r=>r.json()).then(d=>setCommunities(Array.isArray(d)?d:[])).catch(()=>{});return()=>controller.abort();},[]);
+  async function submit(event){event.preventDefault();if(pending)return;setPending(true);setError('');try{const response=await fetch(API_URL+'/posts',{method:'POST',headers:{'Content-Type':'application/json',Authorization:'Bearer '+sessionStorage.getItem('token')},body:JSON.stringify({...form,hashtags:form.hashtags.split(/[\s,]+/).filter(Boolean).slice(0,6)})});const data=await response.json();if(!response.ok)throw new Error(data.message||'Your post could not be published.');onPostCreated?.(data);}catch(err){setError(err.message);}finally{setPending(false);}}
+  const change=event=>setForm(previous=>({...previous,[event.target.name]:event.target.value}));
+  return <form className="library-composer" onSubmit={submit} aria-busy={pending}><h2>A thought worth sharing.</h2><fieldset disabled={pending} style={{border:0,padding:0,margin:0}}><label>Post title<input dir="auto" name="title" value={form.title} onChange={change} required minLength={3} maxLength={180} placeholder="Start with a good headline…" autoFocus/></label><label>Your message<textarea dir="auto" name="content" value={form.content} onChange={change} required minLength={3} maxLength={6000} rows={5} placeholder="Share a discovery, an idea, or a question."/></label><label>Share with<select name="communityId" value={form.communityId} onChange={change}><option value="personal">Everyone · Public post</option>{communities.map(c=><option value={c._id} key={c._id}>{c.name}</option>)}</select></label><label>Topics <span>(optional, up to six)</span><input name="hashtags" value={form.hashtags} onChange={change} maxLength={200} placeholder="#technology #creativity"/></label></fieldset>{error&&<p className="library-error" role="alert">{error}</p>}<div className="library-composer-footer"><span>{form.content.length}/6000 · Your account is the author</span><div className="library-composer-actions"><button type="button" className="library-secondary" onClick={onClose} disabled={pending}>Cancel</button><button className="library-primary" disabled={pending}>{pending?'Publishing…':'Publish post ↗'}</button></div></div></form>;
 }

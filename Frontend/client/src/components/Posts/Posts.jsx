@@ -1,50 +1,16 @@
-import { useEffect, useState } from "react";
-import "./Posts.css";
-import AddPost from "./AddPosts";
-
-export default function Posts() {
-  const [posts, setPosts] = useState([]);
-  const token = sessionStorage.getItem("token");
-
-  const fetchPosts = () => {
-      fetch("http://localhost:4000/posts", {
-    //fetch("http://192.168.68.117:4000/posts", {
-
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-    })
-      .then((res) => res.json())
-      .then((data) => setPosts(data))
-      .catch((err) => console.error("Failed to load posts:", err));
-  };
-
-  useEffect(() => {
-    fetchPosts();
-  }, [token]);
-
-  return (
-    <div className="pos-home-container">
-      <h2>Posts</h2>
-      <AddPost onPostCreated={fetchPosts} />
-
-      {posts.map((post) => (
-        <div key={post._id} className="pos-card">
-          <div className="pos-head">{post._id}</div>
-          <div className="pos-content">
-            <p>Created by: {post.AuthorID || "Unknown"}</p>
-            <p>
-              Date:{" "}
-              {post.date
-                ? new Date(post.date).toLocaleDateString()
-                : "No date"}
-            </p>
-            <p>Content: {post.content || "Unknown"}</p>
-            <p>Community: {post.communityID || "Not assigned"}</p>
-            <button className="pos-button">View Comments</button>
-          </div>
-        </div>
-      ))}
-    </div>
-  );
+import { useCallback, useEffect, useState } from 'react';
+import { Link, useSearchParams } from 'react-router-dom';
+import { API_URL } from '../../config';
+import { BOOKMARK_EVENT, readBookmarks, toggleBookmark } from '../../lib/bookmarks';
+import LibraryCard from '../Collections/LibraryCard';
+import AddPost from './AddPosts';
+import '../Collections/Collections.css';
+function viewer(){try{return JSON.parse(atob(sessionStorage.getItem('token').split('.')[1].replace(/-/g,'+').replace(/_/g,'/'))).id;}catch{return null;}}
+export default function Posts(){
+ const [posts,setPosts]=useState([]);const [loading,setLoading]=useState(true);const [error,setError]=useState('');const [notice,setNotice]=useState('');const [composing,setComposing]=useState(false);const [view,setView]=useState('all');const [query,setQuery]=useState('');const [saved,setSaved]=useState(readBookmarks);const [params]=useSearchParams();const id=viewer();
+ const load=useCallback(async(signal)=>{setError('');try{const r=await fetch(API_URL+'/posts',{headers:{Authorization:'Bearer '+sessionStorage.getItem('token')},signal});const d=await r.json();if(!r.ok||!Array.isArray(d))throw new Error(d.message||'Posts could not be loaded.');setPosts(d);}catch(err){if(err.name!=='AbortError')setError(err.message);}finally{if(!signal?.aborted)setLoading(false);}},[]);
+ useEffect(()=>{const controller=new AbortController();load(controller.signal);const change=event=>setSaved(event.detail||readBookmarks());window.addEventListener(BOOKMARK_EVENT,change);return()=>{controller.abort();window.removeEventListener(BOOKMARK_EVENT,change);};},[load]);
+ const visible=posts.filter(p=>(view!=='mine'||(p.authorId?._id||p.authorId)===id)&&(!params.get('post')||p._id===params.get('post'))&&[p.title,p.content,p.hashtags?.join(' ')].join(' ').toLowerCase().includes(query.toLowerCase()));
+ async function remove(post){setError('');try{const r=await fetch(API_URL+'/posts/'+post._id,{method:'DELETE',headers:{Authorization:'Bearer '+sessionStorage.getItem('token')}});if(!r.ok)throw new Error('Your post could not be removed.');setPosts(previous=>previous.filter(p=>p._id!==post._id));setNotice('Your post was removed.');}catch(err){setError(err.message);}}
+ return <main className="library-page"><header className="library-heading"><div><span className="library-eyebrow">THE COLLECTIVE VOICE</span><h1>Thoughts worth sharing<span>.</span></h1><p>Questions, discoveries, and ideas from your people.</p></div><button className="library-primary" onClick={()=>setComposing(value=>!value)}>{composing?'Close composer':'＋ Write a post'}</button></header><Link to="/Channel" className="library-personal-link">Your repost channel ↗</Link>{composing&&<AddPost onClose={()=>setComposing(false)} onPostCreated={post=>{setPosts(previous=>[post,...previous]);setComposing(false);setNotice('Your post is live.');}}/>}<div className="library-toolbar"><nav className="library-tabs" aria-label="Post views"><button aria-pressed={view==='all'} onClick={()=>setView('all')}>All posts</button><button aria-pressed={view==='mine'} onClick={()=>setView('mine')}>Your posts</button></nav><input className="library-search" type="search" value={query} onChange={e=>setQuery(e.target.value)} placeholder="Find a thought…" aria-label="Search posts"/></div>{notice&&<p className="library-notice" role="status">{notice}</p>}{error&&<p className="library-error" role="alert">{error} <button onClick={()=>load()}>Try again</button></p>}{loading?<p className="library-loading" role="status">Gathering the conversation…</p>:visible.length?<div className="library-grid">{visible.map(post=>{const link=window.location.origin+'/Posts?post='+post._id;const item={...post,link,description:post.content,pubDate:post.createdAt||post.date,type:'article'};return <LibraryCard key={post._id} item={item} author={'@'+(post.authorId?.username||'member')} saved={saved.some(entry=>entry.link===link)} onSave={()=>toggleBookmark(item)} onDelete={(post.authorId?._id||post.authorId)===id?()=>remove(post):undefined}/>;})}</div>:<div className="library-empty"><span aria-hidden="true">✳</span><h2>{query?'No matching thoughts yet.':view==='mine'?'Your first thought belongs here.':'Start something worth talking about.'}</h2><p>{query?'Try another topic or a shorter search.':'Share an idea, ask a question, or pass on something you discovered. Posts are saved to your account.'}</p><button className="library-primary" onClick={()=>setComposing(true)}>Write a post ↗</button></div>}</main>;
 }

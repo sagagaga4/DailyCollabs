@@ -1,0 +1,16 @@
+.dc-emoji { display: inline-block; color: var(--emoji-color); width: 1.35em; height: 1.35em; flex-shrink: 0; vertical-align: -.24em; }
+.dc-emoji-picker { display:block; padding:10px; background:var(--surface-raised); border:1px solid var(--border); border-radius:5px; width:294px; max-width:calc(100vw - 76px); max-height:278px; overflow-y:auto; overscroll-behavior:contain; scrollbar-width:thin; }
+.dc-emoji-picker-heading { display:flex; justify-content:space-between; gap:12px; padding:1px 2px 9px; font-size:7px; font-weight:650; letter-spacing:.12em; color:var(--muted); }
+.dc-emoji-picker-heading>span:last-child { color:var(--accent); }
+#root .dc-emoji-search { display:block; width:100%; min-width:0; height:30px; padding:6px 9px; margin:0 0 9px; border:1px solid var(--border); background:var(--bg); color:var(--text); font:inherit; font-size:10px; }
+.dc-emoji-grid { display:grid; grid-template-columns:repeat(7,minmax(0,1fr)); gap:4px; }
+.dc-emoji-empty { font-size:10px; line-height:1.6; color:var(--muted); padding:6px 2px; margin:0; }
+.dc-emoji-picker button { display: grid; place-items: center; border: 0; border-radius: 3px; background: transparent; width: 34px; height: 34px; font-size: 20px; transition: transform .18s, background .18s; }
+.dc-emoji-grid button { width:100%; min-width:0; }
+.community-chat-composer>.dc-emoji-picker,.community-custom-emoji-intro>.dc-emoji-picker { width:294px; max-width:100%; }
+.community-message-reactions .dc-emoji-picker { width:294px; max-width:calc(100vw - 105px); }
+.dc-emoji-picker button:hover { background: color-mix(in srgb,var(--text) 8%,transparent); transform: translateY(-3px) rotate(-7deg); }
+.dc-emoji-picker button:active { transform: scale(.85) rotate(8deg); }
+@media(prefers-reduced-motion:reduce) { .dc-emoji-picker button:hover,.dc-emoji-picker button:active { transform:none; } }
+html[data-reduced-motion="true"] .dc-emoji-picker button { transform: none !important; }
+@media(max-width:420px) { .dc-emoji-grid { grid-template-columns:repeat(6,minmax(0,1fr)); gap:3px; } .dc-emoji-picker { max-height:250px; } }

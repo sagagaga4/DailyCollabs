@@ -1,0 +1,114 @@
+{
+  "id": 4,
+  "status": "ready",
+  "progress": 100,
+  "message": "Unique artwork, card actions, comments and notifications passed tests and browser review. Ready for a new mission.",
+  "updatedAt": "2026-11-04T21:43:35.773Z",
+  "events": [
+    {
+      "status": "building",
+      "message": "Inspecting the home feed and safe video embeds.",
+      "at": "2026-11-04T19:32:08.298Z"
+    },
+    {
+      "status": "building",
+      "message": "Building the video composer, saved media API, and privacy-first inline player.",
+      "at": "2026-11-04T19:34:08.660Z"
+    },
+    {
+      "status": "building",
+      "message": "Video feed, composer, and responsive cards are built; wiring RSS media and validation tests.",
+      "at": "2026-11-04T19:38:18.040Z"
+    },
+    {
+      "status": "checking",
+      "message": "Five URL/RSS/input tests pass. Reviewing API ownership and keyboard-friendly feed actions.",
+      "at": "2026-11-04T19:40:01.318Z"
+    },
+    {
+      "status": "review",
+      "message": "Video sharing and RSS media are complete. Six targeted tests, scoped lint, and production build pass; awaiting integration review.",
+      "at": "2026-11-04T19:41:05.128Z"
+    },
+    {
+      "status": "checking",
+      "message": "Researching 15 distinct official media/accessibility websites, then refining video behavior and tests.",
+      "at": "2026-11-04T19:48:44.512Z"
+    },
+    {
+      "status": "review",
+      "message": "Read 15 distinct official websites and documented decisions. Refined loading, captions, transcripts, and feed race guards; six tests, lint, and build pass.",
+      "at": "2026-11-04T19:52:37.395Z"
+    },
+    {
+      "status": "ready",
+      "message": "Reviewed 15 sites. Video publishing, inline YouTube playback, media validation, and feed checks pass. Ready for a new mission.",
+      "at": "2026-11-04T19:56:36.048Z"
+    },
+    {
+      "status": "building",
+      "message": "Building recommended community tags, long-press card actions, sharing, and a saved personal channel.",
+      "at": "2026-11-04T20:18:55.334Z"
+    },
+    {
+      "status": "building",
+      "message": "Built community recommendations, persisted repost/share APIs, card action dialogs, and long-press drag targets.",
+      "at": "2026-11-04T20:27:03.622Z"
+    },
+    {
+      "status": "checking",
+      "message": "Reviewing membership and channel permissions, rollback behavior, drag geometry, and share intent encoding.",
+      "at": "2026-11-04T20:30:45.377Z"
+    },
+    {
+      "status": "checking",
+      "message": "Eight targeted tests pass. Finishing drag cancellation, current membership refresh, keyboard fallback, and 15-site evidence.",
+      "at": "2026-11-04T20:33:01.548Z"
+    },
+    {
+      "status": "review",
+      "message": "Recommended joins, three drag bubbles, saved personal channel, and community attachments are complete. Eight tests, scoped lint, and build pass; awaiting browser integration.",
+      "at": "2026-11-04T20:33:53.836Z"
+    },
+    {
+      "status": "fixing",
+      "message": "Replacing generic fallback with topic-relevant publisher and topic images.",
+      "at": "2026-11-04T20:39:53.138Z"
+    },
+    {
+      "status": "review",
+      "message": "Topic images now preserve publisher art and use relevant Wikimedia assets. Skyrim and Redis live checks passed; Hebrew/Unicode and bounded cache tests passed.",
+      "at": "2026-11-04T20:50:26.439Z"
+    },
+    {
+      "status": "building",
+      "message": "Building saved comment threads, replies, reaction notifications, and visible repost actions on every card.",
+      "at": "2026-11-04T20:59:10.897Z"
+    },
+    {
+      "status": "checking",
+      "message": "Saved comments, replies, personal comment history, and real notifications are built. Live Mongo ownership, deduplication, rollback, and concurrent reaction tests passed.",
+      "at": "2026-11-04T21:14:47.001Z"
+    },
+    {
+      "status": "review",
+      "message": "Comments and notifications are complete. Live Mongo tests cover privacy, deduplication, rollback, and concurrent reactions; scoped lint and production build pass.",
+      "at": "2026-11-04T21:15:42.341Z"
+    },
+    {
+      "status": "ready",
+      "message": "Relevant artwork, card sharing, reposts, persistent comments and notifications verified. Ready for a new mission.",
+      "at": "2026-11-04T21:17:57.879Z"
+    },
+    {
+      "status": "review",
+      "message": "Unique per-card artwork is ready: missing/broken images and shared topic covers get deterministic individual frames. Three artwork tests, scoped lint, and build passed.",
+      "at": "2026-11-04T21:32:22.889Z"
+    },
+    {
+      "status": "ready",
+      "message": "Unique artwork, card actions, comments and notifications passed tests and browser review. Ready for a new mission.",
+      "at": "2026-11-04T21:43:35.773Z"
+    }
+  ]
+}

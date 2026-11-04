@@ -1,0 +1,38 @@
+{
+  "codec": "h264",
+  "width": 1280,
+  "height": 720,
+  "fps": 24.0,
+  "frames": 240,
+  "durationSeconds": 10.0,
+  "bytes": 1694316,
+  "capture": "app-preview.jpg",
+  "captureSha256": "28c28e5a8fe8695230f6c3828ea06b0600500a99948626e54fe41f3fded7117b",
+  "samples": [
+    {
+      "time": 0,
+      "decoded": true,
+      "frameHash": "10773d1393ba6867"
+    },
+    {
+      "time": 2.5,
+      "decoded": true,
+      "frameHash": "e197823e051dd128"
+    },
+    {
+      "time": 5,
+      "decoded": true,
+      "frameHash": "6902ad000a666b06"
+    },
+    {
+      "time": 7.5,
+      "decoded": true,
+      "frameHash": "1b3ed501eb8fd68d"
+    },
+    {
+      "time": 9.8,
+      "decoded": true,
+      "frameHash": "6bf8750e5b0d9dfc"
+    }
+  ]
+}

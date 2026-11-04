@@ -31,7 +31,9 @@ class UserRepository{
     }
     
     findUserByUsername = async (username) => {
-        return await User.find({username: { $regex: username , $options: 'i' }})
+        if (typeof username !== 'string') return [];
+        const escaped = username.trim().replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+        return await User.find({username: new RegExp(`^${escaped}$`, 'i')})
     }
     
     findUserByEmail = async (email) => {

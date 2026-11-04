@@ -1,62 +1,19 @@
-/* Reset and base styles */
-* {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
-}
+:root{font-family:Inter,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;line-height:1.5;font-weight:400;--bg:#090b0e;--surface:#101318;--surface-raised:#171c23;--text:#f2f5fa;--muted:#8b96a6;--border:#242b35;--accent:#58d5eb;--accent-contrast:#061216;--input-bg:#0c0f13;font-synthesis:none;text-rendering:optimizeLegibility;-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale;color:var(--text);background:var(--bg)}
+*{box-sizing:border-box}html,body,#root{margin:0;min-height:100%;width:100%}html{scrollbar-gutter:stable}body{min-width:320px;min-height:100vh;background:var(--bg);color:var(--text)}button,input,textarea,select{font:inherit}button,a,input,textarea,select{-webkit-tap-highlight-color:transparent}button{cursor:pointer}button:disabled{cursor:not-allowed}img,video{max-width:100%}a{color:inherit}button:focus-visible,a:focus-visible,input:focus-visible,textarea:focus-visible,select:focus-visible{outline:2px solid var(--accent);outline-offset:4px}::selection{background:color-mix(in srgb,var(--accent) 25%,transparent);color:var(--text)}
+.app-shell{min-height:100vh;width:100%;background:var(--bg)}.app-content{margin-left:238px;min-width:0;min-height:100vh}.auth-shell{width:100%;min-height:100vh;background:var(--bg)}
+@media(max-width:1000px) and (min-width:721px){.app-content{margin-left:82px}}
+@media(max-width:720px){.app-content{margin-left:0;padding-top:58px;padding-bottom:calc(78px + env(safe-area-inset-bottom));min-height:100dvh}}
 
-html, body {
-  height: 100%;
-  width: 100%;
-  overflow-x: hidden;
-}
+@media(prefers-reduced-motion:reduce){*,*::before,*::after{animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important;scroll-behavior:auto!important}}
 
-:root {
-  font-family: system-ui, Avenir, Helvetica, Arial, sans-serif;
-  line-height: 1.5;
-  font-weight: 400;
-  color-scheme: light dark;
-  font-synthesis: none;
-  text-rendering: optimizeLegibility;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-}
-
-
-
-/* App container to center login */
-#root {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  min-height: 100vh;
-  min-height: 100dvh; /* Dynamic viewport height for mobile */
-  width: 100vw;
-  padding: 1rem;
-}
-
-/* Mobile-specific background fixes */
-@media (max-width: 768px) {
-  body {
-    background-attachment: scroll; /* Fixed attachment can cause issues on mobile */
-    background-size: cover;
-    min-height: 100vh;
-    min-height: -webkit-fill-available; /* Safari mobile fix */
-  }
-  
-  #root {
-    min-height: 100vh;
-    min-height: -webkit-fill-available; /* Safari mobile fix */
-  }
-}
-
-/* iOS Safari specific fixes */
-@supports (-webkit-touch-callout: none) {
-  body {
-    min-height: -webkit-fill-available;
-  }
-  
-  #root {
-    min-height: -webkit-fill-available;
-  }
-}
+/* A crisp, tactile identity shared by every DailyCollabs surface. */
+:root{--radius-small:4px;--radius:6px;--radius-large:8px}
+#root :is(button,input,textarea,select){border-radius:var(--radius-small)}
+#root :is(.community-card,.community-feature-banner,.community-dialog,.home-video-card,.home-video-composer,.card,.settings-panel,.settings-profile-preview,.agents-card,.agent-card,.Bcard,.pos-card){border-radius:var(--radius)}
+#root :is(.settings-avatar,.dc-profile-avatar,.community-board-icon){border-radius:5px}
+#root :is(button,a[role="button"]):not(:disabled){transition:background-color .18s,border-color .18s,color .18s,transform .14s,box-shadow .18s}
+#root :is(button,a[role="button"]):not(:disabled):active{transform:translateY(1px) scale(.975);box-shadow:inset 0 0 0 100vmax color-mix(in srgb,var(--text) 4%,transparent)}
+#root :is(input,textarea,select){transition:border-color .18s,box-shadow .18s}
+#root :is(input,textarea,select):focus-visible{box-shadow:0 0 0 3px color-mix(in srgb,var(--accent) 9%,transparent)}
+@media(prefers-reduced-motion:reduce){#root :is(button,a[role="button"]):active{transform:none!important}}
+html[data-reduced-motion="true"] #root :is(button,a[role="button"]):active{transform:none!important}

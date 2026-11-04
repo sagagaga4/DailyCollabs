@@ -46,16 +46,16 @@ const deleteUser = (id) => {
     return userRepo.deleteUser(id)
 }
 
-const joinCommunity = async (userId, communityId) => {
+const joinCommunity = async (userId, communityId, options = {}) => {
+  await require('./communityService').addMember(communityId, userId, options.inviteToken, options)
   const user = await userRepo.joinCommunity(userId, communityId)
-  await commRepo.addMember(communityId, userId)
   return user;
 }
 
 // Leave community (update both User + Community)
 const leaveCommunity = async (userId, communityId) => {
+  await require('./communityService').removeMember(communityId, userId)
   const user = await userRepo.leaveCommunity(userId, communityId)
-  await commRepo.removeMember(communityId, userId)
   return user;
 }
 

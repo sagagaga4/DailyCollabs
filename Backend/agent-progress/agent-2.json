@@ -1,0 +1,139 @@
+{
+  "id": 2,
+  "status": "ready",
+  "progress": 100,
+  "message": "Actual-app capture and final laptop film verified, including muted video controls. Ready for a new mission.",
+  "updatedAt": "2026-11-04T21:43:34.497Z",
+  "events": [
+    {
+      "status": "building",
+      "message": "Inspecting community creation, membership, and invitation flows.",
+      "at": "2026-11-04T19:32:05.706Z"
+    },
+    {
+      "status": "building",
+      "message": "Built authenticated community APIs, owner permissions, invitation links, and five demo board seeds.",
+      "at": "2026-11-04T19:35:44.820Z"
+    },
+    {
+      "status": "checking",
+      "message": "Community discovery, creation, joining, invitation links, and conversation UI complete. Checking API permissions and persistence.",
+      "at": "2026-11-04T19:39:49.729Z"
+    },
+    {
+      "status": "fixing",
+      "message": "Review found a first-invite concurrency edge case on older communities. Replacing it with atomic token initialization.",
+      "at": "2026-11-04T19:41:19.875Z"
+    },
+    {
+      "status": "review",
+      "message": "API lifecycle, permissions, persistence, privacy, and concurrent invitation tests pass. Community UI lint passes; awaiting integrated browser review.",
+      "at": "2026-11-04T19:41:31.558Z"
+    },
+    {
+      "status": "checking",
+      "message": "Second review: checking invitation handoff, empty states, accessible dialogs, and legacy community compatibility.",
+      "at": "2026-11-04T19:43:58.279Z"
+    },
+    {
+      "status": "review",
+      "message": "Second review passed. Fixed invalid-invitation recovery and a concurrent-leave posting edge case. Integrated API confirms five demo boards; lifecycle tests and UI lint pass.",
+      "at": "2026-11-04T19:44:41.606Z"
+    },
+    {
+      "status": "checking",
+      "message": "Researching at least 15 independent sites for community onboarding, invitations, discovery, and accessibility; applying and checking refinements.",
+      "at": "2026-11-04T19:45:47.151Z"
+    },
+    {
+      "status": "fixing",
+      "message": "Read 15 distinct research sites. Applying directory sorting, announced search counts, and safer modal Escape/focus handling.",
+      "at": "2026-11-04T19:47:16.717Z"
+    },
+    {
+      "status": "review",
+      "message": "Completed 15-site research with source notes. Added community sorting, accessible modal focus/Escape handling, live result counts, and focused errors. API lifecycle tests and UI lint pass.",
+      "at": "2026-11-04T19:48:34.650Z"
+    },
+    {
+      "status": "ready",
+      "message": "Reviewed 15 sites. Five boards, creation, membership, invitations, and conversation checks pass. Ready for a new mission.",
+      "at": "2026-11-04T19:56:34.405Z"
+    },
+    {
+      "status": "queued",
+      "message": "Preparing original welcome artwork and a rendered laptop product film; waiting for a build slot.",
+      "at": "2026-11-04T20:18:59.929Z"
+    },
+    {
+      "status": "building",
+      "message": "Building a cinematic welcome page and a real rendered laptop demo film, with accessible motion controls.",
+      "at": "2026-11-04T20:26:41.245Z"
+    },
+    {
+      "status": "building",
+      "message": "Built the cinematic welcome page, real registration/sign-in CTAs, community previews, and motion-safe product film player.",
+      "at": "2026-11-04T20:32:57.091Z"
+    },
+    {
+      "status": "checking",
+      "message": "Rendered and decoded a real 10-second H.264 product film. Welcome page lint and production build pass; reviewing playback and research findings.",
+      "at": "2026-11-04T20:34:20.171Z"
+    },
+    {
+      "status": "checking",
+      "message": "Completed 15 fresh research sites for the welcome experience. Refined finite motion, playback fallbacks, viewport pausing, and a readable film description.",
+      "at": "2026-11-04T20:35:59.908Z"
+    },
+    {
+      "status": "fixing",
+      "message": "Visual review caught missing-font arrow glyphs in the film. Replacing them with original vector icons and rendering the final version.",
+      "at": "2026-11-04T20:37:08.229Z"
+    },
+    {
+      "status": "review",
+      "message": "Welcome and real laptop film complete. Research from 15 fresh sites documented; scoped lint/build and full movie decode pass. Awaiting integrated desktop/mobile browser review.",
+      "at": "2026-11-04T20:37:54.628Z"
+    },
+    {
+      "status": "fixing",
+      "message": "Replacing the illustration with an actual app capture and a professional product frame.",
+      "at": "2026-11-04T20:50:49.191Z"
+    },
+    {
+      "status": "checking",
+      "message": "Professional app-preview frame and 22-site design research are complete. Waiting for the actual app capture to render the matching laptop film.",
+      "at": "2026-11-04T20:57:45.925Z"
+    },
+    {
+      "status": "fixing",
+      "message": "Rendering the final laptop film using the exact captured DailyCollabs app display.",
+      "at": "2026-11-04T21:16:36.179Z"
+    },
+    {
+      "status": "review",
+      "message": "Final film and poster now use the exact actual app capture. Full H.264 decode and five distinct sampled frames pass; no invented screen overlays.",
+      "at": "2026-11-04T21:17:04.445Z"
+    },
+    {
+      "status": "ready",
+      "message": "Professional welcome page, actual-app screenshot and laptop film verified. Ready for a new mission.",
+      "at": "2026-11-04T21:17:55.567Z"
+    },
+    {
+      "status": "fixing",
+      "message": "Refreshing the final product film from the latest actual app capture with muted video controls.",
+      "at": "2026-11-04T21:42:37.037Z"
+    },
+    {
+      "status": "review",
+      "message": "Latest actual app capture rendered into the final film and poster. Source hash, full decode, and five distinct sample frames verified; ready to apply.",
+      "at": "2026-11-04T21:43:02.550Z"
+    },
+    {
+      "status": "ready",
+      "message": "Actual-app capture and final laptop film verified, including muted video controls. Ready for a new mission.",
+      "at": "2026-11-04T21:43:34.497Z"
+    }
+  ]
+}

@@ -1,0 +1,48 @@
+DailyCollabs local development
+
+Keep the dailycollabs-mongo Docker container running, then run this from the project folder:
+
+  node scripts/dev.cjs
+
+App:             http://localhost:5173/
+Communities:     http://localhost:5173/Communities
+Profile:         http://localhost:5173/Settings
+My comments:     http://localhost:5173/Comments
+Notifications:   http://localhost:5173/Notifications
+Welcome:         http://localhost:5173/Welcome
+Mission control: http://localhost:5173/Agents
+API:             http://localhost:4000/
+AI health:       http://localhost:5000/health
+
+The launcher starts the API, frontend, AI service (using ai_service/.venv), and
+quality watcher together. Ctrl+C stops them together. Existing .env files stay
+local. The frontend uses polling to detect saved changes reliably.
+
+The quality watcher checks service health every 15 seconds and runs a fresh
+frontend production build and feature tests after saved source changes. It
+records actual outcomes in Mission control. Coding agents investigate and
+correct during an active chat; they are available for the next mission when
+their reviewed work is complete. Give new missions in the Codex chat.
+
+Each specialist's research ledger is in research/agent-1.md through agent-4.md.
+All four reviewed at least 15 different website domains. Source links are also
+available on each Mission control card.
+
+Tests (from the project folder):
+  node --test Backend/tests/*.test.cjs
+
+Frontend build (from Frontend/client):
+  npm run build
+
+Five demo boards initialize once after MongoDB connects. Their opening prompts
+are labeled as sample conversations; memberships and new posts are real data.
+Invitation links lead back to their community after login or registration.
+
+Video links support YouTube, Vimeo, and direct HTTPS MP4/WebM. Provider embeds
+and native video sources start muted when visible in For you, with Unmute/Mute
+controls and offscreen pause. Other views load them when selected. Optional transcript text is saved
+with shared videos. A source owner may still restrict embedding or captions.
+
+The topic search prompt stays pinned while browsing. Missing or broken images
+receive stable, distinct artwork per card. See research/algorithm/README.md for
+the 89-site research ledger and README.md for feed preference controls.

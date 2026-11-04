@@ -1,0 +1,200 @@
+[
+  {
+    "domain": "w3.org",
+    "url": "https://www.w3.org/WAI/WCAG22/Understanding/pause-stop-hide.html",
+    "title": "Understanding Pause, Stop, Hide",
+    "takeaway": "Moving or automatically updating content needs an effective pause mechanism.",
+    "decision": "Provide an explicit film pause control, visibility suspension and reduced-motion support.",
+    "evidence": "read",
+    "category": "quality-control"
+  },
+  {
+    "domain": "mozilla.org",
+    "url": "https://developer.mozilla.org/en-US/docs/Web/API/Intersection_Observer_API",
+    "title": "Intersection Observer API",
+    "takeaway": "The browser can report visibility asynchronously without continuous scroll polling.",
+    "decision": "Suspend the landing film outside the viewport and use lazy media loading.",
+    "evidence": "read",
+    "category": "quality-control"
+  },
+  {
+    "domain": "web.dev",
+    "url": "https://web.dev/articles/vitals",
+    "title": "Web Vitals",
+    "takeaway": "Loading, responsiveness and visual stability jointly affect the experience.",
+    "decision": "Bound parallel retrieval, reserve media dimensions and lazy-load card imagery; measure rather than claim a performance score.",
+    "evidence": "read",
+    "category": "quality-control"
+  },
+  {
+    "domain": "owasp.org",
+    "url": "https://cheatsheetseries.owasp.org/cheatsheets/Authorization_Cheat_Sheet.html",
+    "title": "Authorization Cheat Sheet",
+    "takeaway": "Authorization belongs on each resource and action, with least privilege and explicit tests.",
+    "decision": "Derive actors from verified JWTs for preferences, comments, bookmarks and notifications; test cross-account access.",
+    "evidence": "read",
+    "category": "quality-control"
+  },
+  {
+    "domain": "ftc.gov",
+    "url": "https://www.ftc.gov/news-events/news/press-releases/2022/09/ftc-report-shows-rise-sophisticated-dark-patterns-designed-trick-trap-consumers",
+    "title": "Bringing Dark Patterns to Light",
+    "takeaway": "Deceptive presentation can obstruct informed user choice.",
+    "decision": "Keep preference controls, undo, reset and disclosure visible; do not fabricate urgency or social proof.",
+    "evidence": "read",
+    "category": "quality-control"
+  },
+  {
+    "domain": "mozillafoundation.org",
+    "url": "https://www.mozillafoundation.org/en/research/library/user-controls/",
+    "title": "User Controls: Do YouTube’s Controls Work?",
+    "takeaway": "The study found a gap between expected and actual effects of recommendation controls.",
+    "decision": "Test that mute, hide and explicit feedback really change eligibility or order. ICO returned 403, so this readable original study replaces it.",
+    "evidence": "read",
+    "category": "quality-control"
+  },
+  {
+    "domain": "europa.eu",
+    "url": "https://digital-strategy.ec.europa.eu/en/policies/dsa-impact-platforms",
+    "title": "DSA impact on platforms",
+    "takeaway": "Transparent explanations and meaningful recommendation choices are emphasized.",
+    "decision": "Explain actual ranking reasons and expose chronological and personalization-off modes. This is a design lesson, not a legal-compliance claim.",
+    "evidence": "read",
+    "category": "quality-control"
+  },
+  {
+    "domain": "ofcom.org.uk",
+    "url": "https://www.ofcom.org.uk/online-safety/safety-technology/evaluating-recommender-systems-in-relation-to-the-dissemination-of-illegal-and-harmful-content-in-the-uk",
+    "title": "Evaluating recommender systems",
+    "takeaway": "Recommendation outcomes require ongoing evaluation with different methods.",
+    "decision": "Verify ranking properties and account isolation now; defer claims about retention or satisfaction until measured with users.",
+    "evidence": "read",
+    "category": "quality-control"
+  },
+  {
+    "domain": "eff.org",
+    "url": "https://www.eff.org/wp/interoperability-and-privacy",
+    "title": "Privacy Without Monopoly",
+    "takeaway": "Interoperability requires informed choice, data minimization and clear boundaries around shared information.",
+    "decision": "Keep feed learning first-party and account-scoped; sharing starts from an explicit user action.",
+    "evidence": "read",
+    "category": "quality-control"
+  },
+  {
+    "domain": "privacyinternational.org",
+    "url": "https://www.privacyinternational.org/our-demands/we-should-know-all-our-data-and-profiles",
+    "title": "We should know all our data and profiles",
+    "takeaway": "Inferred preferences can reveal information people did not knowingly provide.",
+    "decision": "Show inferred interest provenance, support editing and history reset, and avoid outside tracking.",
+    "evidence": "read",
+    "category": "quality-control"
+  },
+  {
+    "domain": "pewresearch.org",
+    "url": "https://www.pewresearch.org/journalism/2025/05/13/what-is-news/",
+    "title": "What Is News?",
+    "takeaway": "Audiences bring different expectations about timeliness, relevance and what qualifies as news.",
+    "decision": "Keep publisher, publication time and content format visible; do not label every video as verified reporting.",
+    "evidence": "read",
+    "category": "quality-control"
+  },
+  {
+    "domain": "commonsensemedia.org",
+    "url": "https://www.commonsensemedia.org/research/constant-companion-a-week-in-the-life-of-a-young-persons-smartphone-use",
+    "title": "Constant Companion",
+    "takeaway": "The youth-focused study describes notification overload and complicated benefits and costs of personalized media.",
+    "decision": "Send only actual comment-interaction events, deduplicate notifications and keep read controls. Do not generalize the youth sample to every user.",
+    "evidence": "read",
+    "category": "quality-control"
+  },
+  {
+    "domain": "cjr.org",
+    "url": "https://www.cjr.org/tow_center_reports/focus-groups-news-media-diet.php",
+    "title": "Local audiences consuming news on social platforms are hungry for transparency",
+    "takeaway": "Focus groups reported convenience alongside concern about opaque feed selection and data collection.",
+    "decision": "Pair useful discovery with readable recommendation reasons and visible preference sources.",
+    "evidence": "read",
+    "category": "quality-control"
+  },
+  {
+    "domain": "ox.ac.uk",
+    "url": "https://reutersinstitute.politics.ox.ac.uk/digital-news-report/2026/dnr-executive-summary",
+    "title": "Digital News Report 2026: Overview and key findings",
+    "takeaway": "Survey findings describe growing video-led news use alongside concerns about overload and trust.",
+    "decision": "Offer relevant video alongside stories, preserve source links and keep viewing a deliberate action.",
+    "evidence": "read",
+    "category": "quality-control"
+  },
+  {
+    "domain": "poynter.org",
+    "url": "https://ifcncodeofprinciples.poynter.org/the-commitments",
+    "title": "IFCN Code of Principles: The commitments",
+    "takeaway": "Traceable evidence and transparent methodology let readers inspect conclusions.",
+    "decision": "Retain original publisher links and distinguish ranking explanations from fact-checking or certification.",
+    "evidence": "read",
+    "category": "quality-control"
+  },
+  {
+    "domain": "thetrustproject.org",
+    "url": "https://thetrustproject.org/trust-indicators/",
+    "title": "The 8 Trust Indicators",
+    "takeaway": "Source identity, labels, methods, references, diverse voices and actionable feedback help readers evaluate news.",
+    "decision": "Display publisher and format metadata and offer feedback without inventing a trust badge. Actual domain corrects the planned trustproject.org.",
+    "evidence": "read",
+    "category": "quality-control"
+  },
+  {
+    "domain": "newsguardtech.com",
+    "url": "https://www.newsguardtech.com/ratings/rating-process-criteria/",
+    "title": "Website Rating Process and Criteria",
+    "takeaway": "NewsGuard describes an editorial assessment with evidence-backed criteria, separate from user-platform content.",
+    "decision": "Do not manufacture reliability scores from engagement; content reasons describe relevance only.",
+    "evidence": "read",
+    "category": "quality-control"
+  },
+  {
+    "domain": "fullfact.org",
+    "url": "https://fullfact.org/about/how-we-fact-check/",
+    "title": "How we fact check",
+    "takeaway": "Full Fact prioritizes public-interest claims, primary evidence and corrections.",
+    "decision": "Keep original links accessible and preserve published metadata; no claim that this aggregator fact-checks every story. Search returned readable first-party article text although direct open returned 410.",
+    "evidence": "read",
+    "category": "quality-control"
+  },
+  {
+    "domain": "rsf.org",
+    "url": "https://rsf.org/en/journalism-trust-initiative",
+    "title": "Journalism Trust Initiative",
+    "takeaway": "JTI evaluates journalism processes and transparency rather than determining the truth of each individual item.",
+    "decision": "Keep relevance ranking separate from source certification; do not claim JTI participation.",
+    "evidence": "read",
+    "category": "quality-control"
+  },
+  {
+    "domain": "thomsonreuters.com",
+    "url": "https://www.thomsonreuters.com/en/about-us/trust-principles",
+    "title": "The Trust Principles",
+    "takeaway": "Reuters emphasizes independence, integrity and reliable information serving varied interests.",
+    "decision": "Preserve publisher identity and source variety instead of optimizing only click counts. This readable official page replaces inaccessible reuters.com.",
+    "evidence": "read",
+    "category": "quality-control"
+  },
+  {
+    "domain": "ap.org",
+    "url": "https://www.ap.org/about/news-values-and-principles/",
+    "title": "News values and principles",
+    "takeaway": "AP describes standards for accuracy and avoidance of bias and conflicts of interest.",
+    "decision": "Treat source attribution and original context as essential metadata; do not imply AP endorsement.",
+    "evidence": "read",
+    "category": "quality-control"
+  },
+  {
+    "domain": "redis.io",
+    "url": "https://redis.io/docs/latest/commands/expire/",
+    "title": "EXPIRE",
+    "takeaway": "Expiration bounds how long cached data remains available, and update behavior must be understood.",
+    "decision": "Use bounded cache and signal lifetimes with explicit invalidation. Redis is a research reference; this implementation uses bounded process caches and MongoDB TTL, not a Redis service.",
+    "evidence": "read",
+    "category": "quality-control"
+  }
+]

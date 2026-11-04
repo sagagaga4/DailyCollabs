@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import { API_URL } from '../../config';
 
 export default function Comments({ postId }) {
   const [comments, setComments] = useState([]);
@@ -6,14 +7,14 @@ export default function Comments({ postId }) {
   const token = sessionStorage.getItem('token');
 
   useEffect(() => {
-    fetch(`http://localhost:4000/comments/${postId}`)
+    fetch(`${API_URL}/comments/${postId}`)
     .then(r => r.json())
     .then(setComments);
   }, [postId]);
 
   const submit = async (e) => {
     e.preventDefault();
-    await fetch(`http://localhost:4000/comments/${postId}`, {
+    await fetch(`${API_URL}/comments/${postId}`, {
       method: 'POST', 
       headers: {'Content-Type':'application/json',
                 'Authorization': `Bearer ${token}`
@@ -22,7 +23,7 @@ export default function Comments({ postId }) {
       }
     );
     setText('');
-    const r = await fetch(`http://localhost:4000/comments/${postId}`);
+    const r = await fetch(`${API_URL}/comments/${postId}`);
     setComments(await r.json());
   };
 

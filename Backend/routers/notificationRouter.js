@@ -1,0 +1,10 @@
+const express = require('express');
+const auth = require('../middleware/authMiddleware');
+const service = require('../services/notificationService');
+const router = express.Router();
+const route = (handler) => async (req, res) => { try { await handler(req, res); } catch (error) { res.status(error.status || 500).json({ message: error.status ? error.message : 'Could not load notifications. Please try again.' }); } };
+router.use(auth);
+router.get('/', route(async (req, res) => res.json(await service.list(req.user.id, req.query.before))));
+router.patch('/read-all', route(async (req, res) => res.json(await service.markAllRead(req.user.id))));
+router.patch('/:id/read', route(async (req, res) => res.json(await service.markRead(req.user.id, req.params.id))));
+module.exports = router;

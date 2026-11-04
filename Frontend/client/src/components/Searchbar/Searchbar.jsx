@@ -1,206 +1,125 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from 'react';
 import SearchIcon from '@mui/icons-material/Search';
-import "./SearchBar.css";
+import { API_URL } from '../../config';
+import PixelSearch from '../Search/PixelSearch';
+import { NEWS_LANGUAGES, canonicalLanguage } from '../../lib/languages';
+import { sendFeedSignal } from '../FeedControls/feedSignals';
+import './SearchBar.css';
 
-export default function SearchBar({ onResults, userId, token }) {
-  const [query, setQuery] = useState("");
+async function jsonRequest(url, options) {
+  const response = await fetch(url, options);
+  const data = await response.json().catch(() => ({}));
+  if (!response.ok) throw new Error(data.message || data.error || 'The request could not finish.');
+  return data;
+}
 
+export default function SearchBar({ onResults, onVideoResults, onSearchState, userId, token, initialLanguage = 'auto', initialRegion = '', modeOverride }) {
+  const [query, setQuery] = useState('');
+  const [languageChoice, setLanguageChoice] = useState(() => NEWS_LANGUAGES.some(([code]) => code === initialLanguage) ? initialLanguage : 'custom');
+  const [customLanguage, setCustomLanguage] = useState(() => canonicalLanguage(initialLanguage) || '');
+  const [region, setRegion] = useState(initialRegion);
+  const [localeMessage, setLocaleMessage] = useState('');
+  const [tags, setTags] = useState([]);
+  const [loading, setLoading] = useState(false);
+  const [activeQuery, setActiveQuery] = useState('');
+  const [error, setError] = useState('');
+  const [savingTag, setSavingTag] = useState(false);
+  const request = useRef(null);
+  const generation = useRef(0);
+  const callbacks = useRef({ onResults, onVideoResults, onSearchState });
+  callbacks.current = { onResults, onVideoResults, onSearchState };
 
-  // Load tags from backend on initial render
-const [tags, setTags] = useState([]);
-
-useEffect(() => {
-  const loadTags = async () => {
-    try {
-      const res = await fetch("http://localhost:4000/tags");
-      const data = await res.json();
-      setTags(data);
-    } catch (err) {
-      console.error(err);
-    }
-  };
-
-  loadTags();
-}, []);
-
-  // Add a new tag (save to DB AND state)
-  const handleAddTag = async (e) => {
-    e.preventDefault();
-    const newTag = query.trim();
-    if (!newTag || tags.includes(newTag)) return;
-
-    try {
-      const res = await fetch("http://localhost:4000/tags", {
-      //const res = await fetch("http://192.168.68.117:4000/tags", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`, // include token
-        },
-          body: JSON.stringify({
-          userId,
-          tagName: newTag,
-        }),
-      });
-
-      if (!res.ok) {
-        const error = await res.text();
-        throw new Error(error);
-      }
-
-      //Append the new tag to the already existing tags
-      let updatedTags = [...tags, { _id: Date.now(), tagName: newTag }];
-
-      // Keep only the 12 most recent tags
-      if (updatedTags.length > 12) {
-        alert("12 TAGS LIMIT");
-        return;
-      }
-
-      setTags(updatedTags);
-      setQuery("");
-
-    } catch (err) {
-      console.error("Failed to add tag:", err.message);
-      alert(err.message);
-    }
-  };
-
-  const [loading, setLoading] = useState(false); 
-  const [error, setError] = useState(null);
-
-  // Save tags to localStorage whenever they change
   useEffect(() => {
-    localStorage.setItem("tags", JSON.stringify(tags));
-  }, [tags]);
+    const controller = new AbortController();
+    const authToken = sessionStorage.getItem('token') || token;
+    setTags([]);
+    if (!authToken) return () => controller.abort();
+    jsonRequest(`${API_URL}/tags`, { headers: { Authorization: `Bearer ${authToken}` }, signal: controller.signal }).then(data => { if (!controller.signal.aborted) setTags(Array.isArray(data) ? data : []); }).catch(() => {});
+    return () => controller.abort();
+  }, [token]);
+  useEffect(() => () => { generation.current += 1; request.current?.abort(); }, []);
 
-  // Handle search submission
-  const handleSearch = async (e, searchQuery) => {
-    if (e) e.preventDefault();
-    const q = searchQuery || query; // allow tag click to trigger search
-
-    if (!q.trim()) return;
-
-    setLoading(true); // start loading animation
-    setError(null);
-
+  async function search(event, selectedQuery) {
+    event?.preventDefault();
+    const topic = (selectedQuery || query).replace(/\s+/g, ' ').trim();
+    if ([...topic].some(character => { const point = character.codePointAt(0); return point < 32 || point === 127 || (point >= 8234 && point <= 8238) || (point >= 8294 && point <= 8297); })) { setError('Use a plain text topic without control characters.'); return; }
+    const language = languageChoice === 'custom' ? canonicalLanguage(customLanguage) : languageChoice;
+    if (!language) { setError('Enter a valid language code, such as he, ar, or fr-CA.'); return; }
+    if (region && !/^[A-Za-z]{2}$/.test(region)) { setError('Use a two-letter region code.'); return; }
+    if (topic.length < 2 || topic.length > 120) { setError('Search for a topic between 2 and 120 characters.'); return; }
+    const authToken = sessionStorage.getItem('token') || token;
+    const authHeaders = authToken ? { Authorization: `Bearer ${authToken}` } : {};
+    sendFeedSignal('search', { query: topic }).catch(() => {});
+    request.current?.abort();
+    const controller = new AbortController(); request.current = controller;
+    const current = ++generation.current;
+    setQuery(topic); setActiveQuery(topic); setLoading(true); setError(''); setLocaleMessage('');
+    callbacks.current.onSearchState?.({ loading: true, query: topic, language, region });
+    const timeout = setTimeout(() => controller.abort('timeout'), 26000);
     try {
-        // Send query to Node.js server
-        const response = await fetch("http://localhost:4000/rss", {
-        // const response = await fetch("http://192.168.68.117:4000/rss", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ query: q }),
+      const videoPromise = jsonRequest(`${API_URL}/video-search?${new URLSearchParams({ q: topic, language, ...(region ? { region } : {}) })}`, { headers: authHeaders, signal: controller.signal });
+      videoPromise.then(data => {
+        if (current === generation.current) callbacks.current.onVideoResults?.({ query: topic, language, region, videos: Array.isArray(data.videos) ? data.videos : [], status: data.status || 'unavailable', message: data.message || '', provider: data.provider || 'YouTube', searchUrl: data.searchUrl });
+      }, () => {
+        if (current === generation.current) callbacks.current.onVideoResults?.({ query: topic, language, region, videos: [], status: 'unavailable', message: 'Video search could not finish. Try again or explore this topic on YouTube.', provider: 'YouTube' });
       });
-
-      if (!response.ok) throw new Error("Failed to fetch articles.");
-
-      const articles = await response.json();
-
-      if (!articles || articles.length === 0) {
-        setError("No articles found for this topic.");
-      } else {
-        onResults?.(articles); // Send articles up to Home.jsx for display
-      }
-    } catch (err) {
-      console.error("Search error:", err);
-      setError("Something went wrong, please try again.");
+      const [news, media] = await Promise.allSettled([
+        jsonRequest(`${API_URL}/rss`, { method: 'POST', headers: { 'Content-Type': 'application/json', ...authHeaders }, body: JSON.stringify({ query: topic, page: 1, pageSize: 12, language, ...(region ? { region } : {}), ...(modeOverride === 'fresh' ? { modeOverride: 'fresh' } : {}) }), signal: controller.signal }),
+        videoPromise,
+      ]);
+      if (current !== generation.current) return;
+      const articles = news.status === 'fulfilled' && Array.isArray(news.value.articles) ? news.value.articles : [];
+      const videos = media.status === 'fulfilled' && Array.isArray(media.value.videos) ? media.value.videos : [];
+      const videoStatus = media.status === 'fulfilled' ? media.value.status : 'unavailable';
+      const videoMessage = media.status === 'fulfilled' ? media.value.message || '' : 'Video search is temporarily unavailable. Explore the topic directly on YouTube.';
+      setLocaleMessage(news.status === 'fulfilled' ? news.value.message || news.value.locale?.message || '' : '');
+      callbacks.current.onResults?.({ articles, query: topic, language, region, locale: news.status === 'fulfilled' ? news.value.locale : undefined, rankingSession: news.status === 'fulfilled' ? news.value.rankingSession : undefined, page: 1, hasMore: news.status === 'fulfilled' && Boolean(news.value.hasMore),
+        videos, videoStatus, videoMessage, videoProvider: media.status === 'fulfilled' ? media.value.provider : 'YouTube',
+        searchUrl: `https://www.youtube.com/results?search_query=${encodeURIComponent(topic)}`,
+        newsMessage: news.status === 'rejected' ? 'News search could not finish. Please try again.' : '' });
+      if (news.status === 'rejected' && videos.length) setError('Your videos are ready. News search couldn’t finish this time.');
+      else if (news.status === 'rejected' && !videos.length) setError(controller.signal.aborted ? 'That search took a little too long. Try again or use a more specific topic.' : 'Search services are temporarily unavailable. Please try again.');
+      else if (!articles.length && !videos.length) setError('No stories or videos matched this topic. Try a more specific search.');
     } finally {
-      setLoading(false); // stop loading animation
+      clearTimeout(timeout);
+      if (current === generation.current) { setLoading(false); request.current = null; callbacks.current.onSearchState?.({ loading: false, query: topic, language, region }); }
     }
-  };
-
-  // Click on tag to perform search
-  const handleTagClick = (tag) => {
-    handleSearch(null, tag);
-  };
-
-// Remove a tag from the list
-const handleRemoveTag = async (tagToRemove) => {
-  try {
-    const res = await fetch(`http://localhost:4000/tags/${encodeURIComponent(tagToRemove)}`, {
-      method: "DELETE",
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-    });
-
-    if (!res.ok) {
-      const error = await res.text();
-      throw new Error(error);
-    }
-
-    // Update the UI after successful deletion
-    setTags(tags.filter(tag => tag.tagName !== tagToRemove));
-
-  } catch (err) {
-    console.error("Failed to delete tag:", err.message);
-    alert("Failed to delete tag from database.");
   }
-};
-
-
-  return (
-    <div className="searchbar">
-      <form onSubmit={handleSearch} className="searchbar-form">
-        <input
-          type="text"
-          value={query}
-          onChange={(e) => setQuery(e.target.value)}
-          placeholder="Type here..."
-          className="searchbar-input"
-        />
-
-        <button
-          type="submit"
-          disabled={loading}
-          className="searchbar-btn"
-        >
-          <SearchIcon style={{ fontSize: '1.2rem', marginRight: '4px' }} />
-        </button>
-
-        {/* Add tag button */}
-        <button
-          type="button"
-          onClick={handleAddTag}
-          disabled={!query.trim()}
-          className="addTag-btn"
-        >
-          Tag
-        </button>
-      </form>
-
-      {/* Thinking animation outside the button */}
-      {loading && (
-        <div className="thinking-container">
-          <span className="loading-dots" style={{fontWeight:"bolder", fontSize: "20px",fontFamily:"monospace"}}>
-            🔍Searching<span>.</span><span>.</span><span>.</span>
-          </span>
-        </div>
-      )}
-
-      <div className="tag-container">
-        {tags.map((tag) => (
-          <div key={tag._id} className="tag">
-            <span
-              className="tag-text"
-              onClick={() => handleTagClick(tag.tagName)}
-            >
-              #{tag.tagName}
-            </span>
-            <span
-              className="tag-remove"
-              onClick={() => handleRemoveTag(tag.tagName)}
-              title="Remove tag"
-            >
-              ×
-            </span>
-          </div>
-        ))}
-      </div>
-
-      {/* Display error messages */}
-      {error && <p className="searchbar-error">{error}</p>}
-    </div>
-  );
+  function cancel() {
+    generation.current += 1; request.current?.abort(); request.current = null;
+    setLoading(false); setError(''); callbacks.current.onSearchState?.({ loading: false, query: activeQuery, cancelled: true });
+  }
+  async function saveTopic() {
+    const topic = query.trim();
+    if (!topic || savingTag) return;
+    if (!token) { setError('Sign in to save a topic.'); return; }
+    if (tags.some(tag => tag.tagName?.toLocaleLowerCase() === topic.toLocaleLowerCase())) { setError('This topic is already saved.'); return; }
+    if (tags.length >= 12) { setError('You can save up to 12 topics. Remove one to add another.'); return; }
+    setSavingTag(true); setError('');
+    try {
+      await jsonRequest(`${API_URL}/tags`, { method: 'POST', headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` }, body: JSON.stringify({ userId, tagName: topic }) });
+      const data = await jsonRequest(`${API_URL}/tags`, { headers: { Authorization: `Bearer ${token}` } });
+      setTags(Array.isArray(data) ? data : []);
+    } catch (err) { setError(err.message || 'This topic could not be saved.'); }
+    finally { setSavingTag(false); }
+  }
+  async function removeTopic(topic) {
+    setError('');
+    try {
+      await jsonRequest(`${API_URL}/tags/${encodeURIComponent(topic)}`, { method: 'DELETE', headers: { Authorization: `Bearer ${token}` } });
+      setTags(previous => previous.filter(tag => tag.tagName !== topic));
+    } catch (err) { setError(err.message || 'This topic could not be removed.'); }
+  }
+  return <div className="searchbar">
+    <form onSubmit={search} className="searchbar-form" role="search" aria-label="Search stories and videos" aria-busy={loading}>
+      <input type="search" value={query} onChange={event => setQuery(event.target.value)} placeholder="Search a topic. Find stories + videos." aria-label="Search stories and videos by topic" dir="auto" className="searchbar-input" maxLength={120} />
+      <button type="submit" disabled={query.trim().length < 2} className="searchbar-btn" aria-label="Search stories and videos"><SearchIcon style={{ fontSize: '1.15rem' }} /><span className="searchbar-submit-label">Search</span></button>
+      <button type="button" onClick={saveTopic} disabled={!query.trim() || savingTag} className="addTag-btn">{savingTag ? 'Saving…' : 'Save topic'}</button>
+    </form>
+    <div className="searchbar-language-row"><label className="searchbar-language-picker"><span>News language</span><select aria-label="News language" value={languageChoice} onChange={event => { setLanguageChoice(event.target.value); setRegion(''); setError(''); }}>{NEWS_LANGUAGES.map(([code,label]) => <option key={code} value={code}>{label}</option>)}</select></label>{languageChoice === 'custom' && <input className="searchbar-language-code" aria-label="Custom BCP 47 language code" placeholder="e.g. he, fr-CA, sw" value={customLanguage} onChange={event => setCustomLanguage(event.target.value)} maxLength={60} autoComplete="off" spellCheck={false} />}<span className="searchbar-language-hint">Original publisher text · all scripts welcome</span></div>
+    {localeMessage && <p className="searchbar-locale-message" role="status">{localeMessage}</p>}
+    {loading && <PixelSearch query={activeQuery} onCancel={cancel} />}
+    {tags.length > 0 && <div className="tag-container" aria-label="Saved topics">{tags.map(tag => <div key={tag._id || tag.tagName} className="tag"><button type="button" className="tag-text" onClick={() => search(null, tag.tagName)}>#{tag.tagName}</button><button type="button" className="tag-remove" onClick={() => removeTopic(tag.tagName)} title="Remove topic" aria-label={`Remove topic ${tag.tagName}`}>×</button></div>)}</div>}
+    {error && <p className="searchbar-error" role="alert">{error}</p>}
+  </div>;
 }

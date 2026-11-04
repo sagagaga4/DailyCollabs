@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { API_URL } from '../../config';
 
 export default function PostCard({ item }) {
   const token = sessionStorage.getItem('token');
@@ -7,8 +8,7 @@ export default function PostCard({ item }) {
 
   const handleLike = async () => {
     if(!item.postId) return;
-      const res = await fetch(`http://localhost:4000/posts/${item.postId}/like`, {
-//    const res = await fetch(`http://192.168.68.117:4000/posts/${item.postId}/like`, {
+      const res = await fetch(`${API_URL}/posts/${item.postId}/like`, {
       method: 'POST', headers: {'Authorization': `Bearer ${token}`}
     });
     const json = await res.json();
@@ -18,7 +18,7 @@ export default function PostCard({ item }) {
 
   const handleSave = async () => {
     if(!item.postId) return;
-    await fetch(`http://localhost:4000/posts/${item.postId}/save`, {
+    await fetch(`${API_URL}/posts/${item.postId}/save`, {
       method: 'POST', headers: {'Authorization': `Bearer ${token}`}
     });
   };

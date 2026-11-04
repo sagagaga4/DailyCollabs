@@ -1,56 +1,36 @@
-// routes/bookmarkedRouter.js
-const express = require("express");
-const bookmarkedService = require("../services/bookmarkedService");
-const auth = require("../middleware/authMiddleware");
-
+const express = require('express');
+const Bookmarked = require('../model/Bookmarked');
+const auth = require('../middleware/authMiddleware');
+const {invalidateProfile}=require('../services/feedService');
 const router = express.Router();
-
-// GET all bookmarks for logged user
-router.get('/', auth, async (req, res) => {
-  try {
-    const userId = req.userId;
-    const bookmarks = await bookmarkedService.getAllBookmarked(userId);
-
-    // Get article links
-    const links = bookmarks.map(b => b.articleLink);
-
-    // Fetch all RSS articles
-    const rssResponse = await fetch("http://localhost:4000/rss");
-    const allArticles = await rssResponse.json();
-
-    // Filter articles that match the saved links
-    const bookmarkedArticles = allArticles.filter(article => links.includes(article.link));
-
-    res.json(bookmarkedArticles);
-  } catch (error) {
-    console.error(error);
-    res.status(500).send("Failed to fetch bookmarked articles");
-  }
+router.use(auth);
+function input(body) {
+  const link = body.articleLink || body.link;
+  let url; try { url = new URL(link); } catch { return null; }
+  if (!['http:', 'https:'].includes(url.protocol) || url.username || url.password || url.href.length > 2048) return null;
+  const text = (value, limit) => typeof value === 'string' ? value.trim().slice(0, limit) : '';
+  let image = '';
+  try { const candidate = new URL(text(body.image, 2048)); if (['http:', 'https:'].includes(candidate.protocol) && !candidate.username && !candidate.password) image = candidate.href; } catch { /* Optional image may be absent. */ }
+  return { articleLink: url.href, title: text(body.title, 250), description: text(body.description, 1200), image, pubDate: text(body.pubDate, 100), type: body.type === 'video' ? 'video' : 'article' };
+}
+const serialize = item => ({ ...item.toObject(), link: item.articleLink });
+router.get('/', async (req, res) => {
+  try { res.json((await Bookmarked.find({ userId: req.user.id }).sort({ createdAt: -1 }).limit(500)).map(serialize)); }
+  catch { res.status(500).json({ message: 'Your saved stories could not be loaded.' }); }
 });
-
-
-// CREATE a bookmark
-router.post("/", auth, async (req, res) => {
+router.post('/', async (req, res) => {
+  const value = input(req.body || {});
+  if (!value) return res.status(400).json({ message: 'Save a valid HTTP or HTTPS story link.' });
   try {
-    const { articleLink } = req.body;
-    const userId = req.userId;
-    const newBookmark = await bookmarkedService.createBookmark(userId, articleLink);
-    res.status(201).json(newBookmark);
-  } catch (error) {
-    res.status(500).send(error.message || "Failed to create bookmark");
-  }
+    const bookmark = await Bookmarked.findOneAndUpdate({ userId: req.user.id, articleLink: value.articleLink }, { $set: value, $setOnInsert: { userId: req.user.id } }, { upsert: true, new: true, runValidators: true });
+    invalidateProfile(req.user.id);
+    res.status(201).json(serialize(bookmark));
+  } catch { res.status(500).json({ message: 'This story could not be saved. Please try again.' }); }
 });
-
-// DELETE a bookmark
-router.delete("/", auth, async (req, res) => {
-  try {
-    const { articleLink } = req.body;
-    const userId = req.userId;
-    const deleted = await bookmarkedService.deleteBookmark(userId, articleLink);
-    res.json(deleted);
-  } catch (error) {
-    res.status(500).send(error.message || "Failed to delete bookmark");
-  }
+router.delete('/', async (req, res) => {
+  const value = input(req.body || {});
+  if (!value) return res.status(400).json({ message: 'Choose a valid saved link.' });
+  try { await Bookmarked.deleteMany({ userId: req.user.id, articleLink: value.articleLink }); invalidateProfile(req.user.id); res.json({ message: 'Removed from bookmarks.' }); }
+  catch { res.status(500).json({ message: 'The saved story could not be removed.' }); }
 });
-
 module.exports = router;

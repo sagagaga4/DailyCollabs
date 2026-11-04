@@ -1,0 +1,76 @@
+# Render.com Blueprint for DailyCollabs. Verify host plans before deployment.
+#
+# This configures 3 services:
+#   1. ai-service  (Python / FastAPI) — news-feed recommender
+#   2. backend     (Node / Express)   — REST API
+#   3. frontend    (static site)       — React build served from a CDN
+#
+# MongoDB is NOT created here — provision a database and paste
+# its connection string into the MONGO_URI env var (set it in the dashboard).
+#
+# After the first deploy, fill in the env vars marked "sync: false" in the
+# Render dashboard (secrets like API keys and the Mongo URI).
+
+services:
+  # ---------------------------------------------------------------- AI service
+  - type: web
+    name: dailycollabs-ai
+    runtime: python
+    plan: free
+    rootDir: ai_service
+    buildCommand: pip install -r requirements.txt
+    startCommand: uvicorn main:app --host 0.0.0.0 --port $PORT
+    envVars:
+      - key: AI_PROVIDER
+        value: openai
+      - key: AI_MODEL
+        value: gpt-4o-mini
+      - key: OPENAI_BASE_URL
+        value: https://api.openai.com/v1
+      - key: OPENAI_API_KEY
+        sync: false
+      - key: ANTHROPIC_API_KEY
+        sync: false
+
+  # ------------------------------------------------------------------- Backend
+  - type: web
+    name: dailycollabs-backend
+    runtime: node
+    plan: free
+    rootDir: Backend
+    buildCommand: npm install
+    startCommand: node index.js
+    envVars:
+      - key: MONGO_URI
+        sync: false   # paste your MongoDB Atlas connection string
+      - key: JWT_SECRET
+        generateValue: true
+      # Paste the full https URL of the AI service after its first deploy,
+      # e.g. https://dailycollabs-ai.onrender.com
+      - key: AI_SERVICE_URL
+        sync: false
+      # Paste this backend's own full https URL, e.g.
+      # https://dailycollabs-backend.onrender.com
+      - key: SELF_URL
+        sync: false
+      - key: FRONTEND_URL
+        sync: false
+      - key: YOUTUBE_API_KEY
+        sync: false
+
+  # ------------------------------------------------------------------ Frontend
+  - type: web
+    name: dailycollabs-frontend
+    runtime: static
+    rootDir: Frontend/client
+    buildCommand: npm install && npm run build
+    staticPublishPath: dist
+    envVars:
+      # Paste the backend's full https URL, e.g.
+      # https://dailycollabs-backend.onrender.com
+      - key: VITE_API_URL
+        sync: false
+    routes:
+      - type: rewrite
+        source: /*
+        destination: /index.html

@@ -13,10 +13,22 @@ const tagRoutes = require('./routers/tagRouter.js')
 const reactionRoutes = require('./routers/reactionsRouter.js')
 const bookmarkRoutes = require('./routers/bookmarkedRouter.js')
 const app = express()
-const PORT = 4000
+const PORT = process.env.PORT || 4000
 
 app.use(cors())
-app.use(express.json())
+app.use(express.json({ limit: '2mb' }))
+
+app.use('/agent-status', require('./routers/agentStatusRouter'))
+app.use('/media', require('./routers/mediaRouter'))
+app.use('/video-search', require('./routers/videoSearchRouter'))
+app.use('/content', require('./routers/contentRouter'))
+app.use('/feed', require('./routers/feedRouter'))
+app.use('/story-comments', require('./routers/storyCommentRouter'))
+app.use('/notifications', require('./routers/notificationRouter'))
+app.get('/health', (req, res) => {
+  const connected = require('mongoose').connection.readyState === 1
+  res.status(connected ? 200 : 503).json({ status: connected ? 'ok' : 'starting', database: connected ? 'connected' : 'disconnected' })
+})
 
 app.get('/', (req, res) => {
   res.send('Main BACKEND page')
@@ -34,7 +46,8 @@ app.use('/reactions', reactionRoutes)
 app.use('/bookmarked', bookmarkRoutes)
 
 connectDB().then(() => {
+  require('./seeds/demoCommunities').seedDemoCommunities().catch(error => console.error('Demo community initialization failed:', error.message))
   app.listen(PORT, () => {
-    console.log(`app is listening at http://localhost:${PORT}`)
+    console.log(`app is listening on port ${PORT}`)
   })
 })

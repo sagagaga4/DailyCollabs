@@ -1,71 +1,40 @@
 const express = require('express');
-const communityService = require('../services/communityService');
-const ctrl = require('../controllers/communityController');
+const service = require('../services/communityService');
 const auth = require('../middleware/authMiddleware');
 const router = express.Router();
-
-// Entry Point - "/communities"
-// All CRUD activities
-
-// GET all communities
-router.get('/', async (req, res) => {
-  try {
-    const filters = req.query;
-    const communities = await communityService.getAllCommunities(filters);
-    res.json(communities);
-  } catch (error) {
-    res.status(500).json({ message: error.message });
+const optionalAuth = (req, res, next) => req.headers.authorization ? auth(req, res, next) : next();
+const route = handler => async (req, res) => {
+  try { await handler(req, res); }
+  catch (error) {
+    const status = error.status || (error.name === 'ValidationError' ? 400 : 500);
+    if (status === 500) console.error('Community request failed:', error.message);
+    res.status(status).json({ message: status === 500 ? 'Something went wrong. Please try again.' : error.message });
   }
-});
+};
 
-// GET community by ID
-router.get('/:id', async (req, res) => {
-  try {
-    const { id } = req.params;
-    const community = await communityService.getCommunityById(id);
-    if (!community) {
-      return res.status(404).json({ message: 'Community not found' });
-    }
-    res.json(community);
-  } catch (error) {
-    res.status(500).json({ message: error.message });
-  }
-});
+router.get('/', optionalAuth, route(async (req, res) => res.json(await service.getAllCommunities(req.query, req.user?.id))));
+router.post('/', auth, route(async (req, res) => res.status(201).json(await service.createCommunity(req.body, req.user.id))));
+router.get('/:id', optionalAuth, route(async (req, res) => res.json(await service.getCommunityById(req.params.id, req.user?.id))));
+router.post('/:id/join', auth, route(async (req, res) => res.json(await service.addMember(req.params.id, req.user.id, req.body?.inviteToken, req.body || {}))));
+router.delete('/:id/membership', auth, route(async (req, res) => res.json(await service.removeMember(req.params.id, req.user.id))));
+router.post('/:id/invite', auth, route(async (req, res) => res.json(await service.getInvite(req.params.id, req.user.id))));
+router.post('/:id/discussions', auth, route(async (req, res) => res.status(201).json(await service.createDiscussion(req.params.id, req.user.id, req.body))));
+router.delete('/:id', auth, route(async (req, res) => res.json(await service.deleteCommunity(req.params.id, req.user.id))));
 
-// CREATE a new community
-router.post('/', async (req, res) => {
-  try {
-    const communityObj = req.body;
-    const newCommunity = await communityService.createCommunity(communityObj);
-    res.status(201).json({ id: newCommunity._id, message: 'Community created successfully' });
-  } catch (error) {
-    res.status(500).json({ message: error.message || 'Failed to create community' });
-  }
-});
+router.get('/:id/channels', optionalAuth, route(async (req, res) => {
+  const board = await service.getCommunityById(req.params.id, req.user?.id);
+  res.json({ channels: board.channels, defaultChannelId: 'general' });
+}));
+router.post('/:id/channels', auth, route(async (req, res) => res.status(201).json(await service.createChannel(req.params.id, req.user.id, req.body))));
+router.patch('/:id/channels/:channelId', auth, route(async (req, res) => res.json(await service.editChannel(req.params.id, req.params.channelId, req.user.id, req.body))));
+router.patch('/:id/rules', auth, route(async (req, res) => res.json(await service.editRules(req.params.id, req.user.id, req.body))));
+router.get('/:id/members', auth, route(async (req, res) => res.json(await service.getMembers(req.params.id, req.user.id))));
+router.get('/:id/channels/:channelId/messages', optionalAuth, route(async (req, res) => res.json(await service.getChannelMessages(req.params.id, req.params.channelId, req.user?.id, req.query.before))));
+router.post('/:id/channels/:channelId/messages', auth, route(async (req, res) => res.status(201).json(await service.createChannelMessage(req.params.id, req.user.id, req.params.channelId, req.body))));
+router.post('/:id/messages/:messageId/reactions', auth, route(async (req, res) => res.json(await service.toggleMessageReaction(req.params.id, req.params.messageId, req.user.id, req.body?.emoji))));
 
-// DELETE a community
-router.delete('/:id', async (req, res) => {
-  try {
-    const { id } = req.params;
-    const deletedCommunity = await communityService.deleteCommunity(id);
-    if (!deletedCommunity) {
-      return res.status(404).json({ message: 'Community not found' });
-    }
-    res.json({ message: 'Community deleted successfully' });
-  } catch (error) {
-    res.status(500).json({ message: error.message });
-  }
-});
-
+router.get('/:id/feed', optionalAuth, route(async (req, res) => {
+  const community = await service.getCommunityById(req.params.id, req.user?.id);
+  res.json(community.discussions.map(item => ({ ...item, description: item.content, pubDate: item.createdAt, source: item.isDemo ? 'demo' : 'user' })));
+}));
 module.exports = router;
-
-// Get RSS news for desired community
-router.get('/:id/rss', async (req, res) => {
-  try {
-    const { id } = req.params
-    const feed = await communityService.getCommunityNews(id)
-    res.json(feed)
-  } catch (err) {
-    res.status(500).json({ message: error.message || 'Failed to fetch RSS news '})  
-  }
-})

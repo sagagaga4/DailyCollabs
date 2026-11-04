@@ -1,0 +1,188 @@
+[
+  {
+    "id": "spark",
+    "label": "Spark",
+    "meaning": "Great idea",
+    "color": "#f8c765"
+  },
+  {
+    "id": "orbit",
+    "label": "Orbit",
+    "meaning": "Mind blown",
+    "color": "#75d4e6"
+  },
+  {
+    "id": "pulse",
+    "label": "Pulse",
+    "meaning": "Feeling this",
+    "color": "#ff8c9b"
+  },
+  {
+    "id": "lens",
+    "label": "Lens",
+    "meaning": "Taking a closer look",
+    "color": "#9bb8ff"
+  },
+  {
+    "id": "bolt",
+    "label": "Bolt",
+    "meaning": "Let’s go",
+    "color": "#bcdf77"
+  },
+  {
+    "id": "bloom",
+    "label": "Bloom",
+    "meaning": "Beautiful work",
+    "color": "#e7a4d0"
+  },
+  {
+    "id": "dc_grin",
+    "label": "Grid grin",
+    "meaning": "That made my day",
+    "color": "#f8c765"
+  },
+  {
+    "id": "dc_hype",
+    "label": "Hype signal",
+    "meaning": "Maximum excitement",
+    "color": "#a8df78"
+  },
+  {
+    "id": "dc_cozy",
+    "label": "Cozy mode",
+    "meaning": "Comfy and content",
+    "color": "#e6b48d"
+  },
+  {
+    "id": "dc_lurk",
+    "label": "Quiet lurker",
+    "meaning": "Reading from the shadows",
+    "color": "#a5b9d3"
+  },
+  {
+    "id": "dc_gg",
+    "label": "GG trophy",
+    "meaning": "Well played",
+    "color": "#f5d16e"
+  },
+  {
+    "id": "dc_brain",
+    "label": "Circuit brain",
+    "meaning": "Big brain moment",
+    "color": "#f2a3c4"
+  },
+  {
+    "id": "dc_rocket",
+    "label": "Launch",
+    "meaning": "Ready for liftoff",
+    "color": "#fb9b77"
+  },
+  {
+    "id": "dc_comet",
+    "label": "Comet",
+    "meaning": "Blazing through",
+    "color": "#8cddde"
+  },
+  {
+    "id": "dc_glitch",
+    "label": "Glitch face",
+    "meaning": "My brain just buffered",
+    "color": "#b9b1fa"
+  },
+  {
+    "id": "dc_wow",
+    "label": "Wide wow",
+    "meaning": "Astonished",
+    "color": "#ffc871"
+  },
+  {
+    "id": "dc_sideeye",
+    "label": "Side channel",
+    "meaning": "A little skeptical",
+    "color": "#bbd998"
+  },
+  {
+    "id": "dc_sus",
+    "label": "Stealth mode",
+    "meaning": "Something is suspicious",
+    "color": "#e5a6bd"
+  },
+  {
+    "id": "dc_salute",
+    "label": "Robot salute",
+    "meaning": "Respect, captain",
+    "color": "#99c8ef"
+  },
+  {
+    "id": "dc_love",
+    "label": "Pixel crush",
+    "meaning": "A lot of love",
+    "color": "#fa9aad"
+  },
+  {
+    "id": "dc_chill",
+    "label": "Chill frequency",
+    "meaning": "Relax and listen",
+    "color": "#8cd0cb"
+  },
+  {
+    "id": "dc_focus",
+    "label": "Laser focus",
+    "meaning": "Locked in",
+    "color": "#acd3fa"
+  },
+  {
+    "id": "dc_chef",
+    "label": "Chef signal",
+    "meaning": "Absolutely perfect",
+    "color": "#f5d9ab"
+  },
+  {
+    "id": "dc_based",
+    "label": "Solid signal",
+    "meaning": "Strong point, well made",
+    "color": "#b7dc9d"
+  },
+  {
+    "id": "dc_oof",
+    "label": "System oof",
+    "meaning": "That one hurt",
+    "color": "#e8a582"
+  },
+  {
+    "id": "dc_peek",
+    "label": "Tiny peek",
+    "meaning": "Just checking in",
+    "color": "#c7b4ec"
+  },
+  {
+    "id": "dc_moon",
+    "label": "Night shift",
+    "meaning": "Late-night thoughts",
+    "color": "#b4bcf5"
+  },
+  {
+    "id": "dc_sun",
+    "label": "Daybreak",
+    "meaning": "Good energy incoming",
+    "color": "#f5cf75"
+  },
+  {
+    "id": "dc_satellite",
+    "label": "Satellite",
+    "meaning": "Message received",
+    "color": "#95d7df"
+  },
+  {
+    "id": "dc_jam",
+    "label": "Jam session",
+    "meaning": "This is my soundtrack",
+    "color": "#eba7cd"
+  },
+  {
+    "id": "dc_portal",
+    "label": "Portal",
+    "meaning": "Down the rabbit hole",
+    "color": "#a5d5b5"
+  }
+]

@@ -1,0 +1,200 @@
+[
+  {
+    "domain": "nngroup.com",
+    "url": "https://www.nngroup.com/articles/ten-usability-heuristics/",
+    "title": "10 Usability Heuristics for User Interface Design",
+    "takeaway": "Visible status, familiar language, recovery, and user control help people understand outcomes and choose their next step.",
+    "decision": "Show the active feed mode and confirm explicit feedback; keep reset and recovery actions easy to find.",
+    "evidence": "read",
+    "category": "design"
+  },
+  {
+    "domain": "baymard.com",
+    "url": "https://baymard.com/research-articles/how-to-design-applied-filters",
+    "title": "Display Applied Filters in an Overview",
+    "takeaway": "Applied-filter summaries give immediate confirmation and make it easier to broaden results without reopening hidden filter panels. These observations come from ecommerce and are adapted to content discovery.",
+    "decision": "Keep selected topics and languages visible near the feed and provide direct removal or reset controls.",
+    "evidence": "read",
+    "category": "design"
+  },
+  {
+    "domain": "lawsofux.com",
+    "url": "https://lawsofux.com/hicks-law/",
+    "title": "Hick’s Law",
+    "takeaway": "More numerous or complicated choices can slow decisions; progressive disclosure can reduce initial cognitive load.",
+    "decision": "Keep a small primary set of feed controls and place detailed preference tuning behind a clearly labeled control.",
+    "evidence": "read",
+    "category": "design"
+  },
+  {
+    "domain": "alistapart.com",
+    "url": "https://alistapart.com/article/priority-guides-a-content-first-alternative-to-wireframes/",
+    "title": "Priority Guides: A Content-First Alternative to Wireframes",
+    "takeaway": "Prioritize real content by user goals before arranging the layout, starting with the most important mobile information.",
+    "decision": "Put the real product display, concrete product value, and account action ahead of decorative marketing; prioritize useful content rather than time spent.",
+    "evidence": "read",
+    "category": "design"
+  },
+  {
+    "domain": "smashingmagazine.com",
+    "url": "https://www.smashingmagazine.com/2016/03/pagination-infinite-scrolling-load-more-buttons/",
+    "title": "Infinite Scrolling, Pagination Or Load More Buttons? Usability Findings In eCommerce",
+    "takeaway": "The authors distinguish exploratory browsing from ranked search and identify footer access and return-position problems with automatic infinite loading. This is not direct evidence about a news feed.",
+    "decision": "For ranked topic results, prefer an explicit batch/end state and preserve the reader’s position; treat a manual Load more option as a recommended refinement rather than optimizing endless scrolling.",
+    "evidence": "read",
+    "category": "design"
+  },
+  {
+    "domain": "uxdesign.cc",
+    "url": "https://uxdesign.cc/context-is-the-new-interface-c16b7f6e77be",
+    "title": "Context is the new interface",
+    "takeaway": "Preferences and past behavior should inform continuity without becoming unquestioned assumptions; people need to inspect and correct the context used.",
+    "decision": "Explain which explicit interests influence the feed and allow clearing learned preferences without changing the person’s account.",
+    "evidence": "read",
+    "category": "design"
+  },
+  {
+    "domain": "uxmatters.com",
+    "url": "https://www.uxmatters.com/mt/archives/2026/04/learned-helplessness-in-ai-assisted-work-when-users-stop-trying-to-shape-the-tools-they-use.php",
+    "title": "Learned Helplessness in AI-Assisted Work: When Users Stop Trying to Shape the Tools They Use",
+    "takeaway": "Corrections need visible consequences and acknowledgements so users can see a connection between their input and system behavior.",
+    "decision": "When Show less is selected, confirm the change and actually reduce the relevant signal; do not display success if persistence fails.",
+    "evidence": "read",
+    "category": "design"
+  },
+  {
+    "domain": "interaction-design.org",
+    "url": "https://assets.interaction-design.org/literature/article/talk-to-me-feedback-and-notifications-in-mobile-design",
+    "title": "Talk to Me! Feedback and Notifications in Mobile Design",
+    "takeaway": "Feedback should fit the person’s goal, arrive promptly, and avoid unnecessary interruption or arbitrary gamification.",
+    "decision": "Use one concise status update after a save, share, or relevance adjustment; avoid repeated engagement prompts, artificial streaks, and unrelated badges.",
+    "evidence": "read",
+    "category": "design"
+  },
+  {
+    "domain": "material.io",
+    "url": "https://m1.material.io/patterns/search.html",
+    "title": "Search — Material Design",
+    "takeaway": "Search helps people locate content in a large information space; predictable access and suitable search patterns improve discovery. This is stable legacy guidance, not a claim about a new 2026 trend.",
+    "decision": "Keep topic search discoverable, retain the active query, and distinguish search results from a general personalized feed.",
+    "evidence": "read",
+    "category": "design"
+  },
+  {
+    "domain": "atlassian.design",
+    "url": "https://atlassian.design/foundations/accessibility/",
+    "title": "Accessibility — Atlassian Design",
+    "takeaway": "Consistency, plain language, personal control, text alternatives, and respecting motion preferences are part of end-to-end accessible experiences.",
+    "decision": "Label personalization actions in plain language, include text with state icons, and preserve account and OS motion preferences.",
+    "evidence": "read",
+    "category": "design"
+  },
+  {
+    "domain": "primer.style",
+    "url": "https://primer.style/accessibility/design-guidance/focus-management/",
+    "title": "Focus management — Primer",
+    "takeaway": "Keyboard focus must remain visible, follow a logical order, enter new dialogs, and return to a sensible place after they close.",
+    "decision": "Relevance menus and reset dialogs should be keyboard-operable and return focus to their trigger; card drag actions must retain a standard button alternative.",
+    "evidence": "read",
+    "category": "design"
+  },
+  {
+    "domain": "carbondesignsystem.com",
+    "url": "https://www.carbondesignsystem.com/building-blocks/foundations/content",
+    "title": "Content — Carbon Design System",
+    "takeaway": "Clear, purposeful interface language and standardized terminology make navigation and product behavior more coherent.",
+    "decision": "Use one label per outcome across the app: Saved, Shared, Show less, Latest, and For you; avoid interchangeable terms that imply different ranking behavior.",
+    "evidence": "read",
+    "category": "design"
+  },
+  {
+    "domain": "shopify.dev",
+    "url": "https://shopify.dev/docs/apps/design",
+    "title": "App Design Guidelines — Shopify",
+    "takeaway": "Matching the appearance and behaviors of the surrounding product reduces relearning and supports trust across workflows.",
+    "decision": "Make feed controls and recommendation feedback use the same buttons, spacing, and input behavior as communities and settings.",
+    "evidence": "read",
+    "category": "design"
+  },
+  {
+    "domain": "adobe.com",
+    "url": "https://spectrum.adobe.com/content/writing-for-errors",
+    "title": "Writing for errors — Adobe Spectrum",
+    "takeaway": "Useful error messages explain what happened and provide a concrete path forward; the component should fit the consequence of the failure.",
+    "decision": "Keep failed feed loads and failed preference saves contextual, preserve the reader’s current state, and provide Try again instead of silently resetting the feed.",
+    "evidence": "read",
+    "category": "design"
+  },
+  {
+    "domain": "microsoft.design",
+    "url": "https://fluent2.microsoft.design/design-principles",
+    "title": "Design principles — Fluent 2",
+    "takeaway": "Familiar platform behavior, less visual clutter, and inclusion help people stay focused on their own task.",
+    "decision": "Give article/video content more visual weight than recommendation controls, while keeping those controls discoverable and consistent on mobile.",
+    "evidence": "read",
+    "category": "design"
+  },
+  {
+    "domain": "service.gov.uk",
+    "url": "https://design-system.service.gov.uk/components/notification-banner/",
+    "title": "Notification banner — GOV.UK Design System",
+    "takeaway": "A notification banner is for relevant service-wide or cross-page information; not every contextual message belongs in a prominent banner.",
+    "decision": "Confirm per-card feedback near the card or in a concise status region; reserve a service banner for a feed-wide outage or important cross-page change.",
+    "evidence": "read",
+    "category": "design"
+  },
+  {
+    "domain": "a11yproject.com",
+    "url": "https://www.a11yproject.com/checklist/",
+    "title": "Checklist — The A11Y Project",
+    "takeaway": "Plain content, keyboard access, semantics, labels, media alternatives, and contrast need to be checked together; a checklist alone does not guarantee accessibility.",
+    "decision": "Review new feed controls with keyboard-only navigation and visible focus, and keep every icon action named and usable without hover.",
+    "evidence": "read",
+    "category": "design"
+  },
+  {
+    "domain": "digital.gov",
+    "url": "https://digital.gov/guides/plain-language/design/",
+    "title": "Design for understanding — Digital.gov",
+    "takeaway": "Logical structure, descriptive headings, scanning aids, and restrained emphasis make content easier to understand.",
+    "decision": "Use descriptive feed headings and readable article metadata; make the current mode understandable without a paragraph of algorithm jargon.",
+    "evidence": "read",
+    "category": "design"
+  },
+  {
+    "domain": "designsystemet.no",
+    "url": "https://designsystemet.no/en/intro/accessibility",
+    "title": "Accessibility — Designsystemet",
+    "takeaway": "Accessible base components still rely on correct semantic HTML, focus management, language metadata, token use, and meaningful content.",
+    "decision": "Use native controls and the app’s semantic tokens for feed preferences; treat language selection as meaningful content filtering and preserve accessible labels.",
+    "evidence": "read",
+    "category": "design"
+  },
+  {
+    "domain": "designsystemsrepo.com",
+    "url": "https://designsystemsrepo.com/design-systems/",
+    "title": "Design Systems Gallery — Design Systems Repo",
+    "takeaway": "The curated product gallery exposes established design systems whose patterns connect reusable components with real product implementations. It is a reference directory, not an independent outcome study.",
+    "decision": "Use documented product patterns and real app components as references; show the actual implemented interface in the landing preview rather than an invented mock product.",
+    "evidence": "read",
+    "category": "design"
+  },
+  {
+    "domain": "zeroheight.com",
+    "url": "https://report.zeroheight.com/2026",
+    "title": "Design Systems Report 2026",
+    "takeaway": "The practitioner survey distinguishes component adoption measures from outcome measures and reports continuing gaps in accessibility, patterns, and documentation.",
+    "decision": "Evaluate the feed by successful discovery, saves, correction usefulness, and low error rates; do not treat longer sessions or more scrolling alone as proof of value.",
+    "evidence": "read",
+    "category": "design"
+  },
+  {
+    "domain": "figma.com",
+    "url": "https://www.figma.com/blog/building-accessibility-into-a-canvas-based-product/",
+    "title": "Building Accessibility Into a Canvas-Based Product",
+    "takeaway": "Figma’s engineering account shows that a visually rich interaction must also expose synchronized focus, semantics, and announcements for keyboard and screen-reader users.",
+    "decision": "Keep personalization and card actions represented in semantic DOM controls with announced outcomes, even where the visible interaction also supports dragging or motion.",
+    "evidence": "read",
+    "category": "design"
+  }
+]

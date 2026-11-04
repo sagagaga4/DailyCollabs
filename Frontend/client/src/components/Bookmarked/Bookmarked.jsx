@@ -1,108 +1,11 @@
-import React, { useEffect, useState } from "react";
-import "../Bookmarked/Bookmarked.css";
-
-export default function Bookmarked({ token }) {
-  const [articles, setArticles] = useState([]);
-  const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-    const fetchBookmarks = async () => {
-      try {
-        // 1. Load bookmarked URLs from localStorage
-        const localBookmarkedURLs = JSON.parse(localStorage.getItem("bookmarkedArticles") || "[]");
-
-        // 2. Fetch backend bookmarks if logged in
-        let backendArticles = [];
-        if (token) {
-          const res = await fetch("http://localhost:4000/bookmarked", {
-            method: "GET",
-            headers: {
-              "Content-Type": "application/json",
-              "authorization": `Bearer ${token}`,
-            },
-          });
-          if (res.ok) backendArticles = await res.json();
-        }
-
-        // 3. Get cached articles from sessionStorage
-        const cachedArticles = JSON.parse(sessionStorage.getItem("cachedArticles") || "[]");
-
-        // 4. Merge backend + local bookmarks, map to full article objects
-        const mergedArticles = [];
-
-        // Add backend articles first
-        backendArticles.forEach(article => {
-          if (article.link) mergedArticles.push(article);
-        });
-
-        // Map local bookmarked URLs to cached articles
-        localBookmarkedURLs.forEach(url => {
-          if (!mergedArticles.some(a => a.link === url)) {
-            const match = cachedArticles.find(a => a.link === url);
-            if (match) mergedArticles.push(match);
-            else mergedArticles.push({ link: url, title: "Untitled", description: "", pubDate: "", image: "" });
-          }
-        });
-
-        setArticles(mergedArticles);
-      } catch (err) {
-        console.error("Error fetching bookmarks:", err);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchBookmarks();
-  }, [token]);
-
-  if (loading) return <p style={{ padding: 20, color: "#f8f8f6eb", display: "flex", justifyContent: "center" }}>Loading bookmarks...</p>;
-  if (!articles.length) return <p style={{ padding: 20, color: "#f8f8f6eb", display: "flex", justifyContent: "center" }}>No bookmarks yet 📌</p>;
-
-  return (
-    <div className="Bhome-container">
-      <div style={{ padding: 10, width: "100%" }}>
-        <h1 style={{ marginTop: "-80px", color: "#f8f8f6eb", textAlign:'center' }}>
-          My Bookmarked Articles
-        </h1>
-      </div>
-
-      {articles.map((article, idx) => (
-        <div key={idx} className="Bcard-content">
-          <div className="Bcard">
-            <div className="Bhead">{article.title || "Untitled"}</div>
-
-            <div className="Bcontent">
-              <p style={{ color: "#b2a0b6ca" }}>
-                {article.pubDate ? new Date(article.pubDate).toLocaleDateString("en-GB") : ""}
-              </p>
-
-              {article.description && (
-                <p style={{ color: "#ded1e1ea" }}>
-                  {article.description.length > 100 ? article.description.slice(0, 100) + "..." : article.description}
-                </p>
-              )}
-
-              {article.image && (
-                <img
-                  src={article.image}
-                  alt={article.title}
-                  className="Bcard-img"
-                />
-              )}
-
-              <a
-                href={article.link}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="B_button"
-                style={{ justifyContent: 'center', width: '100%', height: '100px', display: "inline-block", textDecoration: 'bold' }}
-              >
-                <h1 style={{ textAlign: 'center', width: '100%', marginTop: '25px' }}>Read Post ✨</h1>
-              </a>
-            </div>
-          </div>
-        </div>
-      ))}
-    </div>
-  );
+import { useEffect, useState } from 'react';
+import { Link } from 'react-router-dom';
+import { BOOKMARK_EVENT, loadBookmarks, readBookmarks, toggleBookmark } from '../../lib/bookmarks';
+import LibraryCard from '../Collections/LibraryCard';
+import '../Collections/Collections.css';
+export default function Bookmarked(){
+ const [items,setItems]=useState(readBookmarks);const [loading,setLoading]=useState(true);const [error,setError]=useState('');const [query,setQuery]=useState('');const [filter,setFilter]=useState('all');
+ useEffect(()=>{let active=true;const changed=event=>setItems(event.detail||readBookmarks());window.addEventListener(BOOKMARK_EVENT,changed);loadBookmarks().then(data=>{if(active)setItems(data);}).catch(err=>{if(active)setError(err.message+' Showing items saved on this device.');}).finally(()=>{if(active)setLoading(false);});return()=>{active=false;window.removeEventListener(BOOKMARK_EVENT,changed);};},[]);
+ const visible=items.filter(item=>(filter==='all'||item.type===filter)&&[item.title,item.description].join(' ').toLowerCase().includes(query.toLowerCase()));
+ return <main className="library-page"><header className="library-heading"><div><span className="library-eyebrow">GOOD FINDS. KEPT CLOSE.</span><h1>Your little collection<span>.</span></h1><p>Stories to come back to. Videos worth a second look.</p></div><span className="library-count">{items.length} SAVED</span></header><div className="library-toolbar"><nav className="library-tabs" aria-label="Bookmark types">{[['all','Everything'],['article','Stories'],['video','Videos']].map(([value,label])=><button key={value} aria-pressed={filter===value} onClick={()=>setFilter(value)}>{label}</button>)}</nav><input className="library-search" type="search" value={query} onChange={e=>setQuery(e.target.value)} placeholder="Search your collection…" aria-label="Search bookmarks"/></div>{error&&<p className="library-error" role="alert">{error}</p>}{loading&&!items.length?<p className="library-loading" role="status">Opening your collection…</p>:visible.length?<div className="library-grid">{visible.map(item=><LibraryCard key={item.link} item={item} saved onSave={()=>toggleBookmark(item,false)}/>)}</div>:<div className="library-empty"><span aria-hidden="true">◇</span><h2>{query?'No match in your collection.':'Make room for a good find.'}</h2><p>{query?'Try a different title, topic, or filter.':'Save a story or video from your feed. It will be waiting here, with its details and community connections intact.'}</p><Link to="/" className="library-primary">Discover something good ↗</Link></div>}</main>;
 }

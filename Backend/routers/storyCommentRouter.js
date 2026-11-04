@@ -1,0 +1,16 @@
+const express = require('express');
+const auth = require('../middleware/authMiddleware');
+const service = require('../services/storyCommentService');
+const router = express.Router();
+const route = (handler) => async (req, res) => { try { await handler(req, res); } catch (error) { res.status(error.status || (error.name === 'ValidationError' ? 400 : 500)).json({ message: error.status || error.name === 'ValidationError' ? error.message : 'Could not update comments. Please try again.' }); } };
+router.use(auth);
+router.get('/thread', route(async (req, res) => res.json(await service.thread(req.user.id, req.query))));
+router.get('/mine', route(async (req, res) => res.json(await service.mine(req.user.id, req.query))));
+router.post('/counts', route(async (req, res) => res.json(await service.threadCounts(req.user.id, req.body?.urls))));
+router.get('/:id', route(async (req, res) => res.json(await service.getOne(req.user.id, req.params.id))));
+router.post('/', route(async (req, res) => res.status(201).json(await service.create(req.user.id, req.body))));
+router.patch('/:id', route(async (req, res) => res.json(await service.edit(req.user.id, req.params.id, req.body))));
+router.delete('/:id', route(async (req, res) => res.json(await service.remove(req.user.id, req.params.id))));
+router.post('/:id/reaction', route(async (req, res) => res.json(await service.react(req.user.id, req.params.id, req.body?.type))));
+router.post('/:id/repost', route(async (req, res) => res.status(201).json(await service.repost(req.user.id, req.params.id, req.body))));
+module.exports = router;
