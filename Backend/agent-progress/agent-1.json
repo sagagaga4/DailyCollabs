@@ -2,8 +2,8 @@
   "id": 1,
   "status": "ready",
   "progress": 100,
-  "message": "Search, feed ranking and independent artwork/playback reviews passed. Ready for a new mission.",
-  "updatedAt": "2026-11-04T21:43:33.658Z",
+  "message": "Mixed discovery, recent-topic limits, shared video cache and private pagination passed review. Ready for a new mission.",
+  "updatedAt": "2026-11-05T10:10:10.579Z",
   "events": [
     {
       "status": "queued",
@@ -114,6 +114,31 @@
       "status": "ready",
       "message": "Search, feed ranking and independent artwork/playback reviews passed. Ready for a new mission.",
       "at": "2026-11-04T21:43:33.658Z"
+    },
+    {
+      "status": "building",
+      "message": "Building independent mixed For You discovery with real interest videos, recent-topic limits, and private pagination.",
+      "at": "2026-11-05T09:55:32.390Z"
+    },
+    {
+      "status": "checking",
+      "message": "Discovery API verified: mixed real videos/news, recent-topic cap and presence, account isolation, Hebrew Auto, private pagination and failures.",
+      "at": "2026-11-05T10:00:34.412Z"
+    },
+    {
+      "status": "review",
+      "message": "Mixed discovery backend ready: 7 new tests pass; recent article/video presence, 3-of-12 cap, real shared videos and private locale snapshots verified.",
+      "at": "2026-11-05T10:02:55.813Z"
+    },
+    {
+      "status": "review",
+      "message": "Shared video-search cache verified live: eight Redis results warm For You, which shows a real Redis video alongside its broader mixed feed.",
+      "at": "2026-11-05T10:06:36.814Z"
+    },
+    {
+      "status": "ready",
+      "message": "Mixed discovery, recent-topic limits, shared video cache and private pagination passed review. Ready for a new mission.",
+      "at": "2026-11-05T10:10:10.579Z"
     }
   ]
 }

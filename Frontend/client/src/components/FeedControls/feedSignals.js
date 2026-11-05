@@ -8,10 +8,7 @@ export function signalText(value, max) {
   }).join('').replace(/\s+/gu, ' ').trim().slice(0, max);
 }
 
-/** Called only for a deliberate search, open, or explicit feedback action. */
-export async function sendFeedSignal(type, { url, title, query } = {}, options = {}) {
-  const token = sessionStorage.getItem('token');
-  if (!token) return { recorded: false };
+async function requestSignal(type, { url, title, query } = {}, options = {}, token) {
   const body = type === 'search' ? { type, query: signalText(query, 200) } : { type, url, title: signalText(title, 300) };
   const response = await fetch(`${API_URL}/feed/signals`, {
     method: 'POST', headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
@@ -21,4 +18,29 @@ export async function sendFeedSignal(type, { url, title, query } = {}, options =
   if (sessionStorage.getItem('token') !== token) throw new Error('Your session changed. Open your feed again.');
   if (!response.ok) throw new Error(data.message || data.error || 'Your feed feedback could not be saved.');
   return data;
+}
+
+const searchQueues = new Map();
+export function waitForSearchSignals() {
+  return (searchQueues.get(sessionStorage.getItem('token')) || Promise.resolve()).catch(() => {});
+}
+/** Called only for a deliberate search, open, or explicit feedback action. */
+export function sendFeedSignal(type, metadata = {}, options = {}) {
+  const token = sessionStorage.getItem('token');
+  if (!token) return Promise.resolve({ recorded: false });
+  if (type !== 'search') return requestSignal(type, metadata, options, token);
+  // Search writes must reach the server in submission order. Cancelling a UI
+  // lookup does not cancel the user's already-submitted learning signal.
+  const previous = searchQueues.get(token) || Promise.resolve();
+  const pending = previous.catch(() => {}).then(async () => {
+    if (sessionStorage.getItem('token') !== token) throw new Error('Your session changed. Open your feed again.');
+    const controller = new AbortController();
+    const timeout = setTimeout(() => controller.abort(), 8000);
+    try { return await requestSignal(type, metadata, { signal: controller.signal }, token); }
+    finally { clearTimeout(timeout); }
+  });
+  searchQueues.set(token, pending);
+  const cleanup = () => { if (searchQueues.get(token) === pending) searchQueues.delete(token); };
+  pending.then(cleanup, cleanup);
+  return pending;
 }

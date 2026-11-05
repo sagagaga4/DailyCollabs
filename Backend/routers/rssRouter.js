@@ -299,4 +299,4 @@ router.post("/",async(req,res)=>{
 module.exports = router;
 module.exports.imageHelpers = { extractImage, publisherImage, resolveItem };
 module.exports.localeHelpers = { getRawItems, rawItemsCache };
-module.exports.feedHelpers = { createSnapshot, sessionKey, feedSessions };
+module.exports.feedHelpers = { createSnapshot, sessionKey, feedSessions, enrichRecords };

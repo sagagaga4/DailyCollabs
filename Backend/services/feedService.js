@@ -18,7 +18,7 @@ async function profileDocument(userId){let record=await FeedProfile.findOne({use
 function preferencesOf(record){return{...DEFAULT_PREFERENCES,...record?.preferences,followedTopics:[...(record?.preferences?.followedTopics||[])],mutedTopics:[...(record?.preferences?.mutedTopics||[])]};}
 const BOARD_TOPICS={g:['technology','programming','software'],v:['gaming','video games'],mu:['music'],tv:['film','television'],ic:['art','design','creativity']};
 async function getContext(userId,{fresh=false}={}){
- if(!userId)return{preferences:{...DEFAULT_PREFERENCES,personalized:false},interests:[],hiddenUrls:[],hiddenTitles:[],openedUrls:[],moreUrls:[],lessUrls:[],signalsCount:0,retrievalTopics:[]};
+ if(!userId)return{preferences:{...DEFAULT_PREFERENCES,personalized:false},interests:[],hiddenUrls:[],hiddenTitles:[],openedUrls:[],moreUrls:[],lessUrls:[],signalsCount:0,retrievalTopics:[],recentSearches:[]};
  const id=String(userId);const cached=profileCache.get(id);if(!fresh&&cached&&Date.now()-cached.at<TTL)return cached.value;
  await ensureUser(id);
  const [record,saved,communities,signals,signalsCount,savedTopics]=await Promise.all([profileDocument(id),Bookmarked.find({userId:id}).sort({createdAt:-1}).limit(100).lean(),Community.find({members:id}).select('name board category description').limit(50).lean(),FeedSignal.find({userId:id,expiresAt:{$gt:new Date()}}).sort({updatedAt:-1}).limit(500).lean(),FeedSignal.countDocuments({userId:id,expiresAt:{$gt:new Date()}}),Tag.find({ownerId:new mongoose.Types.ObjectId(id)}).select('tagName').limit(12).lean()]);
@@ -35,7 +35,8 @@ async function getContext(userId,{fresh=false}={}){
  const unique=new Map();for(const interest of interests){const key=`${interest.source}:${interest.topic.toLocaleLowerCase()}`;if(!unique.has(key)||Math.abs(unique.get(key).weight)<Math.abs(interest.weight))unique.set(key,interest);}
  const combined=[...unique.values()].sort((a,b)=>Math.abs(b.weight)-Math.abs(a.weight)||a.topic.localeCompare(b.topic)).slice(0,150);
  const retrievalTopics=[];for(const interest of combined){if(interest.weight<=0)continue;const topic=interest.source==='bookmark'?interest.tokens.slice(0,3).join(' '):interest.topic;if(topic&&!retrievalTopics.some(value=>value.toLocaleLowerCase()===topic.toLocaleLowerCase()))retrievalTopics.push(topic);if(retrievalTopics.length===2)break;}
- const value={preferences,interests:combined,hiddenUrls:[...new Set(hiddenUrls)],hiddenTitles:[...new Set(hiddenTitles)],openedUrls:[...new Set(openedUrls)],moreUrls:[...new Set(moreUrls)],lessUrls:[...new Set(lessUrls)],signalsCount,retrievalTopics};
+ const recentSearches=signals.filter(signal=>signal.type==='search'&&signal.query).slice(0,12).map(signal=>({query:signal.query,at:new Date(signal.updatedAt).toISOString()}));
+ const value={preferences,interests:combined,hiddenUrls:[...new Set(hiddenUrls)],hiddenTitles:[...new Set(hiddenTitles)],openedUrls:[...new Set(openedUrls)],moreUrls:[...new Set(moreUrls)],lessUrls:[...new Set(lessUrls)],signalsCount,retrievalTopics,recentSearches};
  if(profileCache.size>=200)profileCache.delete(profileCache.keys().next().value);profileCache.set(id,{at:Date.now(),value});return value;
 }
 function envelope(context){return{preferences:context.preferences,interests:context.interests.filter(item=>item.weight>0).slice(0,30).map(({topic,weight,source})=>({topic,weight:Math.round(weight*100)/100,source})),signalsCount:context.signalsCount};}

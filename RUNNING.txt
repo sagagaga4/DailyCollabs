@@ -46,3 +46,8 @@ with shared videos. A source owner may still restrict embedding or captions.
 The topic search prompt stays pinned while browsing. Missing or broken images
 receive stable, distinct artwork per card. See research/algorithm/README.md for
 the 89-site research ledger and README.md for feed preference controls.
+
+For you combines interest-based articles and videos in one stream. Searching or
+clicking a saved topic selects Latest news and also prepares matching Videos.
+Returning to For you refreshes its independent mix with a small contribution
+from the latest researched topic, while the topic tabs keep their results.

@@ -131,4 +131,8 @@ function createVideoSearch({ fetchImpl = global.fetch, apiKey = process.env.YOUT
     return pending;
   };
 }
-module.exports = { createVideoSearch, normalizeQuery, extractInitialData, parsePublicResults, parseOfficialResults, limitedBody };
+// Topic search and For You share both successful results and in-flight work.
+// A video already found for a deliberate search remains available when the
+// reader returns to discovery, without a second request to the provider.
+const searchVideos = createVideoSearch();
+module.exports = { searchVideos, createVideoSearch, normalizeQuery, extractInitialData, parsePublicResults, parseOfficialResults, limitedBody };

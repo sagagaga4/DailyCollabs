@@ -9,7 +9,7 @@ const esbuild = frontendRequire('esbuild');
 function compile(filename, globals = {}) {
   const output = esbuild.buildSync({ entryPoints: [path.join(frontendRoot, filename)], bundle: true, write: false, platform: 'node', format: 'cjs', jsx: 'automatic', loader: { '.css': 'empty' }, external: ['react'], define: { 'import.meta.env.VITE_API_URL': '"https://feed-controls.test"' } });
   const module = { exports: {} };
-  vm.runInNewContext(output.outputFiles[0].text, { module, exports: module.exports, require: frontendRequire, ...globals });
+  vm.runInNewContext(output.outputFiles[0].text, { module, exports: module.exports, require: frontendRequire, AbortController, setTimeout, clearTimeout, ...globals });
   return module.exports;
 }
 
@@ -80,4 +80,57 @@ test('deliberate search/open signals send only bounded metadata and honor server
   assert.deepEqual(Object.keys(open), ['type','url','title']);
   assert.equal(open.title.length, 300);
   assert.equal(calls[1].options.keepalive, true);
+});
+
+test('rapid submitted search signals reach the server in order without delaying news lookups', async () => {
+  const calls = [];
+  const { sendFeedSignal } = compile('src/components/FeedControls/feedSignals.js', {
+    sessionStorage: { getItem: () => 'same-account' },
+    fetch: (url, options) => new Promise(resolve => calls.push({ url, options, resolve })),
+  });
+  const first = sendFeedSignal('search', { query: 'first' });
+  const second = sendFeedSignal('search', { query: 'latest' });
+  await new Promise(setImmediate);
+  assert.equal(calls.length, 1, 'The later learning write must wait for the first server acknowledgement.');
+  assert.equal(JSON.parse(calls[0].options.body).query, 'first');
+  calls[0].resolve({ ok: true, json: async () => ({ recorded: true }) }); await first;
+  await new Promise(setImmediate);
+  assert.equal(calls.length, 2); assert.equal(JSON.parse(calls[1].options.body).query, 'latest');
+  calls[1].resolve({ ok: true, json: async () => ({ recorded: true }) }); await second;
+});
+
+test('queued search signals never move from a departed account into the next account', async () => {
+  let token = 'account-one'; const calls = [];
+  const { sendFeedSignal } = compile('src/components/FeedControls/feedSignals.js', {
+    sessionStorage: { getItem: () => token },
+    fetch: (url, options) => new Promise(resolve => calls.push({ options, resolve })),
+  });
+  const first = sendFeedSignal('search', { query: 'first' });
+  const second = sendFeedSignal('search', { query: 'queued' });
+  const firstRejected = assert.rejects(first, /session changed/); const secondRejected = assert.rejects(second, /session changed/);
+  await new Promise(setImmediate); token = 'account-two';
+  calls[0].resolve({ ok: true, json: async () => ({ recorded: true }) });
+  await Promise.all([firstRejected, secondRejected]);
+  assert.equal(calls.length, 1);
+  assert.equal(calls[0].options.headers.Authorization, 'Bearer account-one');
+});
+
+test('search learning survives lookup cancellation, is bounded, and remains awaitable after clearing the UI topic', async () => {
+  const timers = []; let requestSignal;
+  const { sendFeedSignal, waitForSearchSignals } = compile('src/components/FeedControls/feedSignals.js', {
+    sessionStorage: { getItem: () => 'same-account' },
+    setTimeout: (callback, duration) => { timers.push({ callback, duration }); return timers.length; }, clearTimeout: () => {},
+    fetch: (url, options) => new Promise((resolve, reject) => { requestSignal = options.signal; options.signal.addEventListener('abort', () => reject(new Error('bounded timeout'))); }),
+  });
+  const lookup = new AbortController();
+  const pending = sendFeedSignal('search', { query: 'submitted' }, { signal: lookup.signal });
+  const rejected = assert.rejects(pending, /bounded timeout/);
+  let settled = false; const wait = waitForSearchSignals().then(() => { settled = true; });
+  await new Promise(setImmediate);
+  lookup.abort();
+  assert.equal(requestSignal.aborted, false, 'Cancelling news lookup must not reorder submitted learning writes.');
+  assert.equal(settled, false, 'A For you refresh must be able to await learning independently of topic UI state.');
+  assert.equal(timers[0].duration, 8000);
+  timers[0].callback(); await rejected; await wait;
+  assert.equal(settled, true);
 });

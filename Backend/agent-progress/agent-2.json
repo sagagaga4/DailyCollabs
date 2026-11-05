@@ -2,8 +2,8 @@
   "id": 2,
   "status": "ready",
   "progress": 100,
-  "message": "Actual-app capture and final laptop film verified, including muted video controls. Ready for a new mission.",
-  "updatedAt": "2026-11-04T21:43:34.497Z",
+  "message": "Actual mixed-feed screenshot and refreshed laptop film verified. Ready for a new mission.",
+  "updatedAt": "2026-11-05T10:10:11.397Z",
   "events": [
     {
       "status": "building",
@@ -134,6 +134,21 @@
       "status": "ready",
       "message": "Actual-app capture and final laptop film verified, including muted video controls. Ready for a new mission.",
       "at": "2026-11-04T21:43:34.497Z"
+    },
+    {
+      "status": "fixing",
+      "message": "Refreshing the product film from the actual unified For you feed capture.",
+      "at": "2026-11-05T10:08:50.710Z"
+    },
+    {
+      "status": "review",
+      "message": "Unified For you feed capture now appears in the product film and poster. Source hash, codec, complete decode, and sampled motion frames all verified.",
+      "at": "2026-11-05T10:09:19.107Z"
+    },
+    {
+      "status": "ready",
+      "message": "Actual mixed-feed screenshot and refreshed laptop film verified. Ready for a new mission.",
+      "at": "2026-11-05T10:10:11.397Z"
     }
   ]
 }

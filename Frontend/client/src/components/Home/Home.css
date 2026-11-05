@@ -113,3 +113,6 @@
 @media(max-width:650px){.home-page .home-page-heading{flex-direction:column;gap:17px;align-items:flex-start}.home-heading-controls{justify-content:flex-start}.home-story-feedback{gap:14px}.home-story-feedback>button{font-size:10px}}
 .home-video-save{background:none;border:0;padding:7px 0;color:var(--muted);font-size:10px;align-self:flex-start}.home-video-save:hover{color:var(--accent)}.home-page .dc-draggable-card{height:100%}.home-page .card-content>.dc-draggable-card>.card{height:100%}.home-page .dc-card-more{top:8px;right:8px}.home-page .card .button-wrapper{padding-right:25px}
 .home-story-image{margin:0;position:relative;width:100%}.home-story-image figcaption{position:absolute;bottom:5px;right:6px;background:#080a0ed9;padding:3px 6px;border-radius:3px;font-size:8px;color:#c1c9d3}.home-story-image figcaption a{color:inherit;text-decoration:none}
+
+/* One shared grid preserves the discovery service's news/video order. */
+.home-page .home-unified-feed{padding:0;border:0;min-width:0}.home-page .home-mixed-grid{margin-top:0;align-items:start}.home-page .home-video-source-link{font-size:11px;text-align:center;padding:16px 0;color:var(--muted)}.home-page .home-video-source-link a{color:var(--accent);text-decoration:none}.home-page .home-feed-tabs{margin-bottom:24px}

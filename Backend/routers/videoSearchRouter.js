@@ -1,7 +1,6 @@
 const express = require('express');
-const { createVideoSearch } = require('../services/videoSearchService');
+const { searchVideos } = require('../services/videoSearchService');
 const router = express.Router();
-const searchVideos = createVideoSearch();
 const limits = new Map();
 router.get('/', async (req, res) => {
   const address = req.ip || 'local'; const now = Date.now();

@@ -4,6 +4,7 @@ import { API_URL } from '../../config';
 import PixelSearch from '../Search/PixelSearch';
 import { NEWS_LANGUAGES, canonicalLanguage } from '../../lib/languages';
 import { sendFeedSignal } from '../FeedControls/feedSignals';
+import { homeFeedRequest } from '../Home/homeFeedState';
 import './SearchBar.css';
 
 async function jsonRequest(url, options) {
@@ -13,7 +14,7 @@ async function jsonRequest(url, options) {
   return data;
 }
 
-export default function SearchBar({ onResults, onVideoResults, onSearchState, userId, token, initialLanguage = 'auto', initialRegion = '', modeOverride }) {
+export default function SearchBar({ onResults, onVideoResults, onSearchState, userId, token, initialLanguage = 'auto', initialRegion = '' }) {
   const [query, setQuery] = useState('');
   const [languageChoice, setLanguageChoice] = useState(() => NEWS_LANGUAGES.some(([code]) => code === initialLanguage) ? initialLanguage : 'custom');
   const [customLanguage, setCustomLanguage] = useState(() => canonicalLanguage(initialLanguage) || '');
@@ -49,31 +50,33 @@ export default function SearchBar({ onResults, onVideoResults, onSearchState, us
     if (topic.length < 2 || topic.length > 120) { setError('Search for a topic between 2 and 120 characters.'); return; }
     const authToken = sessionStorage.getItem('token') || token;
     const authHeaders = authToken ? { Authorization: `Bearer ${authToken}` } : {};
-    sendFeedSignal('search', { query: topic }).catch(() => {});
     request.current?.abort();
     const controller = new AbortController(); request.current = controller;
     const current = ++generation.current;
+    const signalPromise = sendFeedSignal('search', { query: topic }, { signal: controller.signal }).catch(() => {});
+    const rssRequest = homeFeedRequest('news', { topic, locale: { language, region } });
+    const isCurrent = () => current === generation.current && sessionStorage.getItem('token') === authToken;
     setQuery(topic); setActiveQuery(topic); setLoading(true); setError(''); setLocaleMessage('');
-    callbacks.current.onSearchState?.({ loading: true, query: topic, language, region });
+    callbacks.current.onSearchState?.({ loading: true, query: topic, language, region, requestId: current, signalPromise });
     const timeout = setTimeout(() => controller.abort('timeout'), 26000);
     try {
       const videoPromise = jsonRequest(`${API_URL}/video-search?${new URLSearchParams({ q: topic, language, ...(region ? { region } : {}) })}`, { headers: authHeaders, signal: controller.signal });
       videoPromise.then(data => {
-        if (current === generation.current) callbacks.current.onVideoResults?.({ query: topic, language, region, videos: Array.isArray(data.videos) ? data.videos : [], status: data.status || 'unavailable', message: data.message || '', provider: data.provider || 'YouTube', searchUrl: data.searchUrl });
+        if (isCurrent()) callbacks.current.onVideoResults?.({ requestId: current, query: topic, language, region, videos: Array.isArray(data.videos) ? data.videos : [], status: data.status || 'unavailable', message: data.message || '', provider: data.provider || 'YouTube', searchUrl: data.searchUrl });
       }, () => {
-        if (current === generation.current) callbacks.current.onVideoResults?.({ query: topic, language, region, videos: [], status: 'unavailable', message: 'Video search could not finish. Try again or explore this topic on YouTube.', provider: 'YouTube' });
+        if (isCurrent()) callbacks.current.onVideoResults?.({ requestId: current, query: topic, language, region, videos: [], status: 'unavailable', message: 'Video search could not finish. Try again or explore this topic on YouTube.', provider: 'YouTube' });
       });
       const [news, media] = await Promise.allSettled([
-        jsonRequest(`${API_URL}/rss`, { method: 'POST', headers: { 'Content-Type': 'application/json', ...authHeaders }, body: JSON.stringify({ query: topic, page: 1, pageSize: 12, language, ...(region ? { region } : {}), ...(modeOverride === 'fresh' ? { modeOverride: 'fresh' } : {}) }), signal: controller.signal }),
+        jsonRequest(`${API_URL}/rss`, { method: 'POST', headers: { 'Content-Type': 'application/json', ...authHeaders }, body: JSON.stringify(rssRequest.body), signal: controller.signal }),
         videoPromise,
       ]);
-      if (current !== generation.current) return;
+      if (!isCurrent()) return;
       const articles = news.status === 'fulfilled' && Array.isArray(news.value.articles) ? news.value.articles : [];
       const videos = media.status === 'fulfilled' && Array.isArray(media.value.videos) ? media.value.videos : [];
       const videoStatus = media.status === 'fulfilled' ? media.value.status : 'unavailable';
       const videoMessage = media.status === 'fulfilled' ? media.value.message || '' : 'Video search is temporarily unavailable. Explore the topic directly on YouTube.';
       setLocaleMessage(news.status === 'fulfilled' ? news.value.message || news.value.locale?.message || '' : '');
-      callbacks.current.onResults?.({ articles, query: topic, language, region, locale: news.status === 'fulfilled' ? news.value.locale : undefined, rankingSession: news.status === 'fulfilled' ? news.value.rankingSession : undefined, page: 1, hasMore: news.status === 'fulfilled' && Boolean(news.value.hasMore),
+      callbacks.current.onResults?.({ requestId: current, articles, query: topic, language, region, locale: news.status === 'fulfilled' ? news.value.locale : undefined, rankingSession: news.status === 'fulfilled' ? news.value.rankingSession : undefined, page: 1, hasMore: news.status === 'fulfilled' && Boolean(news.value.hasMore),
         videos, videoStatus, videoMessage, videoProvider: media.status === 'fulfilled' ? media.value.provider : 'YouTube',
         searchUrl: `https://www.youtube.com/results?search_query=${encodeURIComponent(topic)}`,
         newsMessage: news.status === 'rejected' ? 'News search could not finish. Please try again.' : '' });
@@ -82,12 +85,12 @@ export default function SearchBar({ onResults, onVideoResults, onSearchState, us
       else if (!articles.length && !videos.length) setError('No stories or videos matched this topic. Try a more specific search.');
     } finally {
       clearTimeout(timeout);
-      if (current === generation.current) { setLoading(false); request.current = null; callbacks.current.onSearchState?.({ loading: false, query: topic, language, region }); }
+      if (isCurrent()) { setLoading(false); request.current = null; callbacks.current.onSearchState?.({ loading: false, query: topic, language, region, requestId: current }); }
     }
   }
   function cancel() {
-    generation.current += 1; request.current?.abort(); request.current = null;
-    setLoading(false); setError(''); callbacks.current.onSearchState?.({ loading: false, query: activeQuery, cancelled: true });
+    const cancelledRequest = generation.current; generation.current += 1; request.current?.abort(); request.current = null;
+    setLoading(false); setError(''); callbacks.current.onSearchState?.({ loading: false, query: activeQuery, cancelled: true, requestId: cancelledRequest });
   }
   async function saveTopic() {
     const topic = query.trim();
