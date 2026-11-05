@@ -15,7 +15,7 @@ A personal news, video and community space. Search an interest, discover relevan
 - **Take a story somewhere:** fitting community hashtags and inline join, explicit repost, and long-press/drag targets for community, personal channel and sharing. Keyboard-accessible action menus offer the same operations. Email, WhatsApp and native sharing are supported; Instagram uses copy-link plus an explicit app/site handoff.
 - **Join the discussion:** persistent story/video comments, replies, likes/dislikes, custom emoji expressions, editing and deletion of your own comments. **My comments** keeps your contributions together. **Notifications** records other users liking, disliking, replying to or reposting your comments, with unread and mark-read controls.
 - **Keep your collection:** account-scoped bookmarks for articles, videos and posts; searchable saved views; a post composer; and a persistent personal repost channel.
-- **Make it yours:** profile name, username, avatar, theme and motion preferences. The responsive interface uses compact corners, restrained animation and accessible focus states.
+- **Make it yours:** a compact light/dark switch in navigation saves your theme to your account. Profile settings also offer name, username, avatar, theme and motion preferences. The responsive interface uses compact corners, restrained animation and accessible focus states.
 - **See the work:** Mission control shows four agent missions, progress, activity and availability, alongside source/build/test and service-health checks.
 
 The welcome page uses a capture of the actual app and an animated laptop film made with that capture. It includes playback controls and respects reduced motion.

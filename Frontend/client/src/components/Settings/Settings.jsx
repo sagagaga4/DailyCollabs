@@ -4,8 +4,7 @@ import CameraAltOutlinedIcon from '@mui/icons-material/CameraAltOutlined';
 import PersonOutlineIcon from '@mui/icons-material/PersonOutline';
 import PaletteOutlinedIcon from '@mui/icons-material/PaletteOutlined';
 import TuneIcon from '@mui/icons-material/Tune';
-import { API_URL } from '../../config';
-import { applyAppearance, avatarInitials, cacheProfile, DEFAULT_PREFERENCES, loadProfile, readCachedProfile } from '../../lib/profile';
+import { applyAppearance, avatarInitials, DEFAULT_PREFERENCES, loadProfile, PROFILE_EVENT, readCachedProfile, saveProfile, THEME_PREVIEW_EVENT } from '../../lib/profile';
 import './Settings.css';
 
 const THEMES = [
@@ -51,11 +50,40 @@ export default function Settings() {
   const savedPreferences = useRef(profile?.preferences || DEFAULT_PREFERENCES);
   const mounted = useRef(true);
   const savingRequest = useRef(false);
+  const formRef = useRef(form); formRef.current = form;
+  const previewTheme = useRef(null);
+  const themeDraftRevision = useRef(0);
+  const previewDraftRevision = useRef(0);
 
   useEffect(() => {
     let cancelled = false;
     const token = sessionStorage.getItem('token');
     mounted.current = true;
+    const preview = event => {
+      const theme = event.detail?.theme;
+      if (sessionStorage.getItem('token') !== token || !['dark', 'dim', 'light', 'system'].includes(theme)) return;
+      previewTheme.current = event.detail.pending === false ? null : theme;
+      previewDraftRevision.current = themeDraftRevision.current;
+      const preferences = { ...formRef.current.preferences, theme };
+      formRef.current = { ...formRef.current, preferences };
+      setForm(previous => ({ ...previous, preferences: { ...previous.preferences, theme } }));
+      applyAppearance(preferences);
+    };
+    const sync = event => {
+      const data = event.detail;
+      if (!data || sessionStorage.getItem('token') !== token) return;
+      const priorTheme = savedPreferences.current.theme;
+      const pendingTheme = previewTheme.current;
+      const draftTheme = formRef.current.preferences.theme;
+      const newerThemeDraft = pendingTheme ? themeDraftRevision.current > previewDraftRevision.current : draftTheme !== priorTheme;
+      savedPreferences.current = data.preferences; setProfile(data);
+      if (previewTheme.current === data.preferences?.theme) previewTheme.current = null;
+      const preferences = { ...formRef.current.preferences, theme: newerThemeDraft ? draftTheme : previewTheme.current || data.preferences.theme };
+      formRef.current = { ...formRef.current, preferences };
+      setForm(previous => ({ ...previous, preferences })); applyAppearance(preferences);
+    };
+    window.addEventListener(PROFILE_EVENT, sync);
+    window.addEventListener(THEME_PREVIEW_EVENT, preview);
     loadProfile().then(data => {
       if (cancelled) return;
       setProfile(data);
@@ -66,7 +94,8 @@ export default function Settings() {
     return () => {
       cancelled = true;
       mounted.current = false;
-      applyAppearance(sessionStorage.getItem('token') === token ? savedPreferences.current : readCachedProfile()?.preferences);
+      window.removeEventListener(PROFILE_EVENT, sync); window.removeEventListener(THEME_PREVIEW_EVENT, preview);
+      applyAppearance(sessionStorage.getItem('token') === token ? { ...savedPreferences.current, ...(previewTheme.current ? { theme: previewTheme.current } : {}) } : readCachedProfile()?.preferences);
     };
   }, []);
 
@@ -76,7 +105,9 @@ export default function Settings() {
     setSavedMessage('');
   };
   const updatePreference = (name, value) => {
+    if (name === 'theme') themeDraftRevision.current += 1;
     const preferences = { ...form.preferences, [name]: value };
+    formRef.current = { ...formRef.current, preferences };
     setForm(previous => ({ ...previous, preferences }));
     applyAppearance(preferences);
     setSavedMessage('');
@@ -102,15 +133,9 @@ export default function Settings() {
     const token = sessionStorage.getItem('token');
     setSaving(true); setError(''); setSavedMessage('');
     try {
-      const response = await fetch(`${API_URL}/users/me`, {
-        method: 'PATCH', headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
-        body: JSON.stringify(form),
-      });
-      const data = await response.json();
-      if (!response.ok) throw new Error(data.message || data.error || 'Your changes could not be saved.');
+      const data = await saveProfile(form);
       if (sessionStorage.getItem('token') !== token) return;
       savedPreferences.current = data.preferences;
-      cacheProfile(data);
       if (mounted.current) {
         setProfile(data); setForm(formFromProfile(data));
         setSavedMessage('Your profile and preferences are saved.');

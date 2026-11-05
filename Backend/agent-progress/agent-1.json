@@ -2,8 +2,8 @@
   "id": 1,
   "status": "ready",
   "progress": 100,
-  "message": "Mixed discovery, recent-topic limits, shared video cache and private pagination passed review. Ready for a new mission.",
-  "updatedAt": "2026-11-05T10:10:10.579Z",
+  "message": "Quick theme switch reviewed and verified in desktop and mobile navigation. Ready for a new mission.",
+  "updatedAt": "2026-11-05T10:33:12.328Z",
   "events": [
     {
       "status": "queued",
@@ -139,6 +139,16 @@
       "status": "ready",
       "message": "Mixed discovery, recent-topic limits, shared video cache and private pagination passed review. Ready for a new mission.",
       "at": "2026-11-05T10:10:10.579Z"
+    },
+    {
+      "status": "review",
+      "message": "Theme-toggle cross-review passed: account-specific saves, appearance-only updates, Settings draft preservation and successful-theme navigation verified.",
+      "at": "2026-11-05T10:29:18.508Z"
+    },
+    {
+      "status": "ready",
+      "message": "Quick theme switch reviewed and verified in desktop and mobile navigation. Ready for a new mission.",
+      "at": "2026-11-05T10:33:12.328Z"
     }
   ]
 }

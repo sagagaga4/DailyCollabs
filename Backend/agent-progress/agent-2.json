@@ -2,8 +2,8 @@
   "id": 2,
   "status": "ready",
   "progress": 100,
-  "message": "Actual mixed-feed screenshot and refreshed laptop film verified. Ready for a new mission.",
-  "updatedAt": "2026-11-05T10:10:11.397Z",
+  "message": "Actual-app capture, refreshed product film, source hash and full decode verified. Ready for a new mission.",
+  "updatedAt": "2026-11-05T10:33:12.328Z",
   "events": [
     {
       "status": "building",
@@ -149,6 +149,21 @@
       "status": "ready",
       "message": "Actual mixed-feed screenshot and refreshed laptop film verified. Ready for a new mission.",
       "at": "2026-11-05T10:10:11.397Z"
+    },
+    {
+      "status": "fixing",
+      "message": "Refreshing the exact app display in the product film after the quick theme toggle update.",
+      "at": "2026-11-05T10:30:34.675Z"
+    },
+    {
+      "status": "review",
+      "message": "Product film and poster now include the actual app display with the quick theme toggle. Source hash, complete decode, and sampled frames verified.",
+      "at": "2026-11-05T10:30:59.712Z"
+    },
+    {
+      "status": "ready",
+      "message": "Actual-app capture, refreshed product film, source hash and full decode verified. Ready for a new mission.",
+      "at": "2026-11-05T10:33:12.328Z"
     }
   ]
 }

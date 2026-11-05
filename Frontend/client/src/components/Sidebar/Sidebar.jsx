@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { NavLink, Link } from 'react-router-dom';
 import { applyAppearance, avatarInitials, loadProfile, PROFILE_EVENT, readCachedProfile } from '../../lib/profile';
 import NotificationBell from '../Notifications/NotificationBell';
+import ThemeToggle from './ThemeToggle';
 import './Sidebar.css';
 
 function Icon({ name }) {
@@ -48,7 +49,7 @@ export default function Sidebar() {
     <div className="dc-sidebar-note"><span className="dc-note-star">✳</span><strong>Stay curious.</strong><p>Good conversations start with something worth sharing.</p><Link to="/Communities">Explore communities <span>↗</span></Link></div>
     <div className="dc-sidebar-bottom">
       <Link to="/Settings" className="dc-profile" aria-label="Open profile settings"><span className="dc-profile-avatar">{profile?.avatar ? <img src={profile.avatar} alt="" /> : avatarInitials(profile)}</span><span className="dc-profile-text"><strong>{profile?.fullname || 'Your profile'}</strong><span>@{profile?.username || 'member'}</span></span><span className="dc-profile-more" aria-hidden="true">···</span></Link>
-      <button className="dc-logout" type="button" onClick={logout} title="Sign out"><Icon name="logout" /><span>Sign out</span></button>
+      <div className="dc-sidebar-actions"><ThemeToggle /><button className="dc-logout" type="button" onClick={logout} title="Sign out"><Icon name="logout" /><span>Sign out</span></button></div>
     </div>
   </aside>;
 }

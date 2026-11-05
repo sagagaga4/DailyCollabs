@@ -5,34 +5,34 @@
   "fps": 24.0,
   "frames": 240,
   "durationSeconds": 10.0,
-  "bytes": 1425630,
+  "bytes": 1485041,
   "capture": "app-preview.jpg",
-  "captureSha256": "a7b374edb675ff927187524239ce708b91ab3d7709477cc002e815a256b9a79e",
+  "captureSha256": "a4c4bb8f4174fd67cf314322b6e6a923bb2c94f801f4efaa28cad4c8ebf0b5f5",
   "samples": [
     {
       "time": 0,
       "decoded": true,
-      "frameHash": "a0799f9ea9b9e442"
+      "frameHash": "1f79e4f22c1fb51d"
     },
     {
       "time": 2.5,
       "decoded": true,
-      "frameHash": "357f630074f7f2fb"
+      "frameHash": "6ec1ab925d81ba58"
     },
     {
       "time": 5,
       "decoded": true,
-      "frameHash": "cd36eff8bba49f6e"
+      "frameHash": "eb6ad5e9a6c697ec"
     },
     {
       "time": 7.5,
       "decoded": true,
-      "frameHash": "52b826840ef1f18b"
+      "frameHash": "1f93577bedf0cfd6"
     },
     {
       "time": 9.8,
       "decoded": true,
-      "frameHash": "8bcd416c41201738"
+      "frameHash": "c8ed8f58c0676e2e"
     }
   ]
 }
