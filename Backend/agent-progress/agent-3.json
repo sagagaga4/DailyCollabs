@@ -2,8 +2,8 @@
   "id": 3,
   "status": "ready",
   "progress": 100,
-  "message": "Quick light/dark switch, saved preferences and Settings draft preservation verified. Ready for a new mission.",
-  "updatedAt": "2026-11-05T10:33:12.328Z",
+  "message": "Cached topic tabs, stable For you revisits, Settings drafts and explicit freshness updates verified. Ready for a new mission.",
+  "updatedAt": "2026-11-05T10:54:19.299Z",
   "events": [
     {
       "status": "building",
@@ -164,6 +164,21 @@
       "status": "ready",
       "message": "Quick light/dark switch, saved preferences and Settings draft preservation verified. Ready for a new mission.",
       "at": "2026-11-05T10:33:12.328Z"
+    },
+    {
+      "status": "building",
+      "message": "Preserving Home tabs and topic results without unnecessary feed refreshes.",
+      "at": "2026-11-05T10:42:58.402Z"
+    },
+    {
+      "status": "review",
+      "message": "Cached Home tab content, cursors and scroll; hidden pages stop automatic paging and preserve feed-control drafts. Sixteen tests passed.",
+      "at": "2026-11-05T10:46:50.819Z"
+    },
+    {
+      "status": "ready",
+      "message": "Cached topic tabs, stable For you revisits, Settings drafts and explicit freshness updates verified. Ready for a new mission.",
+      "at": "2026-11-05T10:54:19.299Z"
     }
   ]
 }

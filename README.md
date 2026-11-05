@@ -7,7 +7,7 @@ A personal news, video and community space. Search an interest, discover relevan
 ## What you can do
 
 - **Discover your interests:** topic search returns related news and real YouTube results with an animated pixel search indicator. The search prompt stays pinned as you scroll, so another topic is always in reach. Publisher images are preferred; relevant Wikimedia artwork includes attribution. Missing or broken images receive stable, topic-aware artwork unique to each card; shared topic covers use distinct card framing.
-- **One mixed For you feed:** articles and real videos are interleaved from your interests and recent searches. A topic search or saved-topic click opens **Latest news** in date order; **Videos** retains the same topic. Returning to **For you** refreshes an independent mix, with at most three items from the latest researched topic in a default twelve-item page when matching results are available.
+- **One mixed For you feed:** articles and real videos are interleaved from your interests and recent searches. A topic search or saved-topic click opens **Latest news** in date order; **Videos** retains the same topic. Opening **For you** after new research refreshes an independent mix, with at most three items from the latest researched topic in a default twelve-item page when matching results are available. Unchanged tab visits retain the cached mix; **Refresh feed** requests an update.
 - **Watch in your feed:** videos in **For you** display their player and start muted, with an explicit unmute control. Unmuting one player mutes the others. Playback pauses outside the viewport; browser/provider policies may still require a play gesture. Other views keep their deliberate watch flow.
 - **Read in your language:** automatic script detection, common language editions and custom BCP 47 language tags, including Hebrew sources and right-to-left cards. Articles remain in their source language; availability depends on publishers and news editions.
 - **Shape your feed:** Balanced, Latest, Discover and Following modes; personalization on/off; freshness and source-diversity controls; followed/muted topics; visible interest sources; More/Less/Hide feedback and history reset. Explicit topic and language searches remain constrained to that request.
@@ -16,6 +16,7 @@ A personal news, video and community space. Search an interest, discover relevan
 - **Join the discussion:** persistent story/video comments, replies, likes/dislikes, custom emoji expressions, editing and deletion of your own comments. **My comments** keeps your contributions together. **Notifications** records other users liking, disliking, replying to or reposting your comments, with unread and mark-read controls.
 - **Keep your collection:** account-scoped bookmarks for articles, videos and posts; searchable saved views; a post composer; and a persistent personal repost channel.
 - **Make it yours:** a compact light/dark switch in navigation saves your theme to your account. Profile settings also offer name, username, avatar, theme and motion preferences. The responsive interface uses compact corners, restrained animation and accessible focus states.
+- **Pick up where you left off:** switching pages preserves loaded content, filters, drafts and scroll positions during the signed-in session. Home remembers each feed tab separately; a new topic search updates recommendations when you next open For you.
 - **See the work:** Mission control shows four agent missions, progress, activity and availability, alongside source/build/test and service-health checks.
 
 The welcome page uses a capture of the actual app and an animated laptop film made with that capture. It includes playback controls and respects reduced motion.
@@ -72,6 +73,8 @@ Environment files, local accounts and credentials are excluded from commits. Leg
 | MongoDB | Users, communities/channels/messages, posts, bookmarks, comments/reactions, notifications, feed preferences and expiring activity |
 | `scripts` | Development launcher, quality watcher, agent progress updates and product-film renderer |
 
+Navigation retains the twelve most recently visited authenticated pages in memory, including their component state, drafts, filters, focus and scroll. Home also keeps separate feed-tab positions and pagination. Hidden pages pause media and live polling. The page cache resets on account changes or a full reload; older evicted pages load normally when reopened.
+
 The feed uses an **explainable weighted baseline** with an interleaved discovery stream. For you is independent of the active topic result pages; recent research contributes a limited portion instead of replacing the whole feed. It is not a trained deep-learning recommendation model. It learns from the signed-in user's selected topics, saved items, joined communities and bounded recent search/open/feedback signals. Explicit choices carry more weight than incidental opens. Recent signals expire after 90 days; reset clears learned activity while retaining bookmarks, saved topics, follows and memberships. Ranking snapshots keep pagination stable and are scoped to the account, query and locale. This work does not establish a measured retention or satisfaction improvement.
 
 ## Validation
@@ -81,7 +84,7 @@ npm --prefix Frontend/client run build
 npm --prefix Backend test
 ```
 
-The behavioral suite covers account isolation, profile validation, community ownership and rules, channels and emoji reactions, persistent collections, topic video parsing, images/locales, card actions, ranking and comment/notification events. Tests create bounded fixtures and clean up their own records. Optional live-provider checks depend on network access and may be skipped by default.
+The behavioral suite covers account isolation, bounded page caching and history restoration, feed-tab reuse, profile validation, community ownership and rules, channels and emoji reactions, persistent collections, topic video parsing, images/locales, card actions, ranking and comment/notification events. Tests create bounded fixtures and clean up their own records. Optional live-provider checks depend on network access and may be skipped by default.
 
 The quality watcher rebuilds and reruns backend behavior checks when source changes, then refreshes service health every 15 seconds. It reports failures in Mission control. **Coding agents investigate and edit during an active coding session; the watcher does not independently launch an AI agent or silently modify code.**
 

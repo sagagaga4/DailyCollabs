@@ -5,6 +5,7 @@ import PersonOutlineIcon from '@mui/icons-material/PersonOutline';
 import PaletteOutlinedIcon from '@mui/icons-material/PaletteOutlined';
 import TuneIcon from '@mui/icons-material/Tune';
 import { applyAppearance, avatarInitials, DEFAULT_PREFERENCES, loadProfile, PROFILE_EVENT, readCachedProfile, saveProfile, THEME_PREVIEW_EVENT } from '../../lib/profile';
+import { usePageActive } from '../Navigation/PageActivity';
 import './Settings.css';
 
 const THEMES = [
@@ -38,6 +39,8 @@ async function prepareAvatar(file) {
 }
 
 export default function Settings() {
+  const pageActive = usePageActive();
+  const pageActiveRef = useRef(pageActive); pageActiveRef.current = pageActive;
   const [profile, setProfile] = useState(readCachedProfile);
   const [form, setForm] = useState(() => formFromProfile(readCachedProfile()));
   const [loading, setLoading] = useState(true);
@@ -67,7 +70,7 @@ export default function Settings() {
       const preferences = { ...formRef.current.preferences, theme };
       formRef.current = { ...formRef.current, preferences };
       setForm(previous => ({ ...previous, preferences: { ...previous.preferences, theme } }));
-      applyAppearance(preferences);
+      if (pageActiveRef.current) applyAppearance(preferences);
     };
     const sync = event => {
       const data = event.detail;
@@ -80,7 +83,7 @@ export default function Settings() {
       if (previewTheme.current === data.preferences?.theme) previewTheme.current = null;
       const preferences = { ...formRef.current.preferences, theme: newerThemeDraft ? draftTheme : previewTheme.current || data.preferences.theme };
       formRef.current = { ...formRef.current, preferences };
-      setForm(previous => ({ ...previous, preferences })); applyAppearance(preferences);
+      setForm(previous => ({ ...previous, preferences })); if (pageActiveRef.current) applyAppearance(preferences);
     };
     window.addEventListener(PROFILE_EVENT, sync);
     window.addEventListener(THEME_PREVIEW_EVENT, preview);
@@ -95,9 +98,15 @@ export default function Settings() {
       cancelled = true;
       mounted.current = false;
       window.removeEventListener(PROFILE_EVENT, sync); window.removeEventListener(THEME_PREVIEW_EVENT, preview);
-      applyAppearance(sessionStorage.getItem('token') === token ? { ...savedPreferences.current, ...(previewTheme.current ? { theme: previewTheme.current } : {}) } : readCachedProfile()?.preferences);
+      if (pageActiveRef.current) applyAppearance(sessionStorage.getItem('token') === token ? { ...savedPreferences.current, ...(previewTheme.current ? { theme: previewTheme.current } : {}) } : readCachedProfile()?.preferences);
     };
   }, []);
+
+  useEffect(() => {
+    // Keep the draft when this page is cached; preview it only while visible.
+    if (pageActive) applyAppearance(formRef.current.preferences);
+    else applyAppearance({ ...savedPreferences.current, ...(previewTheme.current ? { theme: previewTheme.current } : {}) });
+  }, [pageActive]);
 
   const dirty = JSON.stringify(form) !== JSON.stringify(formFromProfile(profile));
   const updateField = (name, value) => {

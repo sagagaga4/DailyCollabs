@@ -2,8 +2,8 @@
   "id": 2,
   "status": "ready",
   "progress": 100,
-  "message": "Actual-app capture, refreshed product film, source hash and full decode verified. Ready for a new mission.",
-  "updatedAt": "2026-11-05T10:33:12.328Z",
+  "message": "Cached community channels and drafts, hidden-page lifecycle and refreshed actual-app film verified. Ready for a new mission.",
+  "updatedAt": "2026-11-05T10:56:03.525Z",
   "events": [
     {
       "status": "building",
@@ -164,6 +164,21 @@
       "status": "ready",
       "message": "Actual-app capture, refreshed product film, source hash and full decode verified. Ready for a new mission.",
       "at": "2026-11-05T10:33:12.328Z"
+    },
+    {
+      "status": "building",
+      "message": "Pausing hidden live pages while preserving channels, messages and drafts.",
+      "at": "2026-11-05T10:42:58.402Z"
+    },
+    {
+      "status": "review",
+      "message": "Cached-page lifecycle audit complete: hidden polling, SSE, focus, dialogs, and delayed navigation guarded; drafts, messages, and pagination retained. Scoped lint and production build pass.",
+      "at": "2026-11-05T10:44:01.186Z"
+    },
+    {
+      "status": "ready",
+      "message": "Cached community channels and drafts, hidden-page lifecycle and refreshed actual-app film verified. Ready for a new mission.",
+      "at": "2026-11-05T10:56:03.525Z"
     }
   ]
 }

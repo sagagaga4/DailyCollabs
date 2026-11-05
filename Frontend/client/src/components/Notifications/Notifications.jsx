@@ -1,4 +1,5 @@
-import { useState } from 'react';
+import { useRef, useState } from 'react';
+import { usePageActive } from '../Navigation/PageActivity';
 import { BrandEmoji, EmojiText } from '../BrandEmojis/BrandEmojis';
 import { contentRequest } from '../CardActions/contentApi';
 import { useStoryComments } from '../Comments/useStoryComments';
@@ -7,13 +8,16 @@ const VERBS = { like: 'liked your comment', dislike: 'disliked your comment', re
 const SYMBOLS = { like: '↑', dislike: '↓', reply: '↳', repost: '↻' };
 export default function Notifications() {
   const context = useStoryComments();
+  const pageActive = usePageActive();
+  const pageActiveRef = useRef(pageActive);
+  pageActiveRef.current = pageActive;
   const [busy, setBusy] = useState('');
   const [error, setError] = useState('');
   if (!context) return <p>Loading notifications…</p>;
   const { notifications, unreadCount, notificationsLoading, notificationError, markNotificationRead, markAllNotificationsRead, loadMoreNotifications, notificationsHaveMore, refreshNotifications, openComments } = context;
   async function view(notification) {
     setBusy(notification._id); setError('');
-    try { if (!notification.readAt) await markNotificationRead(notification._id); const comment = await contentRequest(`/story-comments/${notification.targetCommentId || notification.commentId}`); openComments({ url: comment.url, title: comment.title, type: comment.type }, { focusId: comment._id }); }
+    try { if (!notification.readAt) await markNotificationRead(notification._id); const comment = await contentRequest(`/story-comments/${notification.targetCommentId || notification.commentId}`); if (pageActiveRef.current) openComments({ url: comment.url, title: comment.title, type: comment.type }, { focusId: comment._id }); }
     catch (failure) { setError(failure.message); }
     finally { setBusy(''); }
   }

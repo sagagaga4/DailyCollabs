@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
+import { usePageActive } from '../Navigation/PageActivity';
 import CommunityDialog from './CommunityDialog';
 import { communityRequest } from './communityApi';
 import './Communities.css';
@@ -7,6 +8,9 @@ import './Communities.css';
 const categories = ['Technology', 'Gaming', 'Music', 'Film & TV', 'Art & Design', 'Science', 'Lifestyle', 'Other'];
 
 export default function Communities() {
+  const pageActive = usePageActive();
+  const pageActiveRef = useRef(pageActive);
+  pageActiveRef.current = pageActive;
   const [communities, setCommunities] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
@@ -22,16 +26,24 @@ export default function Communities() {
   const formErrorRef = useRef(null);
 
   useEffect(() => {
+    if (!pageActive) return;
     if (formError) formErrorRef.current?.focus();
     else if (error) errorRef.current?.focus();
-  }, [error, formError]);
+  }, [error, formError, pageActive]);
 
   useEffect(() => {
     let active = true;
-    communityRequest().then(data => { if (active) setCommunities(Array.isArray(data) ? data : []); })
-      .catch(err => { if (active) setError(err.message); })
+    const controller = new AbortController();
+    const changed = event => {
+      const updated = event.detail;
+      if (!updated?._id) return;
+      setCommunities(previous => previous.some(item => item._id === updated._id) ? previous.map(item => item._id === updated._id ? { ...item, ...updated } : item) : [updated, ...previous]);
+    };
+    window.addEventListener('dailycollabs:communities', changed);
+    communityRequest('', { signal: controller.signal }).then(data => { if (active) setCommunities(Array.isArray(data) ? data : []); })
+      .catch(err => { if (active && err.name !== 'AbortError') setError(err.message); })
       .finally(() => { if (active) setLoading(false); });
-    return () => { active = false; };
+    return () => { active = false; controller.abort(); window.removeEventListener('dailycollabs:communities', changed); };
   }, []);
 
   const filtered = communities.filter(item => (tab !== 'joined' || item.isMember) && `${item.name} ${item.description} ${item.category} ${item.board}`.toLowerCase().includes(query.toLowerCase().trim())).sort((a, b) => sort === 'name' ? a.name.localeCompare(b.name) : sort === 'members' ? b.memberCount - a.memberCount || a.name.localeCompare(b.name) : 0);
@@ -43,6 +55,7 @@ export default function Communities() {
     try {
       const updated = await communityRequest(`/${community._id}/join`, { method: 'POST', body: '{}' });
       setCommunities(items => items.map(item => item._id === updated._id ? updated : item));
+      window.dispatchEvent(new CustomEvent('dailycollabs:communities', { detail: updated }));
       setNotice(`You joined ${community.name}. Your next conversation is waiting.`);
     } catch (err) { setError(err.message); }
     finally { setBusy(''); }
@@ -53,7 +66,9 @@ export default function Communities() {
     const data = Object.fromEntries(new FormData(event.currentTarget));
     try {
       const community = await communityRequest('', { method: 'POST', body: JSON.stringify(data) });
-      navigate(`/Communities/${community._id}`);
+      window.dispatchEvent(new CustomEvent('dailycollabs:communities', { detail: community }));
+      setCreating(false); setNotice(`${community.name} is ready. You are its first member.`);
+      if (pageActiveRef.current) navigate(`/Communities/${community._id}`);
     } catch (err) { setFormError(err.message); }
     finally { setBusy(''); }
   }

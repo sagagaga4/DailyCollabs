@@ -8,7 +8,7 @@ const frontendRequire = createRequire(path.join(frontendRoot, 'package.json'));
 const output = frontendRequire('esbuild').buildSync({ entryPoints: [path.join(frontendRoot, 'src/components/Home/homeFeedState.js')], bundle: true, write: false, platform: 'node', format: 'cjs' });
 const moduleScope = { exports: {} };
 vm.runInNewContext(output.outputFiles[0].text, { module: moduleScope, exports: moduleScope.exports, URL, URLSearchParams });
-const { createHomeFeedState, homeFeedReducer: reduce, homeFeedRequest, homeItemUrl } = moduleScope.exports;
+const { createHomeFeedState, homeFeedReducer: reduce, homeFeedRequest, homeItemUrl, shouldRefreshForYou } = moduleScope.exports;
 const article = (title, link = `https://example.com/${title}`) => ({ title, link, kind: 'article' });
 const video = title => ({ title, videoUrl: `https://www.youtube.com/watch?v=${title}`, kind: 'video' });
 
@@ -91,4 +91,52 @@ test('an article containing a video keeps its article identity for feedback and 
   const item = { kind: 'article', link: 'https://example.com/news?utm_source=rss', videoUrl: 'https://youtu.be/aqz-KE-bpKQ' };
   assert.equal(homeItemUrl(item), 'https://example.com/news');
   assert.equal(homeItemUrl({ ...item, kind: 'video' }), 'https://www.youtube.com/watch?v=aqz-KE-bpKQ');
+});
+
+test('unchanged tab revisits retain their exact cards, cursor, page and separate scroll anchors', () => {
+  let state = reduce(createHomeFeedState(), { type: 'fetch-start', bucket: 'forYou', id: 'mix' });
+  state = reduce(state, { type: 'fetch-success', bucket: 'forYou', id: 'mix', items: [article('one'), video('two')], data: { page: 2, hasMore: true, rankingSession: 'retained-cursor' } });
+  const cards = state.forYou.items;
+  const position = { x: 0, y: 1400, anchor: { key: 'article:https://example.com/one', top: -30 } };
+  state = reduce(state, { type: 'mode', mode: 'news', position });
+  state = reduce(state, { type: 'mode', mode: 'videos', position: { x: 0, y: 580 } });
+  state = reduce(state, { type: 'mode', mode: 'all', position: { x: 0, y: 300 } });
+  assert.equal(state.forYou.items, cards);
+  assert.equal(state.forYou.page, 2); assert.equal(state.forYou.rankingSession, 'retained-cursor');
+  assert.equal(state.tabScroll.all, position); assert.equal(state.tabScroll.news.y, 580); assert.equal(state.tabScroll.videos.y, 300);
+  assert.equal(shouldRefreshForYou(state), false, 'Tab selection alone must not request a fresh snapshot.');
+});
+
+test('a new topic dirties discovery once; successful refresh consumes that change while later revisits stay cached', () => {
+  let state = reduce(createHomeFeedState(), { type: 'fetch-start', bucket: 'forYou', id: 'old' });
+  state = reduce(state, { type: 'fetch-success', bucket: 'forYou', id: 'old', items: [article('old')], data: { rankingSession: 'old-cursor' } });
+  state = reduce(state, { type: 'search-start', id: 1, query: 'new topic', locale: { language: 'en' }, position: { x: 0, y: 900 } });
+  assert.equal(state.forYou.items[0].title, 'old', 'New inputs mark the cached feed, without reordering it in the background.');
+  assert.equal(shouldRefreshForYou(state), true);
+  state = reduce(state, { type: 'mode', mode: 'all', resetScroll: true, position: { x: 0, y: 250 } });
+  assert.equal(state.tabScroll.all.y, 0); assert.equal(state.tabScroll.news.y, 250);
+  state = reduce(state, { type: 'fetch-start', bucket: 'forYou', id: 'new' });
+  state = reduce(state, { type: 'fetch-success', bucket: 'forYou', id: 'new', items: [article('new')], data: { rankingSession: 'new-cursor' } });
+  assert.equal(state.forYouDirty, false); assert.equal(shouldRefreshForYou(state), false);
+  state = reduce(state, { type: 'mode', mode: 'news' }); state = reduce(state, { type: 'mode', mode: 'all' });
+  assert.equal(shouldRefreshForYou(state), false); assert.equal(state.forYou.rankingSession, 'new-cursor');
+});
+
+test('a mutation arriving during a refresh is not swallowed by the older response or a pagination append', () => {
+  let state = reduce(createHomeFeedState(), { type: 'fetch-start', bucket: 'forYou', id: 'loading' });
+  state = reduce(state, { type: 'for-you-dirty' });
+  assert.equal(shouldRefreshForYou(state, true), true, 'A request started before the new input must not count as its refresh.');
+  state = reduce(state, { type: 'fetch-success', bucket: 'forYou', id: 'loading', items: [article('old-context')], data: { hasMore: true, rankingSession: 'older' } });
+  assert.equal(state.forYouDirty, true);
+  state = reduce(state, { type: 'fetch-start', bucket: 'forYou', id: 'new-context' });
+  assert.equal(shouldRefreshForYou(state, true), false, 'Repeated tab clicks must share a request already refreshing the current inputs.');
+  state = reduce(state, { type: 'for-you-dirty' });
+  state = reduce(state, { type: 'fetch-success', bucket: 'forYou', id: 'new-context', items: [article('some-context')], data: {} });
+  assert.equal(state.forYouDirty, true);
+  state = reduce(state, { type: 'fetch-start', bucket: 'forYou', id: 'append', append: true });
+  state = reduce(state, { type: 'fetch-success', bucket: 'forYou', id: 'append', append: true, items: [article('more')], data: { page: 2 } });
+  assert.equal(state.forYouDirty, true);
+  state = reduce(state, { type: 'fetch-start', bucket: 'forYou', id: 'latest' });
+  state = reduce(state, { type: 'fetch-success', bucket: 'forYou', id: 'latest', items: [article('latest')], data: {} });
+  assert.equal(state.forYouDirty, false);
 });

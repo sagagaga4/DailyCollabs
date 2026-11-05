@@ -7,7 +7,11 @@ export function homeFeedRequest(bucket, { topic = '', locale = {}, page = 1, ran
 }
 const emptyBucket = () => ({ items: [], loading: false, loadingMore: false, loaded: false, error: '', page: 1, hasMore: false, rankingSession: null, requestId: null, videoStatus: 'idle' });
 export function createHomeFeedState() {
-  return { mode: 'all', topic: '', locale: { language: 'auto', region: '' }, searchId: null, forYou: emptyBucket(), news: emptyBucket(), videos: emptyBucket() };
+  return { mode: 'all', topic: '', locale: { language: 'auto', region: '' }, searchId: null, forYou: emptyBucket(), news: emptyBucket(), videos: emptyBucket(), forYouDirty: false, forYouRevision: 0, tabRevision: 0, tabScroll: { all: { x: 0, y: 0 }, news: { x: 0, y: 0 }, videos: { x: 0, y: 0 } } };
+}
+export function shouldRefreshForYou(state, requestPending = false) {
+  if (state.forYou.loaded && !state.forYouDirty) return false;
+  return !requestPending || state.forYou.refreshRevision !== state.forYouRevision;
 }
 function uniqueItems(items) {
   const seen = new Set();
@@ -18,15 +22,20 @@ function completed(bucket, data, items, append = false) {
 }
 export function homeFeedReducer(state, action) {
   switch (action.type) {
-    case 'mode': return { ...state, mode: action.mode };
+    case 'mode': {
+      if (action.mode === state.mode && !action.resetScroll) return state;
+      const tabScroll = { ...state.tabScroll, ...(action.position ? { [state.mode]: action.position } : {}), ...(action.resetScroll ? { [action.mode]: { x: 0, y: 0 } } : {}) };
+      return { ...state, mode: action.mode, tabScroll, tabRevision: state.tabRevision + 1 };
+    }
+    case 'for-you-dirty': return { ...state, forYouDirty: true, forYouRevision: state.forYouRevision + 1 };
     case 'fetch-start': {
       const bucket = state[action.bucket];
-      return { ...state, [action.bucket]: { ...bucket, ...(action.append ? {} : { items: [], rankingSession: null }), loading: !action.append, loadingMore: Boolean(action.append), error: '', requestId: action.id } };
+      return { ...state, [action.bucket]: { ...bucket, ...(action.append ? {} : { items: [], rankingSession: null, refreshRevision: state.forYouRevision }), loading: !action.append, loadingMore: Boolean(action.append), error: '', requestId: action.id } };
     }
     case 'fetch-success': {
       const bucket = state[action.bucket];
       if (bucket.requestId !== action.id) return state;
-      return { ...state, [action.bucket]: completed(bucket, action.data, action.items, action.append) };
+      return { ...state, [action.bucket]: completed(bucket, action.data, action.items, action.append), ...(action.bucket === 'forYou' && !action.append ? { forYouDirty: bucket.refreshRevision !== state.forYouRevision } : {}) };
     }
     case 'fetch-error': {
       const bucket = state[action.bucket];
@@ -34,7 +43,7 @@ export function homeFeedReducer(state, action) {
       return { ...state, [action.bucket]: { ...bucket, loading: false, loadingMore: false, error: action.error } };
     }
     case 'search-start':
-      return { ...state, mode: 'news', topic: action.query, locale: action.locale, searchId: action.id, news: { ...emptyBucket(), loading: true, requestId: action.id }, videos: { ...emptyBucket(), loading: true, requestId: action.id } };
+      return { ...state, mode: 'news', topic: action.query, locale: action.locale, searchId: action.id, news: { ...emptyBucket(), loading: true, requestId: action.id }, videos: { ...emptyBucket(), loading: true, requestId: action.id }, forYouDirty: true, forYouRevision: state.forYouRevision + 1, tabRevision: state.tabRevision + 1, tabScroll: { ...state.tabScroll, ...(action.position ? { [state.mode]: action.position } : {}), news: { x: 0, y: 0 }, videos: { x: 0, y: 0 } } };
     case 'search-videos':
       if (state.searchId !== action.id || state.videos.requestId !== action.id) return state;
       return { ...state, videos: completed(state.videos, { error: action.data.status === 'unavailable' ? action.data.message : '' }, (action.data.videos || []).map(item => ({ ...item, kind: 'video' }))) };
@@ -52,12 +61,14 @@ export function homeFeedReducer(state, action) {
       return { ...state, news: finish(state.news), videos: finish(state.videos) };
     }
     case 'clear-topic':
-      return { ...state, topic: '', searchId: null, news: emptyBucket(), videos: emptyBucket() };
+      return { ...state, topic: '', searchId: null, news: emptyBucket(), videos: emptyBucket(), tabRevision: state.tabRevision + 1, tabScroll: { ...state.tabScroll, news: { x: 0, y: 0 }, videos: { x: 0, y: 0 } } };
     case 'hide': {
       const url = canonicalThreadUrl(action.url);
       if (!url) return state;
       return { ...state, ...Object.fromEntries(['forYou', 'news', 'videos'].map(name => [name, { ...state[name], items: state[name].items.filter(item => homeItemUrl(item) !== url) }])) };
     }
+    case 'remove-media':
+      return { ...state, ...Object.fromEntries(['forYou', 'news', 'videos'].map(name => [name, { ...state[name], items: state[name].items.filter(item => String(item._id || item.id || '') !== String(action.id)) }])) };
     case 'restore': {
       const next = { ...state };
       for (const location of action.locations) {

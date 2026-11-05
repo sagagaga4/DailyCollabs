@@ -10,7 +10,7 @@ import './MixedVideoCard.css';
 
 function viewerId() { try { const token = sessionStorage.getItem('token'); return JSON.parse(atob(token.split('.')[1].replace(/-/g, '+').replace(/_/g, '/'))).id || null; } catch { return null; } }
 
-export default function MixedVideoCard({ item, autoplayMuted = false, onError, onFeedback, feedbackBusy = false, onOpen, onDeleted }) {
+export default function MixedVideoCard({ item, autoplayMuted = false, onError, onFeedback, feedbackBusy = false, onOpen, onDeleted, scrollAnchor }) {
   const video = useMemo(() => normalizeMixedVideo(item), [item]);
   const [bookmarks, setBookmarks] = useState(readBookmarks);
   const [saving, setSaving] = useState(false);
@@ -49,7 +49,7 @@ export default function MixedVideoCard({ item, autoplayMuted = false, onError, o
     catch (failure) { setError(failure.message); onError?.(failure.message, video); }
   }
 
-  return <div className="card-content mixed-video-slot"><DraggableCard content={content}>
+  return <div className="card-content mixed-video-slot" data-scroll-anchor={scrollAnchor}><DraggableCard content={content}>
     <article className="mixed-video-card">
       <div className="mixed-video-topline"><span className="mixed-video-type"><span aria-hidden="true">▷</span> VIDEO</span>{video.duration && <span className="mixed-video-duration">{video.duration}</span>}</div>
       <VideoPlayer url={video.videoUrl} title={video.title} poster={video.thumbnailUrl} autoplayMuted={autoplayMuted} />

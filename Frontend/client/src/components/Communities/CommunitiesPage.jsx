@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 import { Link, useParams, useSearchParams } from 'react-router-dom';
+import { usePageActive } from '../Navigation/PageActivity';
 import CommunityDialog from './CommunityDialog';
 import { communityRequest } from './communityApi';
 import EmojiPicker, { BrandEmoji, EmojiText } from '../BrandEmojis/BrandEmojis';
@@ -13,6 +14,9 @@ function mergeMessages(previous, incoming) {
 
 export default function CommunityPage() {
   const { id } = useParams();
+  const pageActive = usePageActive();
+  const pageActiveRef = useRef(pageActive);
+  pageActiveRef.current = pageActive;
   const [searchParams, setSearchParams] = useSearchParams();
   const channelId = searchParams.get('channel') || 'general';
   const inviteToken = searchParams.get('invite');
@@ -43,64 +47,95 @@ export default function CommunityPage() {
   const textareaRef = useRef(null);
   const shouldScroll = useRef(true);
   const sendingRef = useRef(null);
+  const loadedMessagesFor = useRef(null);
+  const savedMessageScroll = useRef(0);
+  const loadedBoard = useRef(null);
   activeChannel.current = `${id}:${channelId}`;
   activeBoard.current = id;
-  useEffect(() => { if (error) errorRef.current?.focus(); }, [error]);
+  useEffect(() => { if (pageActive && error) errorRef.current?.focus(); }, [error, pageActive]);
 
+  // Identity changes reset a board; returning to its cached route does not.
   useEffect(() => {
-    let active = true;
     setLoading(true); setError(''); setDraft(''); setAcceptedRules(false); setBusy(''); setManage(null); setInvite('');
-    const refresh = () => {
-      const revision = communityRevision.current;
-      return communityRequest(`/${id}`).then(data => { if (active && revision === communityRevision.current) setCommunity(data); })
-      .catch(err => { if (active) setError(err.message); })
-      .finally(() => { if (active) setLoading(false); });
-    };
-    refresh();
-    const interval = setInterval(refresh, 12000);
-    return () => { active = false; clearInterval(interval); };
+    loadedBoard.current = null;
   }, [id]);
-
   useEffect(() => {
-    if (!community?._id || channelId === 'welcome') return;
+    if (!pageActive) return;
+    let active = true;
     const controller = new AbortController();
     let fetching = false;
-    let initial = true;
-    setMessages([]); setMessagesLoading(true); setSyncError(''); setDraft(''); setPicker(false); setReactionPicker(null); setHasMore(false); setCursor(null); setBusy('');
+    const refresh = async () => {
+      if (fetching || document.hidden) return;
+      fetching = true;
+      const revision = communityRevision.current;
+      try {
+        const data = await communityRequest(`/${id}`, { signal: controller.signal });
+        if (active && revision === communityRevision.current) { setCommunity(data); loadedBoard.current = id; }
+      } catch (err) { if (active && err.name !== 'AbortError') setError(err.message); }
+      finally { fetching = false; if (active) setLoading(false); }
+    };
+    // A cached board stays visible during this small background freshness check.
+    if (loadedBoard.current !== id) setLoading(true);
+    refresh();
+    const interval = setInterval(refresh, 12000);
+    const visible = () => { if (!document.hidden) refresh(); };
+    document.addEventListener('visibilitychange', visible);
+    return () => { active = false; controller.abort(); clearInterval(interval); document.removeEventListener('visibilitychange', visible); };
+  }, [id, pageActive]);
+
+  useEffect(() => {
+    loadedMessagesFor.current = null;
+    savedMessageScroll.current = 0;
+    setMessages([]); setMessagesLoading(channelId !== 'welcome'); setSyncError(''); setDraft(''); setPicker(false); setReactionPicker(null); setHasMore(false); setCursor(null); setBusy('');
     shouldScroll.current = true;
+  }, [id, channelId, community?._id]);
+  useEffect(() => {
+    if (!pageActive || !community?._id || channelId === 'welcome') return;
+    const controller = new AbortController();
+    const target = `${id}:${channelId}`;
+    let fetching = false;
     async function sync() {
-      if (fetching) return;
+      if (fetching || document.hidden) return;
       fetching = true;
       const revision = messageRevision.current;
       try {
         const data = await communityRequest(`/${id}/channels/${encodeURIComponent(channelId)}/messages`, { signal: controller.signal });
         if (controller.signal.aborted || revision !== messageRevision.current) return;
+        const initial = loadedMessagesFor.current !== target;
         const element = listRef.current;
         shouldScroll.current = initial || !element || element.scrollHeight - element.scrollTop - element.clientHeight < 100;
         setMessages(previous => mergeMessages(previous, data.messages));
         if (initial) { setHasMore(data.hasMore); setCursor(data.nextCursor); }
+        loadedMessagesFor.current = target;
         setSyncError('');
-        initial = false;
-      } catch (failure) { if (failure.name !== 'AbortError') setSyncError(failure.message); }
+      } catch (failure) { if (!controller.signal.aborted && failure.name !== 'AbortError') setSyncError(failure.message); }
       finally { fetching = false; if (!controller.signal.aborted) setMessagesLoading(false); }
     }
     sync();
     const interval = setInterval(sync, 4000);
-    return () => { controller.abort(); clearInterval(interval); };
-  }, [id, channelId, community?._id]);
+    const visible = () => { if (!document.hidden) sync(); };
+    document.addEventListener('visibilitychange', visible);
+    return () => { controller.abort(); clearInterval(interval); document.removeEventListener('visibilitychange', visible); };
+  }, [id, channelId, community?._id, pageActive]);
 
   useEffect(() => {
-    if (shouldScroll.current && listRef.current) listRef.current.scrollTop = listRef.current.scrollHeight;
-  }, [messages]);
+    if (!pageActive || !listRef.current) return;
+    const list = listRef.current;
+    list.scrollTop = shouldScroll.current ? list.scrollHeight : savedMessageScroll.current;
+    savedMessageScroll.current = list.scrollTop;
+  }, [messages, pageActive]);
 
   useEffect(() => {
     if (!community?.isMember) { setMembers([]); return; }
+    if (!pageActive) return;
     let active = true;
-    communityRequest(`/${id}/members`).then(data => { if (active) setMembers(data.members); }).catch(() => {});
-    return () => { active = false; };
-  }, [id, community?.isMember, community?.memberCount]);
+    const controller = new AbortController();
+    communityRequest(`/${id}/members`, { signal: controller.signal }).then(data => { if (active) setMembers(data.members); }).catch(() => {});
+    return () => { active = false; controller.abort(); };
+  }, [id, community?.isMember, community?.memberCount, pageActive]);
 
   function selectChannel(next) {
+    if (!pageActiveRef.current) return;
     setSearchParams(previous => { const params = new URLSearchParams(previous); params.set('channel', next); return params; });
     setError(''); setNotice('');
   }
@@ -110,8 +145,8 @@ export default function CommunityPage() {
       const updated = await communityRequest(`/${id}/${joining ? 'join' : 'membership'}`, { method: joining ? 'POST' : 'DELETE', ...(joining ? { body: JSON.stringify({ inviteToken: inviteToken || undefined, acceptedRules: acceptedRules === community.rulesVersion, rulesVersion: community.rulesVersion }) } : {}) });
       if (activeBoard.current !== id) return;
       communityRevision.current += 1;
-      setCommunity(updated); setNotice(joining ? (community.isMember ? 'You accepted the current community rules. You can take part again.' : `You joined ${updated.name}. Say hello in #general.`) : `You left ${updated.name}. You can rejoin any time.`);
-      if (joining && inviteToken) setSearchParams(previous => { const params = new URLSearchParams(previous); params.delete('invite'); return params; }, { replace: true });
+      setCommunity(updated); window.dispatchEvent(new CustomEvent('dailycollabs:communities', { detail: updated })); setNotice(joining ? (community.isMember ? 'You accepted the current community rules. You can take part again.' : `You joined ${updated.name}. Say hello in #general.`) : `You left ${updated.name}. You can rejoin any time.`);
+      if (joining && inviteToken && pageActiveRef.current) setSearchParams(previous => { const params = new URLSearchParams(previous); params.delete('invite'); return params; }, { replace: true });
     } catch (err) { if (activeBoard.current === id) setError(err.message); }
     finally { if (activeBoard.current === id) setBusy(''); }
   }
@@ -142,7 +177,7 @@ export default function CommunityPage() {
       shouldScroll.current = true;
       setMessages(previous => mergeMessages(previous, [message])); setDraft(''); setPicker(false);
     } catch (err) { if (activeChannel.current === target) setError(err.message); }
-    finally { if (sendingRef.current === target) sendingRef.current = null; if (activeChannel.current === target) { setBusy(''); textareaRef.current?.focus(); } }
+    finally { if (sendingRef.current === target) sendingRef.current = null; if (activeChannel.current === target) { setBusy(''); if (pageActiveRef.current) textareaRef.current?.focus(); } }
   }
   async function react(message, emoji) {
     const requestId = `${message._id}:${emoji}`;
@@ -164,7 +199,7 @@ export default function CommunityPage() {
     const next = `${draft.slice(0, start)}${token} ${draft.slice(end)}`;
     if (next.length <= 3000) setDraft(next);
     setPicker(false);
-    requestAnimationFrame(() => { input?.focus(); input?.setSelectionRange(start + token.length + 1, start + token.length + 1); });
+    requestAnimationFrame(() => { if (!pageActiveRef.current) return; input?.focus(); input?.setSelectionRange(start + token.length + 1, start + token.length + 1); });
   }
   async function olderMessages() {
     const target = `${id}:${channelId}`;
@@ -212,7 +247,7 @@ export default function CommunityPage() {
       <main className="community-chat-main"><header className="community-chat-channel-header"><span className="community-channel-hash" aria-hidden="true">{channelId === 'welcome' ? '≡' : '#'}</span><div><h2>{channel?.name || 'Channel unavailable'}</h2><p>{channel?.topic || 'Choose a channel to start a conversation.'}</p></div>{community.isOwner && channel && channelId !== 'welcome' && <button type="button" className="community-channel-edit" aria-label="Edit channel" onClick={() => { setManage({ mode: 'channel', channel }); setError(''); }}>⚙</button>}</header>
         {channelId === 'welcome' ? <div className="community-welcome"><div className="community-welcome-mark"><BrandEmoji name="spark" /></div><p className="community-eyebrow">WELCOME TO YOUR NEXT GOOD CONVERSATION</p><h2>Good people.<br />A few ground rules.</h2><p dir="auto">{community.description}</p><ol>{community.rules.map((rule, index) => <li key={`${index}-${rule}`}><span>{String(index + 1).padStart(2, '0')}</span><p dir="auto">{rule}</p></li>)}</ol>{community.isOwner && <button type="button" className="community-button secondary" onClick={() => { setManage({ mode: 'rules' }); setError(''); }}>Edit community rules</button>}{(!community.isMember || community.needsRulesAcceptance) && community.requiresRulesAcceptance && <label className="community-rules-accept"><input type="checkbox" checked={hasAcceptedRules} onChange={event => setAcceptedRules(event.target.checked ? community.rulesVersion : false)} /> I’ve read and agree to these community rules.</label>}<button type="button" className="community-button primary" onClick={() => community.isMember && !community.needsRulesAcceptance ? selectChannel('general') : membership(true)} disabled={(!community.isMember || community.needsRulesAcceptance) && community.requiresRulesAcceptance && !hasAcceptedRules || busy === 'membership'}>{community.needsRulesAcceptance ? 'Accept updated rules →' : community.isMember ? 'Go to #general →' : 'Join and say hello →'}</button><div className="community-custom-emoji-intro"><span>OUR KIND OF EXPRESSION</span><EmojiPicker onChoose={name => { if (community.isMember) { selectChannel('general'); setNotice(`Use :${name}: in a message or react below any new message.`); } else setNotice('Join this community to use custom emoji reactions.'); }} /><p>31 original DailyCollabs glyphs. A little more character, a little less noise.</p></div></div> : !channel ? <div className="community-empty"><h2>This channel could not be found.</h2><button className="community-button secondary" type="button" onClick={() => selectChannel('general')}>Back to #general</button></div> : <>
           <div className="community-chat-sync"><span className={syncError ? 'has-error' : ''}>{syncError || 'Messages sync every 4 seconds'}</span>{channel.readOnly && <span>Read-only channel</span>}</div>
-          <div className="community-message-list" ref={listRef} role="log" aria-label={`${channel.name} messages`} aria-live="polite" aria-busy={messagesLoading}>
+          <div className="community-message-list" ref={listRef} onScroll={event => { if (!pageActive) return; const list = event.currentTarget; savedMessageScroll.current = list.scrollTop; shouldScroll.current = list.scrollHeight - list.scrollTop - list.clientHeight < 100; }} role="log" aria-label={`${channel.name} messages`} aria-live="polite" aria-busy={messagesLoading}>
             {hasMore && <button type="button" className="community-older" disabled={busy === 'older'} onClick={olderMessages}>{busy === 'older' ? 'Loading…' : 'Load earlier messages ↑'}</button>}
             {messagesLoading ? <p className="community-chat-loading">Loading conversations…</p> : messages.map(message => <article key={message._id} className="community-chat-message"><span className="community-message-avatar">{message.author.avatar ? <img src={message.author.avatar} alt="" loading="lazy" /> : message.author.username.slice(0, 1).toUpperCase()}</span><div className="community-message-body"><div className="community-message-meta"><strong dir="auto">{message.author.username}</strong><time dateTime={message.createdAt}>{new Date(message.createdAt).toLocaleString(undefined, { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' })}</time>{message.isDemo && <span className="community-demo-label">Sample prompt</span>}{message.legacy && !message.isDemo && <span className="community-demo-label">From the original board</span>}</div><p className="community-message-text" dir="auto"><EmojiText text={message.content} /></p>{message.attachment && <a className="community-shared-card" href={message.attachment.url} target="_blank" rel="noopener noreferrer">{message.attachment.image && <img src={message.attachment.image} alt="" loading="lazy" onError={event => { event.currentTarget.hidden = true; }} />}<div><span>{message.attachment.type === 'video' ? '↗ SHARED VIDEO' : '↗ SHARED ARTICLE'}</span><h3 dir="auto">{message.attachment.title}</h3>{message.attachment.description && <p dir="auto">{message.attachment.description}</p>}</div></a>}{!message.legacy && <div className="community-message-reactions">{message.reactions.map(reaction => <button type="button" key={reaction.emoji} aria-pressed={reaction.reacted} disabled={!community.isMember || community.needsRulesAcceptance} onClick={() => react(message, reaction.emoji)}><BrandEmoji name={reaction.emoji} /><span>{reaction.count}</span></button>)}{community.isMember && !community.needsRulesAcceptance && <button type="button" className="community-add-reaction" aria-label={`React to ${message.author.username}'s message`} onClick={() => setReactionPicker(reactionPicker === message._id ? null : message._id)}>＋ <BrandEmoji name="spark" /></button>}{reactionPicker === message._id && <EmojiPicker onChoose={emoji => react(message, emoji)} />}</div>}</div></article>)}
             {!messagesLoading && !messages.length && <div className="community-channel-empty"><BrandEmoji name="bloom" /><h3>This is the start of #{channel.name}.</h3><p>{community.isMember ? 'The first word could be yours. Share a question, a link, a little spark.' : 'Read along, then join when you’re ready to add your voice.'}</p></div>}

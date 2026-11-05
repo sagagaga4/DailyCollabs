@@ -2,8 +2,8 @@
   "id": 1,
   "status": "ready",
   "progress": 100,
-  "message": "Quick theme switch reviewed and verified in desktop and mobile navigation. Ready for a new mission.",
-  "updatedAt": "2026-11-05T10:33:12.328Z",
+  "message": "Account-isolated page cache, history/focus restoration and exact desktop/mobile scroll verified. Ready for a new mission.",
+  "updatedAt": "2026-11-05T10:54:19.299Z",
   "events": [
     {
       "status": "queued",
@@ -149,6 +149,26 @@
       "status": "ready",
       "message": "Quick theme switch reviewed and verified in desktop and mobile navigation. Ready for a new mission.",
       "at": "2026-11-05T10:33:12.328Z"
+    },
+    {
+      "status": "building",
+      "message": "Building bounded page caching with account isolation and exact scroll restoration.",
+      "at": "2026-11-05T10:42:58.402Z"
+    },
+    {
+      "status": "checking",
+      "message": "Page cache preserves mounted route state, exact history scroll and focus; testing account resets, bounded eviction and dynamic card heights.",
+      "at": "2026-11-05T10:47:15.841Z"
+    },
+    {
+      "status": "review",
+      "message": "Navigation cache ready: route/history content, drafts, exact scroll/focus, hidden activity and account reset verified; four focused tests pass.",
+      "at": "2026-11-05T10:48:28.917Z"
+    },
+    {
+      "status": "ready",
+      "message": "Account-isolated page cache, history/focus restoration and exact desktop/mobile scroll verified. Ready for a new mission.",
+      "at": "2026-11-05T10:54:19.299Z"
     }
   ]
 }

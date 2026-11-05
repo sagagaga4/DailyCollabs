@@ -1,9 +1,11 @@
 import { useEffect, useId, useRef, useState } from 'react';
 import { contentRequest } from '../CardActions/contentApi';
 import { parseVideoUrl } from '../../lib/media';
+import { usePageActive } from '../Navigation/PageActivity';
 import './ShareVideoButton.css';
 
 function VideoComposer({ close, onPublished }) {
+  const pageActive = usePageActive();
   const dialog = useRef(null);
   const id = useId();
   const [url, setUrl] = useState('');
@@ -13,7 +15,11 @@ function VideoComposer({ close, onPublished }) {
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState('');
   const media = parseVideoUrl(url);
-  useEffect(() => { const element = dialog.current; element.showModal(); return () => element.close(); }, []);
+  useEffect(() => {
+    const element = dialog.current;
+    if (pageActive) element.showModal();
+    return () => element.close();
+  }, [pageActive]);
   async function publish(event) {
     event.preventDefault(); setBusy(true); setError('');
     try {

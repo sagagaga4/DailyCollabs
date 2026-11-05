@@ -2,11 +2,14 @@ import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { parseVideoUrl } from '../../lib/media';
 import { createPlaybackIntent, loadVideoApi, playbackEmbedUrl } from '../../lib/videoPlayback';
 import ArticleArtwork from '../Artwork/ArticleArtwork';
+import { usePageActive } from '../Navigation/PageActivity';
 import './VideoPlayer.css';
 
 const AUDIO_FOCUS = 'dailycollabs:video-audio-focus';
 
 function Playback({ media, title, poster, autoplayMuted, loop }) {
+  const pageActive = usePageActive();
+  const pageActiveRef = useRef(pageActive); pageActiveRef.current = pageActive;
   const root = useRef(null);
   const frameHost = useRef(null);
   const native = useRef(null);
@@ -33,15 +36,16 @@ function Playback({ media, title, poster, autoplayMuted, loop }) {
   useEffect(() => {
     let intersecting = false;
     const update = () => {
-      const active = intersecting && !document.hidden;
+      const active = pageActive && intersecting && !document.hidden;
       visibleNow.current = active; setVisible(active);
       if (active) setEntered(true);
     };
+    update();
     const observer = new IntersectionObserver(entries => { intersecting = entries[0].isIntersecting && entries[0].intersectionRatio >= 0.35; update(); }, { threshold: [0, 0.35] });
     observer.observe(root.current);
     document.addEventListener('visibilitychange', update);
     return () => { observer.disconnect(); document.removeEventListener('visibilitychange', update); };
-  }, []);
+  }, [pageActive]);
 
   useEffect(() => {
     const audioFocus = event => {
@@ -59,12 +63,12 @@ function Playback({ media, title, poster, autoplayMuted, loop }) {
   }, []);
   const handlePause = useCallback(() => {
     setPlaybackState('paused');
-    if (intent.paused(visibleNow.current) === 'resume') requestPlayerPlay();
+    if (intent.paused(visibleNow.current && pageActiveRef.current) === 'resume') requestPlayerPlay();
   }, [intent, requestPlayerPlay]);
   const handlePlaying = useCallback(() => {
     setPlaybackState('playing');
     // A pending play request can finish after scrolling away or hiding the tab.
-    if (intent.playing(visibleNow.current) === 'pause') { controls.current?.pause(); return; }
+    if (intent.playing(visibleNow.current && pageActiveRef.current) === 'pause') { controls.current?.pause(); return; }
     setBlocked(false);
   }, [intent]);
 

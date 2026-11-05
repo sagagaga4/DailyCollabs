@@ -1,18 +1,23 @@
 import { useEffect, useId, useRef } from 'react';
+import { usePageActive } from '../Navigation/PageActivity';
 
 export default function CommunityDialog({ title, description, dismissible = true, onClose, children }) {
   const ref = useRef(null);
+  const pageActive = usePageActive();
+  const pageActiveRef = useRef(pageActive);
+  pageActiveRef.current = pageActive;
   const titleId = useId();
   const descriptionId = useId();
   useEffect(() => {
+    if (!pageActive) return;
     const dialog = ref.current;
     const opener = document.activeElement;
     dialog.showModal();
     return () => {
       dialog.close();
-      if (opener instanceof HTMLElement && opener.isConnected) opener.focus({ preventScroll: true });
+      if (pageActiveRef.current && opener instanceof HTMLElement && opener.isConnected) opener.focus({ preventScroll: true });
     };
-  }, []);
+  }, [pageActive]);
   function requestClose(event) {
     event.preventDefault();
     if (dismissible) onClose();

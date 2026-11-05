@@ -1,5 +1,6 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { Link } from 'react-router-dom';
+import { usePageActive } from '../Navigation/PageActivity';
 import VideoPlayer from '../Home/VideoPlayer';
 import ArticleArtwork from '../Artwork/ArticleArtwork';
 import DraggableCard from './DraggableCard';
@@ -9,6 +10,9 @@ import { useCardActions } from './useCardActions';
 import './CardActions.css';
 
 export default function MyChannel() {
+  const pageActive = usePageActive();
+  const loadedRevision = useRef(null);
+  const loadedOlder = useRef(false);
   const [posts, setPosts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
@@ -19,12 +23,18 @@ export default function MyChannel() {
   const { notify } = useCardActions();
 
   useEffect(() => {
+    if (!pageActive || loadedRevision.current === refresh) return;
     let active = true;
-    setLoading(true);
-    contentRequest('/content/channel').then((data) => { if (active) { setPosts(data.posts || []); setPage(data.page); setHasMore(Boolean(data.hasMore)); setError(''); } })
-      .catch((failure) => { if (active) setError(failure.message); }).finally(() => { if (active) setLoading(false); });
-    return () => { active = false; };
-  }, [refresh]);
+    const controller = new AbortController();
+    contentRequest('/content/channel', { signal: controller.signal }).then((data) => {
+      if (!active) return;
+      const latest = data.posts || [];
+      setPosts(previous => loadedOlder.current ? [...latest, ...previous.filter(post => !latest.some(item => item._id === post._id))] : latest);
+      if (!loadedOlder.current) { setPage(data.page); setHasMore(Boolean(data.hasMore)); }
+      loadedRevision.current = refresh; setError('');
+    }).catch((failure) => { if (active && failure.name !== 'AbortError') setError(failure.message); }).finally(() => { if (active) setLoading(false); });
+    return () => { active = false; controller.abort(); };
+  }, [refresh, pageActive]);
   useEffect(() => { const sync = () => setRefresh((value) => value + 1); window.addEventListener('dailycollabs:content', sync); return () => window.removeEventListener('dailycollabs:content', sync); }, []);
 
   async function remove(id) {
@@ -36,7 +46,7 @@ export default function MyChannel() {
   }
   async function more() {
     setBusy('more'); setError('');
-    try { const data = await contentRequest(`/content/channel?page=${page + 1}`); setPosts((previous) => [...previous, ...(data.posts || []).filter((post) => !previous.some((item) => item._id === post._id))]); setPage(data.page); setHasMore(Boolean(data.hasMore)); }
+    try { const data = await contentRequest(`/content/channel?page=${page + 1}`); loadedOlder.current = true; setPosts((previous) => [...previous, ...(data.posts || []).filter((post) => !previous.some((item) => item._id === post._id))]); setPage(data.page); setHasMore(Boolean(data.hasMore)); }
     catch (failure) { setError(failure.message); }
     finally { setBusy(''); }
   }

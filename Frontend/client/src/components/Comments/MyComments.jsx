@@ -1,5 +1,6 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { Link, useSearchParams } from 'react-router-dom';
+import { usePageActive } from '../Navigation/PageActivity';
 import { contentRequest } from '../CardActions/contentApi';
 import { BrandEmoji } from '../BrandEmojis/BrandEmojis';
 import { useStoryComments } from './useStoryComments';
@@ -7,6 +8,10 @@ import StoryCommentCard from './StoryCommentCard';
 import './StoryComments.css';
 
 export default function MyComments() {
+  const pageActive = usePageActive();
+  const loadedRevision = useRef(null);
+  const loadedOlder = useRef(false);
+  const handledFocus = useRef(null);
   const [params] = useSearchParams();
   const focusId = params.get('comment');
   const context = useStoryComments();
@@ -19,22 +24,31 @@ export default function MyComments() {
   const [revision, setRevision] = useState(0);
   const openComments = context?.openComments;
   useEffect(() => {
+    if (!pageActive || loadedRevision.current === revision) return;
     let active = true;
-    contentRequest('/story-comments/mine').then((data) => { if (active) { setComments(data.comments); setCursor(data.nextCursor); setHasMore(data.hasMore); setError(''); } })
-      .catch((failure) => { if (active) setError(failure.message); }).finally(() => { if (active) setLoading(false); });
-    return () => { active = false; };
-  }, [revision]);
+    const controller = new AbortController();
+    contentRequest('/story-comments/mine', { signal: controller.signal }).then((data) => {
+      if (!active) return;
+      setComments(previous => loadedOlder.current ? [...data.comments, ...previous.filter(row => !data.comments.some(latest => latest._id === row._id))] : data.comments);
+      if (!loadedOlder.current) { setCursor(data.nextCursor); setHasMore(data.hasMore); }
+      loadedRevision.current = revision; setError('');
+    }).catch((failure) => { if (active && failure.name !== 'AbortError') setError(failure.message); }).finally(() => { if (active) setLoading(false); });
+    return () => { active = false; controller.abort(); };
+  }, [revision, pageActive]);
   useEffect(() => { const refresh = () => setRevision((value) => value + 1); window.addEventListener('dailycollabs:comments', refresh); return () => window.removeEventListener('dailycollabs:comments', refresh); }, []);
   useEffect(() => {
-    if (!focusId || !openComments) return;
+    if (!focusId) { handledFocus.current = null; return; }
+    if (!pageActive || !openComments || handledFocus.current === focusId) return;
     let active = true;
-    contentRequest(`/story-comments/${encodeURIComponent(focusId)}`).then((comment) => { if (active) openComments({ url: comment.url, title: comment.title, type: comment.type }, { focusId: comment._id }); })
-      .catch((failure) => { if (active) setError(failure.message); });
-    return () => { active = false; };
-  }, [focusId, openComments]);
+    const controller = new AbortController();
+    contentRequest(`/story-comments/${encodeURIComponent(focusId)}`, { signal: controller.signal }).then((comment) => {
+      if (active) { handledFocus.current = focusId; openComments({ url: comment.url, title: comment.title, type: comment.type }, { focusId: comment._id }); }
+    }).catch((failure) => { if (active && failure.name !== 'AbortError') setError(failure.message); });
+    return () => { active = false; controller.abort(); };
+  }, [focusId, openComments, pageActive]);
   async function more() {
     setBusy(true);
-    try { const data = await contentRequest(`/story-comments/mine?before=${cursor}`); setComments((previous) => [...previous, ...data.comments.filter((row) => !previous.some((item) => item._id === row._id))]); setHasMore(data.hasMore); setCursor(data.nextCursor); }
+    try { const data = await contentRequest(`/story-comments/mine?before=${cursor}`); loadedOlder.current = true; setComments((previous) => [...previous, ...data.comments.filter((row) => !previous.some((item) => item._id === row._id))]); setHasMore(data.hasMore); setCursor(data.nextCursor); }
     catch (failure) { setError(failure.message); }
     finally { setBusy(false); }
   }

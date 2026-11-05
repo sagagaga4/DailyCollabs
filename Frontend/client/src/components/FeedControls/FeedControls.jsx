@@ -1,5 +1,6 @@
-import { useEffect, useId, useRef, useState } from 'react';
+import { useEffect, useId, useLayoutEffect, useRef, useState } from 'react';
 import { feedRequest } from './feedApi';
+import { usePageActive } from '../Navigation/PageActivity';
 import './FeedControls.css';
 
 const MODES = [
@@ -14,6 +15,7 @@ function TuneIcon() {
 }
 
 function FeedDialog({ onClose, onChange }) {
+  const pageActive = usePageActive();
   const ref = useRef(null);
   const titleId = useId();
   const introId = useId();
@@ -32,12 +34,13 @@ function FeedDialog({ onClose, onChange }) {
   const pending = useRef(false);
   const busy = saving || resetting;
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     const dialog = ref.current;
+    if (!pageActive) { dialog.close(); return; }
     const opener = document.activeElement;
     dialog.showModal();
-    return () => { dialog.close(); if (opener instanceof HTMLElement && opener.isConnected) opener.focus({ preventScroll: true }); };
-  }, []);
+    return () => { dialog.close(); if (opener instanceof HTMLElement && opener.isConnected && opener.getClientRects().length) opener.focus({ preventScroll: true }); };
+  }, [pageActive]);
 
   useEffect(() => {
     const controller = new AbortController();

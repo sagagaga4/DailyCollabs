@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
+import { usePageActive } from '../Navigation/PageActivity';
 import { API_URL } from '../../config';
 import './Agents.css';
 
@@ -7,18 +8,22 @@ const labels = { queued: 'Queued', building: 'Building', checking: 'Checking', f
 function time(value) { return value ? new Date(value).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' }) : '—'; }
 
 export default function Agents() {
+  const pageActive = usePageActive();
   const [data, setData] = useState(null);
   const [connected, setConnected] = useState(false);
   const [selected, setSelected] = useState(null);
   useEffect(() => {
+    if (!pageActive) return;
     let alive = true;
-    fetch(`${API_URL}/agent-status`).then(res => { if (!res.ok) throw new Error(); return res.json(); }).then(value => { if (alive) setData(value); }).catch(() => {});
+    const controller = new AbortController();
+    setConnected(false);
+    fetch(`${API_URL}/agent-status`, { signal: controller.signal }).then(res => { if (!res.ok) throw new Error(); return res.json(); }).then(value => { if (alive) setData(value); }).catch(() => {});
     const stream = new EventSource(`${API_URL}/agent-status/stream`);
     stream.onopen = () => setConnected(true);
     stream.onmessage = event => { try { setData(JSON.parse(event.data)); setConnected(true); } catch { /* wait for next snapshot */ } };
     stream.onerror = () => setConnected(false);
-    return () => { alive = false; stream.close(); };
-  }, []);
+    return () => { alive = false; controller.abort(); stream.close(); };
+  }, [pageActive]);
   const agents = data?.agents || [];
   const ready = agents.filter(agent => agent.status === 'ready');
   const active = agents.filter(agent => ['building', 'checking', 'fixing', 'review'].includes(agent.status));
